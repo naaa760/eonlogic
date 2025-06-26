@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  email       String   @unique
+  firstName   String?
+  lastName    String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  projects    Project[]
+  websites    Website[]
+  templates   Template[]
+
+  @@map("users")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  businessType String
+  status      ProjectStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  websites    Website[]
+  aiContent   AIContent[]
+
+  @@map("projects")
+}
+
+model Website {
+  id          String   @id @default(cuid())
+  name        String
+  domain      String?  @unique
+  subdomain   String   @unique
+  status      WebsiteStatus @default(BUILDING)
+  isPublished Boolean  @default(false)
+  theme       String   @default("modern")
+  primaryColor String  @default("#3B82F6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // SEO fields
+  metaTitle       String?
+  metaDescription String?
+  keywords        String[]
+
+  // Content
+  pages       Page[]
+  navigation  Json?
+  footer      Json?
+
+  // Relations
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  templateId  String?
+  template    Template? @relation(fields: [templateId], references: [id])
+  aiContent   AIContent[]
+
+  @@map("websites")
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  title       String
+  content     Json     // Rich content structure
+  isHomePage  Boolean  @default(false)
+  isPublished Boolean  @default(false)
+  seoTitle    String?
+  seoDescription String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  websiteId   String
+  website     Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@unique([websiteId, slug])
+  @@map("pages")
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  category    String
+  businessType String
+  thumbnail   String
+  isPublic    Boolean  @default(true)
+  structure   Json     // Template structure
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  createdBy   String?
+  creator     User?    @relation(fields: [createdBy], references: [id])
+  websites    Website[]
+
+  @@map("templates")
+}
+
+model AIContent {
+  id          String   @id @default(cuid())
+  type        AIContentType
+  prompt      String
+  content     Json
+  status      AIStatus @default(PROCESSING)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  websiteId   String?
+  website     Website? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@map("ai_content")
+}
+
+// Enums
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  PUBLISHED
+}
+
+enum WebsiteStatus {
+  BUILDING
+  REVIEW
+  LIVE
+  MAINTENANCE
+}
+
+enum AIContentType {
+  WEBSITE_STRUCTURE
+  PAGE_CONTENT
+  BLOG_POST
+  SEO_CONTENT
+  MARKETING_COPY
+  BUSINESS_DESCRIPTION
+}
+
+enum AIStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+  PENDING
+} 
