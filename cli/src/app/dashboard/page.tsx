@@ -217,7 +217,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="p-4">
-                  <Button className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                  <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
                     Edit and publish website
                   </Button>
                 </div>
@@ -252,10 +252,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="mt-4">
-                  <Button
-                    variant="outline"
-                    className="w-full hover:bg-gray-50 transition-colors"
-                  >
+                  <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
                     View analytics
                   </Button>
                 </div>
@@ -265,74 +262,65 @@ export default function Dashboard() {
             {/* Bottom Section - Three Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Latest Contacts */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-5 w-5 text-gray-500" />
-                    <span className="font-medium text-gray-900">
+              <div className="bg-white rounded-xl shadow-sm">
+                <div className="p-6">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <Users className="h-5 w-5 text-gray-400" />
+                    <span className="font-medium text-gray-700 text-sm">
                       Latest contacts
                     </span>
                   </div>
-                </div>
-                <div className="p-6 text-center">
-                  <div className="text-gray-500 mb-4">
-                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p className="text-sm">No contacts yet</p>
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 mb-6">
+                      <Users className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p className="text-sm text-gray-500">No contacts yet</p>
+                    </div>
+                    <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
+                      Go to contacts
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full hover:bg-gray-50 transition-colors"
-                  >
-                    Go to contacts
-                  </Button>
                 </div>
               </div>
 
               {/* Latest Invoices */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5 text-gray-500" />
-                    <span className="font-medium text-gray-900">
+              <div className="bg-white rounded-xl shadow-sm">
+                <div className="p-6">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <FileText className="h-5 w-5 text-gray-400" />
+                    <span className="font-medium text-gray-700 text-sm">
                       Latest invoices
                     </span>
                   </div>
-                </div>
-                <div className="p-6 text-center">
-                  <div className="text-gray-500 mb-4">
-                    <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p className="text-sm">No invoices yet</p>
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 mb-6">
+                      <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p className="text-sm text-gray-500">No invoices yet</p>
+                    </div>
+                    <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
+                      Go to invoices
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full hover:bg-gray-50 transition-colors"
-                  >
-                    Go to invoices
-                  </Button>
                 </div>
               </div>
 
               {/* Latest Blog Posts */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 lg:col-span-1">
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <Edit className="h-5 w-5 text-gray-500" />
-                    <span className="font-medium text-gray-900">
+              <div className="bg-white rounded-xl shadow-sm md:col-span-2 lg:col-span-1">
+                <div className="p-6">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <Edit className="h-5 w-5 text-gray-400" />
+                    <span className="font-medium text-gray-700 text-sm">
                       Latest blog posts
                     </span>
                   </div>
-                </div>
-                <div className="p-6 text-center">
-                  <div className="text-gray-500 mb-4">
-                    <Edit className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p className="text-sm">No blog posts yet</p>
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 mb-6">
+                      <Edit className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p className="text-sm text-gray-500">No blog posts yet</p>
+                    </div>
+                    <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
+                      Go to blog
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full hover:bg-gray-50 transition-colors"
-                  >
-                    Go to blog
-                  </Button>
                 </div>
               </div>
             </div>
