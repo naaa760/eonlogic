@@ -3,23 +3,36 @@
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import {
-  Plus,
+  Home,
   Globe,
-  BarChart3,
-  Sparkles,
   Users,
+  FileText,
   Settings,
-  Eye,
+  HelpCircle,
+  BarChart3,
   Edit,
-  ExternalLink,
+  Eye,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import Link from "next/link";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function Dashboard() {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -29,348 +42,303 @@ export default function Dashboard() {
 
   if (!isLoaded || !isSignedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  // Mock data - will be replaced with real API calls
-  const stats = [
+  const currentTime = new Date().getHours();
+  const greeting =
+    currentTime < 12
+      ? "Good morning"
+      : currentTime < 18
+      ? "Good afternoon"
+      : "Good evening";
+
+  const mainNavItems = [
     {
-      title: "Total Projects",
-      value: "3",
-      change: "+2 this month",
-      icon: <BarChart3 className="h-6 w-6" />,
-      color: "text-blue-600",
+      title: "Home",
+      url: "/dashboard",
+      icon: Home,
+      isActive: true,
     },
     {
-      title: "Published Websites",
-      value: "2",
-      change: "+1 this week",
-      icon: <Globe className="h-6 w-6" />,
-      color: "text-green-600",
+      title: "Website",
+      url: "/website",
+      icon: Globe,
     },
     {
-      title: "AI Generations",
-      value: "12",
-      change: "+8 today",
-      icon: <Sparkles className="h-6 w-6" />,
-      color: "text-purple-600",
+      title: "Contacts",
+      url: "/contacts",
+      icon: Users,
     },
     {
-      title: "Team Members",
-      value: "1",
-      change: "Just you",
-      icon: <Users className="h-6 w-6" />,
-      color: "text-orange-600",
+      title: "Invoices",
+      url: "/invoices",
+      icon: FileText,
     },
   ];
 
-  const recentProjects = [
+  const bottomNavItems = [
     {
-      id: "1",
-      name: "Coffee Shop Website",
-      description: "A modern coffee shop with online ordering",
-      status: "Published",
-      websiteCount: 1,
-      updatedAt: "2 hours ago",
-      color: "from-amber-400 to-orange-500",
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
     },
     {
-      id: "2",
-      name: "Tech Startup Landing",
-      description: "SaaS product landing page",
-      status: "Draft",
-      websiteCount: 0,
-      updatedAt: "1 day ago",
-      color: "from-blue-400 to-purple-500",
-    },
-    {
-      id: "3",
-      name: "Photography Portfolio",
-      description: "Creative portfolio for photographer",
-      status: "In Progress",
-      websiteCount: 1,
-      updatedAt: "3 days ago",
-      color: "from-pink-400 to-red-500",
-    },
-  ];
-
-  const quickActions = [
-    {
-      title: "Create New Project",
-      description: "Start a new business project",
-      icon: <Plus className="h-8 w-8" />,
-      action: () => {},
-      color: "bg-blue-600 hover:bg-blue-700",
-    },
-    {
-      title: "Generate with AI",
-      description: "Create website using AI",
-      icon: <Sparkles className="h-8 w-8" />,
-      action: () => {},
-      color: "bg-purple-600 hover:bg-purple-700",
-    },
-    {
-      title: "Browse Templates",
-      description: "Choose from templates",
-      icon: <Globe className="h-8 w-8" />,
-      action: () => {},
-      color: "bg-green-600 hover:bg-green-700",
+      title: "Help",
+      url: "/help",
+      icon: HelpCircle,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">
-                  EonLogic
-                </span>
-              </Link>
+    <SidebarProvider>
+      <div className="min-h-screen bg-white flex w-full">
+        <Sidebar className="fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear md:flex left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l bg-white">
+          <SidebarHeader className="p-4 bg-white flex items-center justify-between">
+            <div className="text-sm font-medium text-gray-700">Menu</div>
+          </SidebarHeader>
+
+          <SidebarContent className="flex-1 bg-white">
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1 p-4">
+                  {mainNavItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                          item.isActive
+                            ? "bg-gray-100 text-gray-900 font-medium shadow-sm"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                        }`}
+                      >
+                        <Link href={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span
+                            className={`text-sm ${
+                              item.isActive ? "font-medium" : "font-normal"
+                            }`}
+                          >
+                            {item.title}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+
+          <SidebarFooter className="bg-white">
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1 p-4">
+                  {bottomNavItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        className="flex items-center space-x-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-lg transition-all duration-200"
+                      >
+                        <Link href={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span className="font-normal text-sm">
+                            {item.title}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarFooter>
+          <SidebarRail />
+        </Sidebar>
+
+        {/* Always Visible Sidebar Toggle */}
+        <SidebarTrigger className="fixed top-4 left-4 z-20 h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-all duration-200 bg-white border border-gray-200 shadow-sm" />
+
+        <SidebarInset className="flex-1">
+          {/* Main Content */}
+          <div className="flex-1 p-4 md:p-8 ml-16 pt-16">
+            {/* Welcome Header */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+                {greeting}, welcome to EonLogic
+              </h1>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.firstName} {user?.lastName}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {user?.primaryEmailAddress?.emailAddress}
-                  </p>
-                </div>
-                {user?.imageUrl && (
-                  <Image
-                    src={user.imageUrl}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user?.firstName}! 👋
-          </h1>
-          <p className="text-gray-600">
-            Let&apos;s continue building amazing websites with AI.
-          </p>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        >
-          {stats.map((stat) => (
-            <div
-              key={stat.title}
-              className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.color} bg-gray-50 p-3 rounded-lg`}>
-                  {stat.icon}
-                </div>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 mb-1">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-xs text-green-600">{stat.change}</p>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-8"
-        >
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {quickActions.map((action) => (
-              <button
-                key={action.title}
-                onClick={action.action}
-                className={`${action.color} text-white p-6 rounded-xl hover:shadow-lg transition-all group`}
-              >
-                <div className="flex items-center mb-4">
-                  <div className="bg-white/20 p-3 rounded-lg group-hover:bg-white/30 transition-colors">
-                    {action.icon}
-                  </div>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{action.title}</h3>
-                <p className="text-sm opacity-90">{action.description}</p>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Recent Projects */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-8"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Recent Projects
-            </h2>
-            <Button variant="outline">View All Projects</Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-                className="bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden group"
-              >
-                <div
-                  className={`h-32 bg-gradient-to-br ${project.color} flex items-center justify-center`}
-                >
-                  <div className="text-white text-center">
-                    <Globe className="h-8 w-8 mx-auto mb-2" />
-                    <p className="font-medium">{project.name}</p>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-gray-900">
-                      {project.name}
-                    </h3>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        project.status === "Published"
-                          ? "bg-green-100 text-green-800"
-                          : project.status === "Draft"
-                          ? "bg-gray-100 text-gray-800"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
-                      {project.status}
+            {/* Top Section - Website Card and Analytics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Website Preview Card */}
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div className="p-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Globe className="h-5 w-5 text-gray-500" />
+                      <span className="font-medium text-gray-900">Website</span>
+                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      • Unpublished
                     </span>
                   </div>
+                </div>
 
-                  <p className="text-sm text-gray-600 mb-4">
-                    {project.description}
-                  </p>
-
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <span>
-                      {project.websiteCount} website
-                      {project.websiteCount !== 1 ? "s" : ""}
-                    </span>
-                    <span>{project.updatedAt}</span>
+                {/* Website Preview */}
+                <div className="relative">
+                  <div className="aspect-video bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold mb-2">
+                        Your Amazing Business
+                      </h3>
+                      <p className="text-sm opacity-90 mb-4">
+                        Professional website coming soon
+                      </p>
+                      <div className="inline-block px-4 py-2 bg-blue-600 rounded text-sm font-medium hover:bg-blue-700 transition-colors">
+                        Get Started
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+                  <div className="absolute top-4 right-4">
+                    <div className="flex space-x-2">
+                      <button className="p-1 bg-black bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
+                        <Eye className="h-4 w-4 text-white" />
+                      </button>
+                      <button className="p-1 bg-black bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
+                        <Edit className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Activity Feed */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="bg-white rounded-xl border border-gray-200 p-6"
-        >
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Recent Activity
-          </h2>
-
-          <div className="space-y-4">
-            {[
-              {
-                action: "Generated website content",
-                project: "Coffee Shop Website",
-                time: "2 hours ago",
-                icon: <Sparkles className="h-5 w-5 text-purple-600" />,
-              },
-              {
-                action: "Published website",
-                project: "Tech Startup Landing",
-                time: "1 day ago",
-                icon: <Globe className="h-5 w-5 text-green-600" />,
-              },
-              {
-                action: "Created new project",
-                project: "Photography Portfolio",
-                time: "3 days ago",
-                icon: <Plus className="h-5 w-5 text-blue-600" />,
-              },
-            ].map((activity, index) => (
-              <div
-                key={index}
-                className="flex items-center space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <div className="bg-gray-100 p-2 rounded-lg">
-                  {activity.icon}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    {activity.action} for{" "}
-                    <span className="text-blue-600">{activity.project}</span>
-                  </p>
-                  <p className="text-xs text-gray-500">{activity.time}</p>
+                <div className="p-4">
+                  <Button className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                    Edit and publish website
+                  </Button>
                 </div>
               </div>
-            ))}
+
+              {/* Analytics Card */}
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <BarChart3 className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-900">
+                      Daily visits
+                    </span>
+                  </div>
+                </div>
+
+                {/* Simple Chart Placeholder */}
+                <div className="h-40 flex items-end justify-center space-x-2 mb-4">
+                  {[2, 4, 3, 7, 5, 8, 6].map((height, index) => (
+                    <div
+                      key={index}
+                      className="bg-blue-200 w-8 rounded-t hover:bg-blue-300 transition-colors cursor-pointer"
+                      style={{ height: `${height * 12}px` }}
+                    />
+                  ))}
+                </div>
+
+                <div className="text-center">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+                    Sample Data
+                  </span>
+                </div>
+
+                <div className="mt-4">
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-gray-50 transition-colors"
+                  >
+                    View analytics
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Section - Three Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Latest Contacts */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-900">
+                      Latest contacts
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6 text-center">
+                  <div className="text-gray-500 mb-4">
+                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm">No contacts yet</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-gray-50 transition-colors"
+                  >
+                    Go to contacts
+                  </Button>
+                </div>
+              </div>
+
+              {/* Latest Invoices */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-900">
+                      Latest invoices
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6 text-center">
+                  <div className="text-gray-500 mb-4">
+                    <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm">No invoices yet</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-gray-50 transition-colors"
+                  >
+                    Go to invoices
+                  </Button>
+                </div>
+              </div>
+
+              {/* Latest Blog Posts */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 lg:col-span-1">
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Edit className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-900">
+                      Latest blog posts
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6 text-center">
+                  <div className="text-gray-500 mb-4">
+                    <Edit className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm">No blog posts yet</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-gray-50 transition-colors"
+                  >
+                    Go to blog
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
-      </main>
-    </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
