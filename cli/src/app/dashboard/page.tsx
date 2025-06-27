@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Home,
@@ -13,6 +13,13 @@ import {
   BarChart3,
   Edit,
   Eye,
+  LogOut,
+  X,
+  User,
+  Building,
+  CreditCard,
+  UserPlus,
+  Receipt,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -32,12 +39,15 @@ import {
 } from "@/components/ui/sidebar";
 
 export default function Dashboard() {
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       window.location.href = "/";
     }
+    // NO onboarding logic - dashboard is just a normal page
   }, [isLoaded, isSignedIn]);
 
   if (!isLoaded || !isSignedIn) {
@@ -83,8 +93,9 @@ export default function Dashboard() {
   const bottomNavItems = [
     {
       title: "Settings",
-      url: "/settings",
+      url: "#",
       icon: Settings,
+      onClick: () => setShowUserMenu(true),
     },
     {
       title: "Help",
@@ -92,6 +103,12 @@ export default function Dashboard() {
       icon: HelpCircle,
     },
   ];
+
+  const handleLogout = () => {
+    signOut(() => {
+      window.location.href = "/";
+    });
+  };
 
   return (
     <SidebarProvider>
@@ -141,15 +158,25 @@ export default function Dashboard() {
                   {bottomNavItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
-                        asChild
+                        asChild={!item.onClick}
                         className="flex items-center space-x-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-lg transition-all duration-200"
+                        onClick={item.onClick}
                       >
-                        <Link href={item.url}>
-                          <item.icon className="h-4 w-4" />
-                          <span className="font-normal text-sm">
-                            {item.title}
-                          </span>
-                        </Link>
+                        {item.onClick ? (
+                          <div>
+                            <item.icon className="h-4 w-4" />
+                            <span className="font-normal text-sm">
+                              {item.title}
+                            </span>
+                          </div>
+                        ) : (
+                          <Link href={item.url}>
+                            <item.icon className="h-4 w-4" />
+                            <span className="font-normal text-sm">
+                              {item.title}
+                            </span>
+                          </Link>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -217,9 +244,11 @@ export default function Dashboard() {
                 </div>
 
                 <div className="p-4">
-                  <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
-                    Edit and publish website
-                  </Button>
+                  <Link href="/website">
+                    <Button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 shadow-none">
+                      Edit and publish website
+                    </Button>
+                  </Link>
                 </div>
               </div>
 
@@ -326,6 +355,93 @@ export default function Dashboard() {
             </div>
           </div>
         </SidebarInset>
+
+        {/* User Menu Popup */}
+        {showUserMenu && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-semibold">
+                      {user?.firstName?.charAt(0) ||
+                        user?.emailAddresses[0]?.emailAddress.charAt(0) ||
+                        "U"}
+                    </span>
+                  </div>
+                  <span className="font-medium text-gray-900">
+                    {user?.username || user?.firstName || "User"}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowUserMenu(false)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Menu Items */}
+              <div className="py-2">
+                <Link
+                  href="/profile"
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <User className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Profile</span>
+                </Link>
+
+                <Link
+                  href="/business"
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <Building className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Business details</span>
+                </Link>
+
+                <Link
+                  href="/team"
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <UserPlus className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Team</span>
+                </Link>
+
+                <Link
+                  href="/invoicing"
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <Receipt className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Invoicing</span>
+                </Link>
+
+                <Link
+                  href="/subscription"
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <CreditCard className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Subscription</span>
+                </Link>
+
+                <div className="border-t border-gray-200 my-2"></div>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors w-full text-left"
+                >
+                  <LogOut className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700">Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </SidebarProvider>
   );
