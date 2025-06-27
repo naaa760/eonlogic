@@ -80,6 +80,8 @@ export default function RootLayout({
           headerSubtitle: "text-gray-600",
         },
       }}
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/onboarding"
     >
       <html lang="en" className={inter.variable}>
         <head>

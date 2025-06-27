@@ -122,7 +122,7 @@ export default function LandingPage() {
 
             <div className="flex items-center space-x-4">
               {isSignedIn ? (
-                <Link href="/onboarding">
+                <Link href="/dashboard">
                   <Button className="bg-blue-600 hover:bg-blue-700">
                     Continue Setup
                   </Button>
@@ -178,7 +178,7 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
             >
               {isSignedIn ? (
-                <Link href="/onboarding">
+                <Link href="/dashboard">
                   <Button
                     size="lg"
                     className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6"
