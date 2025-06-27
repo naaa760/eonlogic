@@ -121,6 +121,23 @@ interface ProjectData {
 
 export default function WebsiteBuilder() {
   const { isLoaded, isSignedIn, user } = useUser();
+
+  // Safe localStorage utility for SSR compatibility
+  const safeLocalStorage = {
+    getItem: (key: string): string | null => {
+      if (typeof window === "undefined") return null;
+      return localStorage.getItem(key);
+    },
+    setItem: (key: string, value: string): void => {
+      if (typeof window === "undefined") return;
+      localStorage.setItem(key, value);
+    },
+    removeItem: (key: string): void => {
+      if (typeof window === "undefined") return;
+      localStorage.removeItem(key);
+    },
+  };
+
   const [website, setWebsite] = useState<Website | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
@@ -159,7 +176,7 @@ export default function WebsiteBuilder() {
     vertical: 50,
   });
   const [panelPosition, setPanelPosition] = useState({
-    x: window.innerWidth - 320,
+    x: typeof window !== "undefined" ? window.innerWidth - 320 : 320,
     width: 320,
   });
   const [isDragging, setIsDragging] = useState(false);
@@ -172,7 +189,7 @@ export default function WebsiteBuilder() {
 
     if (isLoaded && isSignedIn && user) {
       // Check if we already have a generated website for this user
-      const existingWebsite = localStorage.getItem(
+      const existingWebsite = safeLocalStorage.getItem(
         `generated_website_${user.id}`
       );
       if (existingWebsite) {
@@ -196,7 +213,9 @@ export default function WebsiteBuilder() {
   const generateWebsiteFromBusinessInfo = async () => {
     try {
       // Get business info from localStorage
-      const businessInfoStr = localStorage.getItem(`business_info_${user?.id}`);
+      const businessInfoStr = safeLocalStorage.getItem(
+        `business_info_${user?.id}`
+      );
       if (!businessInfoStr) {
         // Redirect back to onboarding if no business info
         window.location.href = "/onboarding";
@@ -213,7 +232,7 @@ export default function WebsiteBuilder() {
       setWebsite(generatedWebsite);
 
       // Save the generated website to localStorage for persistence
-      localStorage.setItem(
+      safeLocalStorage.setItem(
         `generated_website_${user?.id}`,
         JSON.stringify(generatedWebsite)
       );
@@ -649,7 +668,7 @@ export default function WebsiteBuilder() {
   const saveToRecentProjects = (website: Website) => {
     try {
       const recentProjects: ProjectData[] = JSON.parse(
-        localStorage.getItem(`recent_projects_${user?.id}`) || "[]"
+        safeLocalStorage.getItem(`recent_projects_${user?.id}`) || "[]"
       );
 
       const projectData: ProjectData = {
@@ -676,7 +695,7 @@ export default function WebsiteBuilder() {
       // Keep only the last 10 projects
       const limitedProjects = updatedProjects.slice(0, 10);
 
-      localStorage.setItem(
+      safeLocalStorage.setItem(
         `recent_projects_${user?.id}`,
         JSON.stringify(limitedProjects)
       );
@@ -693,7 +712,7 @@ export default function WebsiteBuilder() {
   ) => {
     try {
       const recentProjects: ProjectData[] = JSON.parse(
-        localStorage.getItem(`recent_projects_${user?.id}`) || "[]"
+        safeLocalStorage.getItem(`recent_projects_${user?.id}`) || "[]"
       );
 
       const projectData: ProjectData = {
@@ -717,7 +736,7 @@ export default function WebsiteBuilder() {
       // Add the updated entry at the beginning
       const updatedProjects = [projectData, ...filteredProjects];
 
-      localStorage.setItem(
+      safeLocalStorage.setItem(
         `recent_projects_${user?.id}`,
         JSON.stringify(updatedProjects)
       );
@@ -869,16 +888,16 @@ Make it sound professional, engaging, and specific to the business type and loca
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-8"></div>
           <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-            {localStorage.getItem(`generated_website_${user?.id}`)
+            {safeLocalStorage.getItem(`generated_website_${user?.id}`)
               ? "Loading Your Website..."
               : "Creating Your Website..."}
           </h3>
           <p className="text-gray-600 max-w-md">
-            {localStorage.getItem(`generated_website_${user?.id}`)
+            {safeLocalStorage.getItem(`generated_website_${user?.id}`)
               ? "Loading your previously created website from storage."
               : "Our AI is crafting a beautiful, professional website tailored specifically for your business. This will just take a moment."}
           </p>
-          {!localStorage.getItem(`generated_website_${user?.id}`) && (
+          {!safeLocalStorage.getItem(`generated_website_${user?.id}`) && (
             <div className="mt-8 flex items-center justify-center space-x-4 text-sm text-gray-500">
               <span>✨ Generating content</span>
               <span>🎨 Selecting images</span>
@@ -927,7 +946,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
       // Save updated website to localStorage
       if (user?.id) {
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           `generated_website_${user.id}`,
           JSON.stringify(updatedWebsite)
         );
@@ -961,7 +980,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
       // Save updated website to localStorage
       if (user?.id) {
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           `generated_website_${user.id}`,
           JSON.stringify(updatedWebsite)
         );
@@ -992,7 +1011,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
       // Save updated website to localStorage
       if (user?.id) {
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           `generated_website_${user.id}`,
           JSON.stringify(updatedWebsite)
         );
@@ -1014,7 +1033,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
       // Save updated website to localStorage
       if (user?.id) {
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           `generated_website_${user.id}`,
           JSON.stringify(updatedWebsite)
         );
@@ -1074,7 +1093,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
         // Save updated website to localStorage
         if (user?.id) {
-          localStorage.setItem(
+          safeLocalStorage.setItem(
             `generated_website_${user.id}`,
             JSON.stringify(updatedWebsite)
           );
@@ -1113,7 +1132,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
       // Save updated website to localStorage
       if (user?.id) {
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           `generated_website_${user.id}`,
           JSON.stringify(updatedWebsite)
         );
@@ -1289,9 +1308,9 @@ Make it sound professional, engaging, and specific to the business type and loca
               )
             }
           >
-            <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
+            <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
               <h1
-                className="text-5xl md:text-6xl font-bold mb-6 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
                 onClick={(e) =>
                   handleElementClick(block.id, "text", "title", e)
                 }
@@ -1311,7 +1330,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                     }
                     onBlur={() => setEditingText(null)}
                     onKeyDown={(e) => e.key === "Enter" && setEditingText(null)}
-                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none"
+                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
                     autoFocus
                   />
                 ) : (
@@ -1319,7 +1338,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 )}
               </h1>
               <p
-                className="text-xl md:text-2xl mb-8 opacity-90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
                 onClick={(e) =>
                   handleElementClick(block.id, "text", "subtitle", e)
                 }
@@ -1339,7 +1358,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       handleTextChange(block.id, "subtitle", e.target.value)
                     }
                     onBlur={() => setEditingText(null)}
-                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none resize-none"
+                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none resize-none text-lg sm:text-xl md:text-2xl"
                     autoFocus
                   />
                 ) : (
@@ -1347,7 +1366,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 )}
               </p>
               <button
-                className="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
+                className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
                 onClick={(e) =>
                   handleElementClick(block.id, "button", "buttonText", e)
                 }
@@ -1380,12 +1399,15 @@ Make it sound professional, engaging, and specific to the business type and loca
         )}
 
         {block.type === "about" && (
-          <div className="py-20" style={{ backgroundColor: "#f8fafc" }}>
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div
+            className="py-12 sm:py-16 md:py-20"
+            style={{ backgroundColor: "#f8fafc" }}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
                 <div>
                   <h2
-                    className="text-4xl font-bold mb-6 cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 rounded transition-all"
+                    className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 rounded transition-all"
                     style={{ color: website.theme.colors.text }}
                     onClick={(e) =>
                       handleElementClick(block.id, "text", "title", e)
@@ -1407,7 +1429,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                           handleTextChange(block.id, "title", e.target.value)
                         }
                         onBlur={() => setEditingText(null)}
-                        className="w-full outline-none bg-transparent border-b-2"
+                        className="w-full outline-none bg-transparent border-b-2 text-2xl sm:text-3xl md:text-4xl"
                         autoFocus
                       />
                     ) : (
@@ -1415,7 +1437,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                     )}
                   </h2>
                   <p
-                    className="text-lg mb-8 leading-relaxed cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 rounded transition-all text-gray-700"
+                    className="text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 rounded transition-all text-gray-700"
                     onClick={(e) =>
                       handleElementClick(block.id, "text", "description", e)
                     }
@@ -1439,7 +1461,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                           )
                         }
                         onBlur={() => setEditingText(null)}
-                        className="w-full outline-none bg-transparent border-b-2 resize-none"
+                        className="w-full outline-none bg-transparent border-b-2 resize-none text-base sm:text-lg"
                         rows={4}
                         autoFocus
                       />
@@ -1447,12 +1469,12 @@ Make it sound professional, engaging, and specific to the business type and loca
                       block.content.description
                     )}
                   </p>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-wrap gap-3 sm:gap-4">
                     {block.content.highlights?.map(
                       (highlight: string, index: number) => (
                         <span
                           key={index}
-                          className="px-4 py-2 rounded-full text-sm font-medium"
+                          className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium"
                           style={{
                             backgroundColor:
                               website.theme.colors.primary + "20",
@@ -1465,11 +1487,11 @@ Make it sound professional, engaging, and specific to the business type and loca
                     )}
                   </div>
                 </div>
-                <div className="relative">
+                <div className="relative mt-8 md:mt-0">
                   <img
                     src={block.content.image}
                     alt="About us"
-                    className="rounded-2xl shadow-xl w-full h-96 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
+                    className="rounded-2xl shadow-xl w-full h-64 sm:h-80 md:h-96 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
                     onClick={(e) =>
                       handleImageClick(
                         block.id,
@@ -1486,11 +1508,14 @@ Make it sound professional, engaging, and specific to the business type and loca
         )}
 
         {block.type === "services" && (
-          <div className="py-20" style={{ backgroundColor: "#ffffff" }}>
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center mb-16">
+          <div
+            className="py-12 sm:py-16 md:py-20"
+            style={{ backgroundColor: "#ffffff" }}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-12 sm:mb-16">
                 <h2
-                  className="text-4xl font-bold mb-4"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
                   style={{ color: website.theme.colors.text }}
                   onClick={(e) =>
                     handleElementClick(block.id, "text", "title", e)
@@ -1510,7 +1535,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "title", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-2xl sm:text-3xl md:text-4xl"
                       autoFocus
                     />
                   ) : (
@@ -1518,7 +1543,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </h2>
                 <p
-                  className="text-xl"
+                  className="text-lg sm:text-xl"
                   style={{ color: website.theme.colors.secondary }}
                   onClick={(e) =>
                     handleElementClick(block.id, "text", "subtitle", e)
@@ -1540,7 +1565,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "subtitle", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-lg sm:text-xl"
                       autoFocus
                     />
                   ) : (
@@ -1548,7 +1573,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </p>
               </div>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {block.content.services?.map(
                   (service: ServiceItem, index: number) => (
                     <div
@@ -1558,7 +1583,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       <img
                         src={service.image}
                         alt={service.title}
-                        className="w-full h-48 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
+                        className="w-full h-40 sm:h-48 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
                         onClick={(e) =>
                           handleImageClick(
                             block.id,
@@ -1568,15 +1593,20 @@ Make it sound professional, engaging, and specific to the business type and loca
                           )
                         }
                       />
-                      <div className="p-6">
-                        <div className="text-2xl mb-3">{service.icon}</div>
+                      <div className="p-4 sm:p-6">
+                        <div className="text-xl sm:text-2xl mb-3">
+                          {service.icon}
+                        </div>
                         <h3
-                          className="text-xl font-bold mb-3"
+                          className="text-lg sm:text-xl font-bold mb-3"
                           style={{ color: website.theme.colors.text }}
                         >
                           {service.title}
                         </h3>
-                        <p style={{ color: website.theme.colors.secondary }}>
+                        <p
+                          className="text-sm sm:text-base"
+                          style={{ color: website.theme.colors.secondary }}
+                        >
                           {service.description}
                         </p>
                       </div>
@@ -1589,11 +1619,11 @@ Make it sound professional, engaging, and specific to the business type and loca
         )}
 
         {block.type === "features" && (
-          <div className="py-20">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center mb-16">
+          <div className="py-12 sm:py-16 md:py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-12 sm:mb-16">
                 <h2
-                  className="text-4xl font-bold mb-4"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
                   style={{ color: website.theme.colors.text }}
                   onDoubleClick={() => handleTextDoubleClick(block.id, "title")}
                 >
@@ -1610,7 +1640,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "title", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-2xl sm:text-3xl md:text-4xl"
                       autoFocus
                     />
                   ) : (
@@ -1618,7 +1648,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </h2>
                 <p
-                  className="text-xl"
+                  className="text-lg sm:text-xl"
                   style={{ color: website.theme.colors.secondary }}
                   onDoubleClick={() =>
                     handleTextDoubleClick(block.id, "subtitle")
@@ -1637,7 +1667,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "subtitle", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-lg sm:text-xl"
                       autoFocus
                     />
                   ) : (
@@ -1645,18 +1675,23 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </p>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {block.content.features?.map(
                   (feature: FeatureItem, index: number) => (
                     <div key={index} className="text-center">
-                      <div className="text-4xl mb-4">{feature.icon}</div>
+                      <div className="text-3xl sm:text-4xl mb-4">
+                        {feature.icon}
+                      </div>
                       <h3
-                        className="text-xl font-bold mb-3"
+                        className="text-lg sm:text-xl font-bold mb-3"
                         style={{ color: website.theme.colors.text }}
                       >
                         {feature.title}
                       </h3>
-                      <p style={{ color: website.theme.colors.secondary }}>
+                      <p
+                        className="text-sm sm:text-base"
+                        style={{ color: website.theme.colors.secondary }}
+                      >
                         {feature.description}
                       </p>
                     </div>
@@ -1668,11 +1703,11 @@ Make it sound professional, engaging, and specific to the business type and loca
         )}
 
         {block.type === "contact" && (
-          <div className="py-20">
-            <div className="max-4xl mx-auto px-6">
-              <div className="text-center mb-16">
+          <div className="py-12 sm:py-16 md:py-20">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-12 sm:mb-16">
                 <h2
-                  className="text-4xl font-bold mb-4"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
                   style={{ color: website.theme.colors.text }}
                   onDoubleClick={() => handleTextDoubleClick(block.id, "title")}
                 >
@@ -1689,7 +1724,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "title", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-2xl sm:text-3xl md:text-4xl"
                       autoFocus
                     />
                   ) : (
@@ -1697,7 +1732,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </h2>
                 <p
-                  className="text-xl"
+                  className="text-lg sm:text-xl"
                   style={{ color: website.theme.colors.secondary }}
                   onDoubleClick={() =>
                     handleTextDoubleClick(block.id, "subtitle")
@@ -1716,7 +1751,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         handleTextChange(block.id, "subtitle", e.target.value)
                       }
                       onBlur={() => setEditingText(null)}
-                      className="w-full outline-none bg-transparent border-b-2 text-center"
+                      className="w-full outline-none bg-transparent border-b-2 text-center text-lg sm:text-xl"
                       autoFocus
                     />
                   ) : (
@@ -1724,40 +1759,49 @@ Make it sound professional, engaging, and specific to the business type and loca
                   )}
                 </p>
               </div>
-              <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div className="grid sm:grid-cols-3 gap-6 sm:gap-8 text-center">
                 <div>
-                  <div className="text-3xl mb-4">📍</div>
+                  <div className="text-2xl sm:text-3xl mb-4">📍</div>
                   <h3
-                    className="font-bold mb-2"
+                    className="font-bold mb-2 text-base sm:text-lg"
                     style={{ color: website.theme.colors.text }}
                   >
                     Address
                   </h3>
-                  <p style={{ color: website.theme.colors.secondary }}>
+                  <p
+                    className="text-sm sm:text-base break-words"
+                    style={{ color: website.theme.colors.secondary }}
+                  >
                     {block.content.address}
                   </p>
                 </div>
                 <div>
-                  <div className="text-3xl mb-4">📧</div>
+                  <div className="text-2xl sm:text-3xl mb-4">📧</div>
                   <h3
-                    className="font-bold mb-2"
+                    className="font-bold mb-2 text-base sm:text-lg"
                     style={{ color: website.theme.colors.text }}
                   >
                     Email
                   </h3>
-                  <p style={{ color: website.theme.colors.secondary }}>
+                  <p
+                    className="text-sm sm:text-base break-all"
+                    style={{ color: website.theme.colors.secondary }}
+                  >
                     {block.content.email}
                   </p>
                 </div>
                 <div>
-                  <div className="text-3xl mb-4">📞</div>
+                  <div className="text-2xl sm:text-3xl mb-4">📞</div>
                   <h3
-                    className="font-bold mb-2"
+                    className="font-bold mb-2 text-base sm:text-lg"
                     style={{ color: website.theme.colors.text }}
                   >
                     Phone
                   </h3>
-                  <p style={{ color: website.theme.colors.secondary }}>
+                  <p
+                    className="text-sm sm:text-base"
+                    style={{ color: website.theme.colors.secondary }}
+                  >
                     {block.content.phone}
                   </p>
                 </div>
@@ -1768,12 +1812,12 @@ Make it sound professional, engaging, and specific to the business type and loca
 
         {block.type === "cta" && (
           <div
-            className="py-20 text-center"
+            className="py-12 sm:py-16 md:py-20 text-center"
             style={{ backgroundColor: website.theme.colors.primary }}
           >
-            <div className="max-w-4xl mx-auto px-6">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
               <h2
-                className="text-4xl font-bold mb-4 text-white cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
                 onClick={(e) =>
                   handleElementClick(block.id, "text", "title", e)
                 }
@@ -1792,7 +1836,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       handleTextChange(block.id, "title", e.target.value)
                     }
                     onBlur={() => setEditingText(null)}
-                    className="w-full outline-none bg-transparent border-b-2 text-center text-white"
+                    className="w-full outline-none bg-transparent border-b-2 text-center text-white text-2xl sm:text-3xl md:text-4xl"
                     autoFocus
                   />
                 ) : (
@@ -1800,7 +1844,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 )}
               </h2>
               <p
-                className="text-xl mb-8 text-white opacity-90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                className="text-lg sm:text-xl mb-6 sm:mb-8 text-white opacity-90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
                 onClick={(e) =>
                   handleElementClick(block.id, "text", "subtitle", e)
                 }
@@ -1821,7 +1865,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       handleTextChange(block.id, "subtitle", e.target.value)
                     }
                     onBlur={() => setEditingText(null)}
-                    className="w-full outline-none bg-transparent border-b-2 text-center text-white"
+                    className="w-full outline-none bg-transparent border-b-2 text-center text-white text-lg sm:text-xl"
                     autoFocus
                   />
                 ) : (
@@ -1829,7 +1873,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 )}
               </p>
               <button
-                className="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
+                className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
                 onClick={(e) =>
                   handleElementClick(block.id, "button", "buttonText", e)
                 }
@@ -1893,7 +1937,9 @@ Make it sound professional, engaging, and specific to the business type and loca
 
     // Generate business-specific alt text
     let dynamicAltText = "";
-    const businessInfoStr = localStorage.getItem(`business_info_${user?.id}`);
+    const businessInfoStr = safeLocalStorage.getItem(
+      `business_info_${user?.id}`
+    );
     const businessInfo: BusinessInfo = businessInfoStr
       ? JSON.parse(businessInfoStr)
       : null;
@@ -1932,7 +1978,9 @@ Make it sound professional, engaging, and specific to the business type and loca
     setIsRegenerating(true);
     try {
       // Get business info for better image generation
-      const businessInfoStr = localStorage.getItem(`business_info_${user?.id}`);
+      const businessInfoStr = safeLocalStorage.getItem(
+        `business_info_${user?.id}`
+      );
       const businessInfo: BusinessInfo = businessInfoStr
         ? JSON.parse(businessInfoStr)
         : null;
@@ -2006,7 +2054,7 @@ Make it sound professional, engaging, and specific to the business type and loca
 
         // Save updated website to localStorage
         if (user?.id) {
-          localStorage.setItem(
+          safeLocalStorage.setItem(
             `generated_website_${user.id}`,
             JSON.stringify(updatedWebsite)
           );
@@ -2074,6 +2122,8 @@ Make it sound professional, engaging, and specific to the business type and loca
 
   // Handle panel dragging
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (typeof window === "undefined") return;
+
     setIsDragging(true);
     const startX = e.clientX;
     const startPanelX = panelPosition.x;
@@ -2100,51 +2150,59 @@ Make it sound professional, engaging, and specific to the business type and loca
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation - Exact Match from Screenshot */}
-      <nav className="bg-white border-b border-gray-200 px-4 py-3">
+      <nav className="bg-white border-b border-gray-200 px-2 sm:px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Left Side Navigation */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 overflow-x-auto">
             {/* Home Icon */}
             <Link
               href="/dashboard"
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0"
               title="Home"
             >
-              <Home className="h-5 w-5" />
+              <Home className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
 
             {/* Customize */}
-            <button className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              <Settings className="h-4 w-4" />
-              <span className="text-sm font-medium">Customize</span>
+            <button className="flex items-center space-x-1 px-2 sm:px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0">
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                Customize
+              </span>
             </button>
 
             {/* Pages */}
-            <button className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              <FileText className="h-4 w-4" />
-              <span className="text-sm font-medium">Pages</span>
+            <button className="flex items-center space-x-1 px-2 sm:px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0">
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                Pages
+              </span>
             </button>
 
             {/* Add */}
             <button
               onClick={() => setShowSectionSelector(true)}
-              className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              className="flex items-center space-x-1 px-2 sm:px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0"
             >
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Add</span>
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                Add
+              </span>
             </button>
 
             {/* Help */}
-            <button className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              <HelpCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Help</span>
+            <button className="flex items-center space-x-1 px-2 sm:px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0">
+              <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                Help
+              </span>
             </button>
           </div>
 
           {/* Right Side Navigation */}
-          <div className="flex items-center space-x-3">
-            {/* Home Dropdown */}
-            <button className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
+          <div className="flex items-center space-x-1 sm:space-x-3">
+            {/* Home Dropdown - Hidden on small screens */}
+            <button className="hidden md:flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
               <span className="text-sm font-medium">Home</span>
               <ChevronDown className="h-4 w-4" />
             </button>
@@ -2152,14 +2210,19 @@ Make it sound professional, engaging, and specific to the business type and loca
             {/* Preview Button */}
             <button
               onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors text-sm font-medium ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-md transition-colors text-xs sm:text-sm font-medium ${
                 isPreviewMode
                   ? "bg-blue-100 text-blue-700"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              <Eye className="h-4 w-4" />
-              <span>{isPreviewMode ? "Exit Preview" : "Preview"}</span>
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">
+                {isPreviewMode ? "Exit Preview" : "Preview"}
+              </span>
+              <span className="sm:hidden">
+                {isPreviewMode ? "Exit" : "Preview"}
+              </span>
             </button>
 
             {/* Publish Button */}
@@ -2170,7 +2233,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   alert("Website published successfully!");
                 }
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="bg-blue-600 text-white px-2 sm:px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium"
             >
               Publish
             </button>
@@ -2185,12 +2248,14 @@ Make it sound professional, engaging, and specific to the business type and loca
                     )
                   ) {
                     if (user?.id) {
-                      localStorage.removeItem(`generated_website_${user.id}`);
+                      safeLocalStorage.removeItem(
+                        `generated_website_${user.id}`
+                      );
                       window.location.reload();
                     }
                   }
                 }}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm font-medium ml-2"
+                className="hidden sm:inline-block bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm font-medium ml-2"
               >
                 🔄 Regenerate
               </button>
@@ -2210,13 +2275,16 @@ Make it sound professional, engaging, and specific to the business type and loca
         {website.blocks.map((block) => renderBlock(block))}
       </div>
 
-      {/* Floating Actions Menu */}
+      {/* Floating Actions Menu - Mobile Responsive */}
       {showFloatingActions && selectedBlock && !isPreviewMode && (
         <div
           className="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-2 flex space-x-1"
           style={{
-            left: floatingActionsPosition.x,
-            top: floatingActionsPosition.y,
+            left:
+              typeof window !== "undefined"
+                ? Math.min(floatingActionsPosition.x, window.innerWidth - 200)
+                : floatingActionsPosition.x,
+            top: Math.max(floatingActionsPosition.y, 60),
           }}
         >
           <button
@@ -2227,38 +2295,40 @@ Make it sound professional, engaging, and specific to the business type and loca
             className="p-2 hover:bg-gray-100 rounded text-gray-600 hover:text-gray-900"
             title="Regenerate images"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
           <button
             onClick={() => moveBlock(selectedBlock, "up")}
             className="p-2 hover:bg-gray-100 rounded text-gray-600 hover:text-gray-900"
             title="Move up"
           >
-            <ArrowUp className="h-4 w-4" />
+            <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
           <button
             onClick={() => moveBlock(selectedBlock, "down")}
             className="p-2 hover:bg-gray-100 rounded text-gray-600 hover:text-gray-900"
             title="Move down"
           >
-            <ArrowDown className="h-4 w-4" />
+            <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
           <button
             onClick={() => deleteBlock(selectedBlock)}
             className="p-2 hover:bg-red-100 rounded text-red-600 hover:text-red-700"
             title="Delete"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
         </div>
       )}
 
-      {/* Section Selector */}
+      {/* Section Selector - Mobile Responsive */}
       {showSectionSelector && !isPreviewMode && (
-        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4">
-            <h3 className="text-xl font-bold mb-6">Add New Section</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
+              Add New Section
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { type: "hero" as const, icon: "🎯", name: "Hero" },
                 { type: "about" as const, icon: "👥", name: "About" },
@@ -2278,10 +2348,10 @@ Make it sound professional, engaging, and specific to the business type and loca
                   onClick={() =>
                     addSection(type, sectionSelectorPosition || undefined)
                   }
-                  className="p-4 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-colors text-center"
+                  className="p-3 sm:p-4 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-colors text-center"
                 >
-                  <div className="text-2xl mb-2">{icon}</div>
-                  <div className="text-sm font-medium">{name}</div>
+                  <div className="text-xl sm:text-2xl mb-2">{icon}</div>
+                  <div className="text-xs sm:text-sm font-medium">{name}</div>
                 </button>
               ))}
             </div>
@@ -2290,7 +2360,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 setShowSectionSelector(false);
                 setSectionSelectorPosition(null);
               }}
-              className="mt-6 w-full py-2 text-gray-600 hover:text-gray-800"
+              className="mt-4 sm:mt-6 w-full py-2 text-gray-600 hover:text-gray-800"
             >
               Cancel
             </button>
@@ -2298,12 +2368,12 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Comprehensive Edit Panel */}
+      {/* Comprehensive Edit Panel - Mobile Responsive */}
       {showEditPanel && selectedElement && !isPreviewMode && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-bold">
                 Edit{" "}
                 {selectedElement.elementType === "text"
                   ? "Text"
@@ -2318,7 +2388,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   setShowEditPanel(false);
                   setSelectedElement(null);
                 }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 p-1"
               >
                 ✕
               </button>
@@ -2346,7 +2416,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         e.target.value
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     rows={3}
                   />
                 </div>
@@ -2380,18 +2450,18 @@ Make it sound professional, engaging, and specific to the business type and loca
                     type="file"
                     accept="image/*"
                     onChange={handleChangeImage}
-                    className="w-full border border-gray-300 rounded-lg p-2"
+                    className="w-full border border-gray-300 rounded-lg p-2 text-sm"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Generate AI Image
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       placeholder="Describe the image..."
-                      className="flex-1 border border-gray-300 rounded-lg p-2"
+                      className="flex-1 border border-gray-300 rounded-lg p-2 text-sm"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           const query = (e.target as HTMLInputElement).value;
@@ -2419,7 +2489,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                           );
                         }
                       }}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm"
                     >
                       Generate
                     </button>
@@ -2455,18 +2525,18 @@ Make it sound professional, engaging, and specific to the business type and loca
                     type="file"
                     accept="image/*"
                     onChange={handleChangeImage}
-                    className="w-full border border-gray-300 rounded-lg p-2"
+                    className="w-full border border-gray-300 rounded-lg p-2 text-sm"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Generate AI Background
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       placeholder="Describe the background..."
-                      className="flex-1 border border-gray-300 rounded-lg p-2"
+                      className="flex-1 border border-gray-300 rounded-lg p-2 text-sm"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           const query = (e.target as HTMLInputElement).value;
@@ -2494,7 +2564,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                           );
                         }
                       }}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm"
                     >
                       Generate
                     </button>
@@ -2526,7 +2596,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         e.target.value
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
@@ -2567,7 +2637,7 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Image Settings Side Panel - Exactly like Durable AI */}
+      {/* Image Settings Side Panel - Mobile Responsive */}
       {showImageSettings && selectedImage && !isPreviewMode && (
         <>
           {/* Side Panel - slides from right and draggable */}
@@ -2576,21 +2646,32 @@ Make it sound professional, engaging, and specific to the business type and loca
               showImageSettings ? "translate-x-0" : "translate-x-full"
             }`}
             style={{
-              left: `${panelPosition.x}px`,
-              width: `${panelPosition.width}px`,
+              left: `${
+                typeof window !== "undefined"
+                  ? Math.min(
+                      panelPosition.x,
+                      window.innerWidth - panelPosition.width
+                    )
+                  : panelPosition.x
+              }px`,
+              width: `${
+                typeof window !== "undefined"
+                  ? Math.min(panelPosition.width, window.innerWidth)
+                  : panelPosition.width
+              }px`,
               cursor: isDragging ? "grabbing" : "default",
             }}
           >
-            {/* Resize Handle */}
+            {/* Resize Handle - Hidden on mobile */}
             <div
-              className="absolute left-0 top-0 w-1 h-full bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+              className="absolute left-0 top-0 w-1 h-full bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors hidden sm:block"
               onMouseDown={handleMouseDown}
               style={{ cursor: "col-resize" }}
             />
 
-            <div className="p-6 h-full overflow-y-auto ml-1">
+            <div className="p-4 sm:p-6 h-full overflow-y-auto ml-0 sm:ml-1">
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <button
                   onClick={() => {
                     setShowImageSettings(false);
@@ -2612,10 +2693,12 @@ Make it sound professional, engaging, and specific to the business type and loca
                     />
                   </svg>
                 </button>
-                <h3 className="text-lg font-semibold">Image settings</h3>
+                <h3 className="text-base sm:text-lg font-semibold">
+                  Image settings
+                </h3>
                 <div className="flex items-center space-x-2">
-                  {/* Drag Handle */}
-                  <div className="cursor-move p-1 hover:bg-gray-100 rounded">
+                  {/* Drag Handle - Hidden on mobile */}
+                  <div className="cursor-move p-1 hover:bg-gray-100 rounded hidden sm:block">
                     <svg
                       className="w-4 h-4 text-gray-400"
                       fill="currentColor"
@@ -2637,16 +2720,16 @@ Make it sound professional, engaging, and specific to the business type and loca
               </div>
 
               {/* Image Preview */}
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 <img
                   src={selectedImage.currentUrl}
                   alt="Selected image"
-                  className="w-full h-48 object-cover rounded-xl shadow-md"
+                  className="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-3 mb-6">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mb-4 sm:mb-6">
                 <button
                   onClick={handleRegenerateImage}
                   disabled={isRegenerating}
@@ -2695,7 +2778,7 @@ Make it sound professional, engaging, and specific to the business type and loca
               </div>
 
               {/* Alt Text */}
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Alt text
                 </label>
@@ -2712,7 +2795,7 @@ Make it sound professional, engaging, and specific to the business type and loca
               </div>
 
               {/* Image Position */}
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-4">
                   Image position
                 </label>
