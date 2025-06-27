@@ -108,6 +108,17 @@ interface BusinessInfo {
   description: string;
 }
 
+interface ProjectData {
+  id: string;
+  title: string;
+  businessName: string;
+  businessType: string;
+  lastModified: string;
+  status: "published" | "unpublished";
+  previewImage: string;
+  websiteData: Website;
+}
+
 export default function WebsiteBuilder() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [website, setWebsite] = useState<Website | null>(null);
@@ -139,8 +150,19 @@ export default function WebsiteBuilder() {
     blockId: string;
     field: string;
     currentUrl: string;
+    altText: string;
   } | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [imageAltText, setImageAltText] = useState("");
+  const [imagePosition, setImagePosition] = useState({
+    horizontal: 50,
+    vertical: 50,
+  });
+  const [panelPosition, setPanelPosition] = useState({
+    x: window.innerWidth - 320,
+    width: 320,
+  });
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -149,7 +171,25 @@ export default function WebsiteBuilder() {
     }
 
     if (isLoaded && isSignedIn && user) {
-      generateWebsiteFromBusinessInfo();
+      // Check if we already have a generated website for this user
+      const existingWebsite = localStorage.getItem(
+        `generated_website_${user.id}`
+      );
+      if (existingWebsite) {
+        try {
+          const parsedWebsite = JSON.parse(existingWebsite);
+          console.log("Loading existing website from localStorage");
+          setWebsite(parsedWebsite);
+          setIsGenerating(false);
+        } catch (error) {
+          console.error("Error parsing existing website data:", error);
+          // If corrupted data, generate new website
+          generateWebsiteFromBusinessInfo();
+        }
+      } else {
+        // No existing website, generate new one
+        generateWebsiteFromBusinessInfo();
+      }
     }
   }, [isLoaded, isSignedIn, user]);
 
@@ -171,6 +211,15 @@ export default function WebsiteBuilder() {
       // Generate AI content for the website
       const generatedWebsite = await generateWebsiteContent(businessInfo);
       setWebsite(generatedWebsite);
+
+      // Save the generated website to localStorage for persistence
+      localStorage.setItem(
+        `generated_website_${user?.id}`,
+        JSON.stringify(generatedWebsite)
+      );
+
+      // Track this as the most recent project
+      saveToRecentProjects(generatedWebsite);
     } catch (error) {
       console.error("Error generating website:", error);
       setIsGenerating(false);
@@ -193,18 +242,39 @@ export default function WebsiteBuilder() {
     // Generate content using GROQ API
     const websiteContent = await generateAIContent(businessInfo);
 
-    // Fetch images from Pexels
-    const heroImage = await fetchPexelsImage(
-      `${businessInfo.type} business professional hero banner`
+    // Create business-type specific image queries
+    const businessType = businessInfo.type.toLowerCase();
+    const location = businessInfo.location;
+
+    // Generate highly specific image queries based on business type
+    const heroImageQuery = createBusinessSpecificImageQuery(
+      businessType,
+      "hero",
+      location
     );
-    const aboutImage = await fetchPexelsImage(
-      `${businessInfo.type} team meeting office professional`
+    const aboutImageQuery = createBusinessSpecificImageQuery(
+      businessType,
+      "about",
+      location
     );
-    const servicesImages = await Promise.all([
-      fetchPexelsImage(`${businessInfo.type} service professional work`),
-      fetchPexelsImage(`${businessInfo.type} technology solution modern`),
-      fetchPexelsImage(`${businessInfo.type} consulting business meeting`),
-    ]);
+    const servicesImageQueries = [
+      createBusinessSpecificImageQuery(businessType, "service1", location),
+      createBusinessSpecificImageQuery(businessType, "service2", location),
+      createBusinessSpecificImageQuery(businessType, "service3", location),
+    ];
+
+    console.log("Generated image queries:", {
+      hero: heroImageQuery,
+      about: aboutImageQuery,
+      services: servicesImageQueries,
+    });
+
+    // Fetch images from Pexels with business-specific queries
+    const heroImage = await fetchPexelsImage(heroImageQuery);
+    const aboutImage = await fetchPexelsImage(aboutImageQuery);
+    const servicesImages = await Promise.all(
+      servicesImageQueries.map((query) => fetchPexelsImage(query))
+    );
 
     // Generate theme first
     const theme = generateThemeFromBusinessType(businessInfo.type);
@@ -325,6 +395,222 @@ export default function WebsiteBuilder() {
     return website;
   };
 
+  // New function to create business-type specific image queries
+  const createBusinessSpecificImageQuery = (
+    businessType: string,
+    imageType: string,
+    location: string
+  ): string => {
+    const businessTypeKeywords = extractBusinessKeywords(businessType);
+    const locationContext = location ? ` in ${location}` : "";
+
+    const imageTypeQueries = {
+      hero: [
+        `${businessTypeKeywords.primary} business professional modern office`,
+        `${businessTypeKeywords.primary} company headquarters building`,
+        `professional ${businessTypeKeywords.primary} workspace modern`,
+        `${businessTypeKeywords.primary} business professional environment`,
+      ],
+      about: [
+        `${businessTypeKeywords.primary} team meeting professional collaboration`,
+        `${businessTypeKeywords.primary} professionals working together`,
+        `${businessTypeKeywords.primary} business people office meeting`,
+        `professional ${businessTypeKeywords.primary} team discussion`,
+      ],
+      service1: [
+        `${businessTypeKeywords.primary} service professional consultation`,
+        `${businessTypeKeywords.secondary} professional service delivery`,
+        `${businessTypeKeywords.primary} expert professional advice`,
+        `professional ${businessTypeKeywords.primary} client meeting`,
+      ],
+      service2: [
+        `${businessTypeKeywords.secondary} professional technology solution`,
+        `${businessTypeKeywords.primary} digital professional tools`,
+        `modern ${businessTypeKeywords.primary} professional equipment`,
+        `${businessTypeKeywords.primary} professional innovation technology`,
+      ],
+      service3: [
+        `${businessTypeKeywords.primary} professional quality service`,
+        `${businessTypeKeywords.secondary} professional excellence`,
+        `professional ${businessTypeKeywords.primary} premium service`,
+        `${businessTypeKeywords.primary} professional high quality`,
+      ],
+    };
+
+    const queries =
+      imageTypeQueries[imageType as keyof typeof imageTypeQueries] ||
+      imageTypeQueries.hero;
+    const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+
+    return `${randomQuery}${locationContext} professional high quality`;
+  };
+
+  // Function to extract relevant keywords from business type
+  const extractBusinessKeywords = (
+    businessType: string
+  ): { primary: string; secondary: string } => {
+    const type = businessType.toLowerCase();
+
+    // Define business type mappings for better image targeting
+    const businessMappings: Record<
+      string,
+      { primary: string; secondary: string }
+    > = {
+      // Technology related
+      software: {
+        primary: "software development",
+        secondary: "technology coding",
+      },
+      tech: { primary: "technology", secondary: "software innovation" },
+      "web development": {
+        primary: "web development",
+        secondary: "coding programming",
+      },
+      "app development": {
+        primary: "app development",
+        secondary: "mobile technology",
+      },
+      it: { primary: "IT technology", secondary: "computer systems" },
+      "artificial intelligence": {
+        primary: "AI technology",
+        secondary: "machine learning",
+      },
+      cybersecurity: {
+        primary: "cybersecurity",
+        secondary: "network security",
+      },
+
+      // Healthcare related
+      healthcare: {
+        primary: "healthcare medical",
+        secondary: "hospital clinic",
+      },
+      medical: { primary: "medical healthcare", secondary: "doctor clinic" },
+      dental: { primary: "dental clinic", secondary: "dentist office" },
+      pharmacy: {
+        primary: "pharmacy medical",
+        secondary: "medicine healthcare",
+      },
+      fitness: { primary: "fitness gym", secondary: "workout exercise" },
+      nutrition: { primary: "nutrition health", secondary: "healthy food" },
+      wellness: { primary: "wellness health", secondary: "spa therapy" },
+
+      // Business services
+      consulting: {
+        primary: "business consulting",
+        secondary: "professional advisory",
+      },
+      marketing: {
+        primary: "marketing digital",
+        secondary: "advertising brand",
+      },
+      accounting: {
+        primary: "accounting finance",
+        secondary: "financial planning",
+      },
+      legal: { primary: "legal law", secondary: "lawyer attorney" },
+      "real estate": { primary: "real estate", secondary: "property home" },
+      insurance: {
+        primary: "insurance financial",
+        secondary: "protection coverage",
+      },
+
+      // Creative services
+      design: { primary: "graphic design", secondary: "creative studio" },
+      photography: {
+        primary: "photography studio",
+        secondary: "camera professional",
+      },
+      video: { primary: "video production", secondary: "filming studio" },
+      music: { primary: "music studio", secondary: "recording audio" },
+      art: { primary: "art studio", secondary: "creative artwork" },
+
+      // Food & Restaurant
+      restaurant: { primary: "restaurant dining", secondary: "food kitchen" },
+      cafe: { primary: "cafe coffee", secondary: "coffee shop" },
+      bakery: { primary: "bakery bread", secondary: "baking pastry" },
+      catering: { primary: "catering food", secondary: "event dining" },
+      food: { primary: "food service", secondary: "culinary dining" },
+
+      // Education
+      education: {
+        primary: "education learning",
+        secondary: "school classroom",
+      },
+      training: {
+        primary: "training education",
+        secondary: "learning development",
+      },
+      tutoring: {
+        primary: "tutoring education",
+        secondary: "student learning",
+      },
+      coaching: {
+        primary: "coaching training",
+        secondary: "mentoring development",
+      },
+
+      // Retail & E-commerce
+      retail: { primary: "retail store", secondary: "shopping customer" },
+      ecommerce: { primary: "ecommerce online", secondary: "shopping digital" },
+      fashion: { primary: "fashion clothing", secondary: "style apparel" },
+      beauty: { primary: "beauty salon", secondary: "cosmetics skincare" },
+
+      // Construction & Home
+      construction: {
+        primary: "construction building",
+        secondary: "contractor tools",
+      },
+      architecture: {
+        primary: "architecture design",
+        secondary: "building planning",
+      },
+      plumbing: {
+        primary: "plumbing service",
+        secondary: "repair maintenance",
+      },
+      electrical: {
+        primary: "electrical service",
+        secondary: "electrician tools",
+      },
+      cleaning: {
+        primary: "cleaning service",
+        secondary: "maintenance janitorial",
+      },
+
+      // Transportation
+      automotive: { primary: "automotive car", secondary: "vehicle repair" },
+      logistics: {
+        primary: "logistics shipping",
+        secondary: "transportation delivery",
+      },
+      travel: { primary: "travel tourism", secondary: "vacation destination" },
+
+      // Personal services
+      "personal training": {
+        primary: "personal training fitness",
+        secondary: "gym workout",
+      },
+      massage: { primary: "massage therapy", secondary: "spa relaxation" },
+      hair: { primary: "hair salon", secondary: "styling beauty" },
+      pet: { primary: "pet care", secondary: "animal veterinary" },
+    };
+
+    // Find the best match for the business type
+    for (const [key, value] of Object.entries(businessMappings)) {
+      if (type.includes(key)) {
+        return value;
+      }
+    }
+
+    // Fallback: extract first few words and use them
+    const words = type.split(" ").slice(0, 2);
+    return {
+      primary: words.join(" "),
+      secondary: `${words[0]} professional`,
+    };
+  };
+
   // Save to your existing backend API
   const saveWebsiteToBackend = async (
     website: Website,
@@ -356,6 +642,88 @@ export default function WebsiteBuilder() {
       }
     } catch (error) {
       console.error("Error saving website to backend:", error);
+    }
+  };
+
+  // New function to save to recent projects for dashboard
+  const saveToRecentProjects = (website: Website) => {
+    try {
+      const recentProjects: ProjectData[] = JSON.parse(
+        localStorage.getItem(`recent_projects_${user?.id}`) || "[]"
+      );
+
+      const projectData: ProjectData = {
+        id: website.id,
+        title: website.title,
+        businessName: website.businessName,
+        businessType: website.businessType,
+        lastModified: new Date().toISOString(),
+        status: "unpublished",
+        previewImage:
+          website.blocks.find((block) => block.type === "hero")?.content
+            ?.backgroundImage || "",
+        websiteData: website,
+      };
+
+      // Remove any existing entry for this website
+      const filteredProjects = recentProjects.filter(
+        (p: ProjectData) => p.id !== website.id
+      );
+
+      // Add the new/updated entry at the beginning
+      const updatedProjects = [projectData, ...filteredProjects];
+
+      // Keep only the last 10 projects
+      const limitedProjects = updatedProjects.slice(0, 10);
+
+      localStorage.setItem(
+        `recent_projects_${user?.id}`,
+        JSON.stringify(limitedProjects)
+      );
+      console.log("Saved to recent projects:", projectData);
+    } catch (error) {
+      console.error("Error saving to recent projects:", error);
+    }
+  };
+
+  // Function to update project status and move to top
+  const updateProjectStatus = (
+    website: Website,
+    status: "published" | "unpublished"
+  ) => {
+    try {
+      const recentProjects: ProjectData[] = JSON.parse(
+        localStorage.getItem(`recent_projects_${user?.id}`) || "[]"
+      );
+
+      const projectData: ProjectData = {
+        id: website.id,
+        title: website.title,
+        businessName: website.businessName,
+        businessType: website.businessType,
+        lastModified: new Date().toISOString(),
+        status: status,
+        previewImage:
+          website.blocks.find((block) => block.type === "hero")?.content
+            ?.backgroundImage || "",
+        websiteData: website,
+      };
+
+      // Remove any existing entry for this website
+      const filteredProjects = recentProjects.filter(
+        (p: ProjectData) => p.id !== website.id
+      );
+
+      // Add the updated entry at the beginning
+      const updatedProjects = [projectData, ...filteredProjects];
+
+      localStorage.setItem(
+        `recent_projects_${user?.id}`,
+        JSON.stringify(updatedProjects)
+      );
+      console.log(`Updated project status to ${status} and moved to top`);
+    } catch (error) {
+      console.error("Error updating project status:", error);
     }
   };
 
@@ -501,17 +869,22 @@ Make it sound professional, engaging, and specific to the business type and loca
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-8"></div>
           <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-            Creating Your Website...
+            {localStorage.getItem(`generated_website_${user?.id}`)
+              ? "Loading Your Website..."
+              : "Creating Your Website..."}
           </h3>
           <p className="text-gray-600 max-w-md">
-            Our AI is crafting a beautiful, professional website tailored
-            specifically for your business. This will just take a moment.
+            {localStorage.getItem(`generated_website_${user?.id}`)
+              ? "Loading your previously created website from storage."
+              : "Our AI is crafting a beautiful, professional website tailored specifically for your business. This will just take a moment."}
           </p>
-          <div className="mt-8 flex items-center justify-center space-x-4 text-sm text-gray-500">
-            <span>✨ Generating content</span>
-            <span>🎨 Selecting images</span>
-            <span>🎯 Customizing design</span>
-          </div>
+          {!localStorage.getItem(`generated_website_${user?.id}`) && (
+            <div className="mt-8 flex items-center justify-center space-x-4 text-sm text-gray-500">
+              <span>✨ Generating content</span>
+              <span>🎨 Selecting images</span>
+              <span>🎯 Customizing design</span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -537,7 +910,7 @@ Make it sound professional, engaging, and specific to the business type and loca
   const handleTextChange = (blockId: string, field: string, value: string) => {
     setWebsite((prev) => {
       if (!prev) return null;
-      return {
+      const updatedWebsite = {
         ...prev,
         blocks: prev.blocks.map((block) =>
           block.id === blockId
@@ -551,6 +924,18 @@ Make it sound professional, engaging, and specific to the business type and loca
             : block
         ),
       };
+
+      // Save updated website to localStorage
+      if (user?.id) {
+        localStorage.setItem(
+          `generated_website_${user.id}`,
+          JSON.stringify(updatedWebsite)
+        );
+        // Update recent projects with the change
+        saveToRecentProjects(updatedWebsite);
+      }
+
+      return updatedWebsite;
     });
   };
 
@@ -571,7 +956,20 @@ Make it sound professional, engaging, and specific to the business type and loca
       } else {
         blocks.push(newBlock);
       }
-      return { ...prev, blocks };
+
+      const updatedWebsite = { ...prev, blocks };
+
+      // Save updated website to localStorage
+      if (user?.id) {
+        localStorage.setItem(
+          `generated_website_${user.id}`,
+          JSON.stringify(updatedWebsite)
+        );
+        // Update recent projects with the change
+        saveToRecentProjects(updatedWebsite);
+      }
+
+      return updatedWebsite;
     });
 
     setShowSectionSelector(false);
@@ -590,17 +988,41 @@ Make it sound professional, engaging, and specific to the business type and loca
         [blocks[index], blocks[index + 1]] = [blocks[index + 1], blocks[index]];
       }
 
-      return { ...prev, blocks };
+      const updatedWebsite = { ...prev, blocks };
+
+      // Save updated website to localStorage
+      if (user?.id) {
+        localStorage.setItem(
+          `generated_website_${user.id}`,
+          JSON.stringify(updatedWebsite)
+        );
+        // Update recent projects with the change
+        saveToRecentProjects(updatedWebsite);
+      }
+
+      return updatedWebsite;
     });
   };
 
   const deleteBlock = (blockId: string) => {
     setWebsite((prev) => {
       if (!prev) return null;
-      return {
+      const updatedWebsite = {
         ...prev,
         blocks: prev.blocks.filter((b) => b.id !== blockId),
       };
+
+      // Save updated website to localStorage
+      if (user?.id) {
+        localStorage.setItem(
+          `generated_website_${user.id}`,
+          JSON.stringify(updatedWebsite)
+        );
+        // Update recent projects with the change
+        saveToRecentProjects(updatedWebsite);
+      }
+
+      return updatedWebsite;
     });
     setSelectedBlock(null);
     setShowFloatingActions(false);
@@ -626,34 +1048,6 @@ Make it sound professional, engaging, and specific to the business type and loca
     setShowEditPanel(true);
   };
 
-  const handleImageUpload = async (
-    blockId: string,
-    field: string,
-    file: File
-  ) => {
-    // Here you would upload to your backend/cloud storage
-    // For now, we'll use URL.createObjectURL for local preview
-    const imageUrl = URL.createObjectURL(file);
-
-    setWebsite((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        blocks: prev.blocks.map((block) =>
-          block.id === blockId
-            ? {
-                ...block,
-                content: {
-                  ...block.content,
-                  [field]: imageUrl,
-                },
-              }
-            : block
-        ),
-      };
-    });
-  };
-
   const generateNewImage = async (
     blockId: string,
     field: string,
@@ -663,7 +1057,7 @@ Make it sound professional, engaging, and specific to the business type and loca
       const newImage = await fetchPexelsImage(query);
       setWebsite((prev) => {
         if (!prev) return null;
-        return {
+        const updatedWebsite = {
           ...prev,
           blocks: prev.blocks.map((block) =>
             block.id === blockId
@@ -677,6 +1071,18 @@ Make it sound professional, engaging, and specific to the business type and loca
               : block
           ),
         };
+
+        // Save updated website to localStorage
+        if (user?.id) {
+          localStorage.setItem(
+            `generated_website_${user.id}`,
+            JSON.stringify(updatedWebsite)
+          );
+          // Update recent projects with the change
+          saveToRecentProjects(updatedWebsite);
+        }
+
+        return updatedWebsite;
       });
     } catch (error) {
       console.error("Failed to generate new image:", error);
@@ -690,7 +1096,7 @@ Make it sound professional, engaging, and specific to the business type and loca
   ) => {
     setWebsite((prev) => {
       if (!prev) return null;
-      return {
+      const updatedWebsite = {
         ...prev,
         blocks: prev.blocks.map((block) =>
           block.id === blockId
@@ -704,6 +1110,18 @@ Make it sound professional, engaging, and specific to the business type and loca
             : block
         ),
       };
+
+      // Save updated website to localStorage
+      if (user?.id) {
+        localStorage.setItem(
+          `generated_website_${user.id}`,
+          JSON.stringify(updatedWebsite)
+        );
+        // Update recent projects with the change
+        saveToRecentProjects(updatedWebsite);
+      }
+
+      return updatedWebsite;
     });
   };
 
@@ -1472,7 +1890,39 @@ Make it sound professional, engaging, and specific to the business type and loca
     if (isPreviewMode) return;
 
     event.stopPropagation();
-    setSelectedImage({ blockId, field, currentUrl });
+
+    // Generate business-specific alt text
+    let dynamicAltText = "";
+    const businessInfoStr = localStorage.getItem(`business_info_${user?.id}`);
+    const businessInfo: BusinessInfo = businessInfoStr
+      ? JSON.parse(businessInfoStr)
+      : null;
+
+    if (businessInfo) {
+      const businessKeywords = extractBusinessKeywords(businessInfo.type);
+
+      if (field === "backgroundImage") {
+        dynamicAltText = `${businessKeywords.primary} professional office workspace in ${businessInfo.location}`;
+      } else if (field === "image") {
+        dynamicAltText = `${businessKeywords.primary} team collaboration and professional meeting`;
+      } else if (field.includes("services")) {
+        const serviceIndex = field.match(/\[(\d+)\]/)?.[1];
+        if (serviceIndex === "0") {
+          dynamicAltText = `${businessKeywords.primary} professional consultation and service delivery`;
+        } else if (serviceIndex === "1") {
+          dynamicAltText = `${businessKeywords.secondary} technology and professional solutions`;
+        } else {
+          dynamicAltText = `${businessKeywords.primary} high quality professional service`;
+        }
+      } else {
+        dynamicAltText = `${businessKeywords.primary} professional business image`;
+      }
+    } else {
+      dynamicAltText = "Professional business image";
+    }
+
+    setSelectedImage({ blockId, field, currentUrl, altText: dynamicAltText });
+    setImageAltText(dynamicAltText);
     setShowImageSettings(true);
   };
 
@@ -1492,36 +1942,54 @@ Make it sound professional, engaging, and specific to the business type and loca
         return;
       }
 
-      let query = "";
+      // Create business-specific query based on the image field
+      let finalQuery = "";
+      const businessType = businessInfo.type.toLowerCase();
+      const location = businessInfo.location;
 
-      // Generate specific queries based on business type and image field
       if (selectedImage.field === "backgroundImage") {
-        query = `${businessInfo.type} business professional office modern workspace ${businessInfo.location}`;
+        finalQuery = createBusinessSpecificImageQuery(
+          businessType,
+          "hero",
+          location
+        );
       } else if (selectedImage.field === "image") {
-        query = `${businessInfo.type} team meeting professional office collaboration ${businessInfo.location}`;
+        finalQuery = createBusinessSpecificImageQuery(
+          businessType,
+          "about",
+          location
+        );
       } else if (selectedImage.field.includes("services")) {
         const serviceIndex = selectedImage.field.match(/\[(\d+)\]/)?.[1];
-        if (serviceIndex === "0") {
-          query = `${businessInfo.type} consulting service professional client meeting`;
-        } else if (serviceIndex === "1") {
-          query = `${businessInfo.type} technology solution modern workspace computer`;
-        } else {
-          query = `${businessInfo.type} business solution professional service delivery`;
-        }
+        const serviceType =
+          serviceIndex === "0"
+            ? "service1"
+            : serviceIndex === "1"
+            ? "service2"
+            : "service3";
+        finalQuery = createBusinessSpecificImageQuery(
+          businessType,
+          serviceType,
+          location
+        );
       } else {
-        query = `${businessInfo.type} professional business modern ${businessInfo.location}`;
+        // Fallback to general business-specific query
+        const businessKeywords = extractBusinessKeywords(businessType);
+        finalQuery = `${businessKeywords.primary} professional modern ${location}`;
       }
 
       console.log(
-        `Regenerating image for ${businessInfo.type} business with query: "${query}"`
+        `Regenerating image with business-specific query: "${finalQuery}"`
       );
 
-      const newImageUrl = await fetchPexelsImage(query);
+      const newImageUrl = await fetchPexelsImage(finalQuery);
+
+      console.log(`New business-specific image URL received: ${newImageUrl}`);
 
       // Update the image in the website
       setWebsite((prev) => {
         if (!prev) return null;
-        return {
+        const updatedWebsite = {
           ...prev,
           blocks: prev.blocks.map((block) =>
             block.id === selectedImage.blockId
@@ -1535,10 +2003,28 @@ Make it sound professional, engaging, and specific to the business type and loca
               : block
           ),
         };
+
+        // Save updated website to localStorage
+        if (user?.id) {
+          localStorage.setItem(
+            `generated_website_${user.id}`,
+            JSON.stringify(updatedWebsite)
+          );
+          // Update recent projects with the change
+          saveToRecentProjects(updatedWebsite);
+        }
+
+        return updatedWebsite;
       });
 
-      setShowImageSettings(false);
-      setSelectedImage(null);
+      // Update the selected image URL in the panel
+      setSelectedImage((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          currentUrl: newImageUrl,
+        };
+      });
     } catch (error) {
       console.error("Failed to regenerate image:", error);
       alert(
@@ -1576,8 +2062,39 @@ Make it sound professional, engaging, and specific to the business type and loca
       };
     });
 
-    setShowImageSettings(false);
-    setSelectedImage(null);
+    // Update the selected image URL in the panel
+    setSelectedImage((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        currentUrl: imageUrl,
+      };
+    });
+  };
+
+  // Handle panel dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    const startX = e.clientX;
+    const startPanelX = panelPosition.x;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX;
+      const newX = Math.max(
+        0,
+        Math.min(window.innerWidth - panelPosition.width, startPanelX + deltaX)
+      );
+      setPanelPosition((prev) => ({ ...prev, x: newX }));
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   return (
@@ -1646,9 +2163,38 @@ Make it sound professional, engaging, and specific to the business type and loca
             </button>
 
             {/* Publish Button */}
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
+            <button
+              onClick={() => {
+                if (website) {
+                  updateProjectStatus(website, "published");
+                  alert("Website published successfully!");
+                }
+              }}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+            >
               Publish
             </button>
+
+            {/* Developer Tools - Remove in production */}
+            {process.env.NODE_ENV === "development" && (
+              <button
+                onClick={() => {
+                  if (
+                    confirm(
+                      "This will delete your current website and generate a new one. Are you sure?"
+                    )
+                  ) {
+                    if (user?.id) {
+                      localStorage.removeItem(`generated_website_${user.id}`);
+                      window.location.reload();
+                    }
+                  }
+                }}
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm font-medium ml-2"
+              >
+                🔄 Regenerate
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -1833,16 +2379,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleImageUpload(
-                          selectedElement.blockId,
-                          selectedElement.field,
-                          file
-                        );
-                      }
-                    }}
+                    onChange={handleChangeImage}
                     className="w-full border border-gray-300 rounded-lg p-2"
                   />
                 </div>
@@ -1917,16 +2454,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleImageUpload(
-                          selectedElement.blockId,
-                          selectedElement.field,
-                          file
-                        );
-                      }
-                    }}
+                    onChange={handleChangeImage}
                     className="w-full border border-gray-300 rounded-lg p-2"
                   />
                 </div>
@@ -2039,137 +2567,214 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Image Settings Popup - Exactly like Durable AI */}
+      {/* Image Settings Side Panel - Exactly like Durable AI */}
       {showImageSettings && selectedImage && !isPreviewMode && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Image settings</h3>
-              <button
-                onClick={() => {
-                  setShowImageSettings(false);
-                  setSelectedImage(null);
-                }}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-              >
-                ✕
-              </button>
-            </div>
+        <>
+          {/* Side Panel - slides from right and draggable */}
+          <div
+            className={`fixed top-0 h-full bg-white shadow-2xl z-50 transform transition-all duration-300 ease-in-out ${
+              showImageSettings ? "translate-x-0" : "translate-x-full"
+            }`}
+            style={{
+              left: `${panelPosition.x}px`,
+              width: `${panelPosition.width}px`,
+              cursor: isDragging ? "grabbing" : "default",
+            }}
+          >
+            {/* Resize Handle */}
+            <div
+              className="absolute left-0 top-0 w-1 h-full bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+              onMouseDown={handleMouseDown}
+              style={{ cursor: "col-resize" }}
+            />
 
-            {/* Image Preview */}
-            <div className="mb-4">
-              <img
-                src={selectedImage.currentUrl}
-                alt="Selected image"
-                className="w-full h-32 object-cover rounded-lg"
-              />
-            </div>
-
-            {/* Alt Text */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Alt text
-              </label>
-              <input
-                type="text"
-                defaultValue="Hand man holding illuminated lightbulb, idea,"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                placeholder="Describe the image to improve SEO and accessibility"
-              />
-            </div>
-
-            {/* Image Position */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image position
-              </label>
-              <div className="space-y-2">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Horizontal
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    defaultValue="50"
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
+            <div className="p-6 h-full overflow-y-auto ml-1">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => {
+                    setShowImageSettings(false);
+                    setSelectedImage(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <h3 className="text-lg font-semibold">Image settings</h3>
+                <div className="flex items-center space-x-2">
+                  {/* Drag Handle */}
+                  <div className="cursor-move p-1 hover:bg-gray-100 rounded">
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                    </svg>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowImageSettings(false);
+                      setSelectedImage(null);
+                    }}
+                    className="px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded"
+                  >
+                    Done
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Vertical
-                  </label>
+              </div>
+
+              {/* Image Preview */}
+              <div className="mb-6">
+                <img
+                  src={selectedImage.currentUrl}
+                  alt="Selected image"
+                  className="w-full h-48 object-cover rounded-xl shadow-md"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3 mb-6">
+                <button
+                  onClick={handleRegenerateImage}
+                  disabled={isRegenerating}
+                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  <span className="text-sm font-medium">
+                    {isRegenerating ? "Regenerating..." : "Regenerate"}
+                  </span>
+                </button>
+
+                <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors cursor-pointer">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
+                  </svg>
+                  <span className="text-sm font-medium">Change</span>
                   <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    defaultValue="50"
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleChangeImage}
+                    className="hidden"
                   />
+                </label>
+              </div>
+
+              {/* Alt Text */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Alt text
+                </label>
+                <textarea
+                  value={imageAltText}
+                  onChange={(e) => setImageAltText(e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl text-sm resize-none"
+                  rows={3}
+                  placeholder="Describe the image to improve SEO and accessibility"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Describe the image to improve SEO and accessibility
+                </p>
+              </div>
+
+              {/* Image Position */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Image position
+                </label>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs text-gray-500">
+                        Horizontal
+                      </label>
+                      <span className="text-xs text-gray-500">
+                        {imagePosition.horizontal}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={imagePosition.horizontal}
+                      onChange={(e) =>
+                        setImagePosition({
+                          ...imagePosition,
+                          horizontal: parseInt(e.target.value),
+                        })
+                      }
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs text-gray-500">Vertical</label>
+                      <span className="text-xs text-gray-500">
+                        {imagePosition.vertical}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={imagePosition.vertical}
+                      onChange={(e) =>
+                        setImagePosition({
+                          ...imagePosition,
+                          vertical: parseInt(e.target.value),
+                        })
+                      }
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex space-x-3">
-              <button
-                onClick={handleRegenerateImage}
-                disabled={isRegenerating}
-                className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                <span>{isRegenerating ? "Regenerating..." : "Regenerate"}</span>
-              </button>
-
-              <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                  />
-                </svg>
-                <span>Change</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleChangeImage}
-                  className="hidden"
-                />
-              </label>
-            </div>
-
-            {/* Done Button */}
-            <button
-              onClick={() => {
-                setShowImageSettings(false);
-                setSelectedImage(null);
-              }}
-              className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Done
-            </button>
           </div>
-        </div>
+
+          {/* Overlay for clicking outside to close */}
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => {
+              setShowImageSettings(false);
+              setSelectedImage(null);
+            }}
+          />
+        </>
       )}
     </div>
   );
