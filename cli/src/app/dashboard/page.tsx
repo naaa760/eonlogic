@@ -38,10 +38,38 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
+interface ProjectData {
+  id: string;
+  title: string;
+  businessName: string;
+  businessType: string;
+  lastModified: string;
+  status: "published" | "unpublished";
+  previewImage: string;
+  websiteData: {
+    id: string;
+    title: string;
+    businessName: string;
+    businessType: string;
+    location: string;
+    blocks: Array<{
+      id: string;
+      type: string;
+      content: Record<string, unknown>;
+      styles: Record<string, unknown>;
+    }>;
+    theme: {
+      colors: Record<string, string>;
+      fonts: Record<string, string>;
+    };
+  };
+}
+
 export default function Dashboard() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [recentProjects, setRecentProjects] = useState<ProjectData[]>([]);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -49,6 +77,21 @@ export default function Dashboard() {
     }
     // NO onboarding logic - dashboard is just a normal page
   }, [isLoaded, isSignedIn]);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      // Load recent projects from localStorage
+      try {
+        const projects: ProjectData[] = JSON.parse(
+          localStorage.getItem(`recent_projects_${user.id}`) || "[]"
+        );
+        setRecentProjects(projects);
+      } catch (error) {
+        console.error("Error loading recent projects:", error);
+        setRecentProjects([]);
+      }
+    }
+  }, [isLoaded, isSignedIn, user]);
 
   if (!isLoaded || !isSignedIn) {
     return (
@@ -65,6 +108,10 @@ export default function Dashboard() {
       : currentTime < 18
       ? "Good afternoon"
       : "Good evening";
+
+  // Get the most recent project for the main website card
+  const mostRecentProject =
+    recentProjects.length > 0 ? recentProjects[0] : null;
 
   const mainNavItems = [
     {
@@ -107,6 +154,16 @@ export default function Dashboard() {
   const handleLogout = () => {
     signOut(() => {
       window.location.href = "/";
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -202,7 +259,7 @@ export default function Dashboard() {
 
             {/* Top Section - Website Card and Analytics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              {/* Website Preview Card */}
+              {/* Website Preview Card - Show Most Recent Project */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center justify-between">
@@ -210,27 +267,60 @@ export default function Dashboard() {
                       <Globe className="h-5 w-5 text-gray-500" />
                       <span className="font-medium text-gray-900">Website</span>
                     </div>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      • Unpublished
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        mostRecentProject?.status === "published"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-orange-100 text-orange-800"
+                      }`}
+                    >
+                      •{" "}
+                      {mostRecentProject?.status === "published"
+                        ? "Published"
+                        : "Unpublished"}
                     </span>
                   </div>
                 </div>
 
                 {/* Website Preview */}
                 <div className="relative">
-                  <div className="aspect-video bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white">
-                    <div className="text-center">
-                      <h3 className="text-xl font-bold mb-2">
-                        Your Amazing Business
-                      </h3>
-                      <p className="text-sm opacity-90 mb-4">
-                        Professional website coming soon
-                      </p>
-                      <div className="inline-block px-4 py-2 bg-blue-600 rounded text-sm font-medium hover:bg-blue-700 transition-colors">
-                        Get Started
+                  {mostRecentProject ? (
+                    <div
+                      className="aspect-video flex items-center justify-center text-white bg-cover bg-center"
+                      style={{
+                        backgroundImage: mostRecentProject.previewImage
+                          ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${mostRecentProject.previewImage})`
+                          : "linear-gradient(to-br, #4f46e5, #7c3aed)",
+                      }}
+                    >
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold mb-2">
+                          {mostRecentProject.businessName}
+                        </h3>
+                        <p className="text-sm opacity-90 mb-4">
+                          {mostRecentProject.businessType} • Last edited{" "}
+                          {formatDate(mostRecentProject.lastModified)}
+                        </p>
+                        <div className="inline-block px-4 py-2 bg-blue-600 rounded text-sm font-medium hover:bg-blue-700 transition-colors">
+                          Get Started
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="aspect-video bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white">
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold mb-2">
+                          Your Amazing Business
+                        </h3>
+                        <p className="text-sm opacity-90 mb-4">
+                          Professional website coming soon
+                        </p>
+                        <div className="inline-block px-4 py-2 bg-blue-600 rounded text-sm font-medium hover:bg-blue-700 transition-colors">
+                          Get Started
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="absolute top-4 right-4">
                     <div className="flex space-x-2">
                       <button className="p-1 bg-black bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
@@ -287,6 +377,59 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Recent Projects Section - Show if we have more than one project */}
+            {recentProjects.length > 1 && (
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Recent Projects
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recentProjects.slice(1, 4).map((project) => (
+                    <div
+                      key={project.id}
+                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div
+                        className="aspect-video flex items-center justify-center text-white bg-cover bg-center"
+                        style={{
+                          backgroundImage: project.previewImage
+                            ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${project.previewImage})`
+                            : "linear-gradient(to-br, #4f46e5, #7c3aed)",
+                        }}
+                      >
+                        <div className="text-center">
+                          <h3 className="text-lg font-bold mb-1">
+                            {project.businessName}
+                          </h3>
+                          <p className="text-xs opacity-90">
+                            {project.businessType}
+                          </p>
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              project.status === "published"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-orange-100 text-orange-800"
+                            }`}
+                          >
+                            {project.status === "published"
+                              ? "Published"
+                              : "Draft"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs text-gray-500">
+                          Last edited {formatDate(project.lastModified)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Bottom Section - Three Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

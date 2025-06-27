@@ -78,6 +78,11 @@ export default function Onboarding() {
     // Store business info for later use
     localStorage.setItem(`business_info_${user?.id}`, JSON.stringify(info));
 
+    // Clear any existing website data to force fresh generation
+    if (user?.id) {
+      localStorage.removeItem(`generated_website_${user.id}`);
+    }
+
     // Simulate AI generation delay
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
