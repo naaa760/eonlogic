@@ -196,6 +196,24 @@ export default function WebsiteBuilder() {
   const [buttonEmail, setButtonEmail] = useState("");
   const [buttonPhone, setButtonPhone] = useState("");
 
+  // Panel transition states for beautiful animations
+  const [panelTransition, setPanelTransition] = useState<{
+    isTransitioning: boolean;
+    fromPanel: string | null;
+    toPanel: string | null;
+  }>({
+    isTransitioning: false,
+    fromPanel: null,
+    toPanel: null,
+  });
+
+  // Panel visibility states for smooth fading
+  const [panelVisibility, setPanelVisibility] = useState({
+    image: { show: false, opacity: 0 },
+    button: { show: false, opacity: 0 },
+    edit: { show: false, opacity: 0 },
+  });
+
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       window.location.href = "/";
@@ -1078,8 +1096,11 @@ Make it sound professional, engaging, and specific to the business type and loca
     if (isPreviewMode) return;
 
     event.stopPropagation();
-    setSelectedElement({ blockId, elementType, field });
-    setShowEditPanel(true);
+
+    createSmoothTransition("edit", () => {
+      setSelectedElement({ blockId, elementType, field });
+      setShowEditPanel(true);
+    });
   };
 
   const generateNewImage = async (
@@ -1949,6 +1970,75 @@ Make it sound professional, engaging, and specific to the business type and loca
     );
   };
 
+  // Beautiful panel transition helper
+  const createSmoothTransition = (
+    targetPanel: "image" | "button" | "edit",
+    setupCallback: () => void
+  ) => {
+    if (panelTransition.isTransitioning) return;
+
+    const currentPanel = showImageSettings
+      ? "image"
+      : showButtonSettings
+      ? "button"
+      : showEditPanel
+      ? "edit"
+      : null;
+
+    if (currentPanel === targetPanel) return; // Same panel, no transition needed
+
+    setPanelTransition({
+      isTransitioning: true,
+      fromPanel: currentPanel,
+      toPanel: targetPanel,
+    });
+
+    if (currentPanel) {
+      // Start fade out current panel
+      setPanelVisibility((prev) => ({
+        ...prev,
+        [currentPanel]: { show: true, opacity: 0 },
+      }));
+
+      // After fade out starts, setup new panel and fade it in
+      setTimeout(() => {
+        // Setup new panel data
+        setupCallback();
+
+        // Show new panel with fade in
+        setPanelVisibility((prev) => ({
+          ...prev,
+          [currentPanel]: { show: false, opacity: 0 },
+          [targetPanel]: { show: true, opacity: 1 },
+        }));
+
+        // Clean up transition state
+        setTimeout(() => {
+          setPanelTransition({
+            isTransitioning: false,
+            fromPanel: null,
+            toPanel: null,
+          });
+        }, 400); // Wait for fade in to complete
+      }, 200); // Overlap timing for smooth transition
+    } else {
+      // No current panel, immediate fade in
+      setupCallback();
+      setPanelVisibility((prev) => ({
+        ...prev,
+        [targetPanel]: { show: true, opacity: 1 },
+      }));
+
+      setTimeout(() => {
+        setPanelTransition({
+          isTransitioning: false,
+          fromPanel: null,
+          toPanel: null,
+        });
+      }, 400);
+    }
+  };
+
   // Handle image clicks to show settings popup
   const handleImageClick = (
     blockId: string,
@@ -1960,41 +2050,49 @@ Make it sound professional, engaging, and specific to the business type and loca
 
     event.stopPropagation();
 
-    // Generate business-specific alt text
-    let dynamicAltText = "";
-    const businessInfoStr = safeLocalStorage.getItem(
-      `business_info_${user?.id}`
-    );
-    const businessInfo: BusinessInfo = businessInfoStr
-      ? JSON.parse(businessInfoStr)
-      : null;
+    createSmoothTransition("image", () => {
+      // Close other panels
+      setShowButtonSettings(false);
+      setSelectedButton(null);
+      setShowEditPanel(false);
+      setSelectedElement(null);
 
-    if (businessInfo) {
-      const businessKeywords = extractBusinessKeywords(businessInfo.type);
+      // Generate business-specific alt text
+      let dynamicAltText = "";
+      const businessInfoStr = safeLocalStorage.getItem(
+        `business_info_${user?.id}`
+      );
+      const businessInfo: BusinessInfo = businessInfoStr
+        ? JSON.parse(businessInfoStr)
+        : null;
 
-      if (field === "backgroundImage") {
-        dynamicAltText = `${businessKeywords.primary} professional office workspace in ${businessInfo.location}`;
-      } else if (field === "image") {
-        dynamicAltText = `${businessKeywords.primary} team collaboration and professional meeting`;
-      } else if (field.includes("services")) {
-        const serviceIndex = field.match(/\[(\d+)\]/)?.[1];
-        if (serviceIndex === "0") {
-          dynamicAltText = `${businessKeywords.primary} professional consultation and service delivery`;
-        } else if (serviceIndex === "1") {
-          dynamicAltText = `${businessKeywords.secondary} technology and professional solutions`;
+      if (businessInfo) {
+        const businessKeywords = extractBusinessKeywords(businessInfo.type);
+
+        if (field === "backgroundImage") {
+          dynamicAltText = `${businessKeywords.primary} professional office workspace in ${businessInfo.location}`;
+        } else if (field === "image") {
+          dynamicAltText = `${businessKeywords.primary} team collaboration and professional meeting`;
+        } else if (field.includes("services")) {
+          const serviceIndex = field.match(/\[(\d+)\]/)?.[1];
+          if (serviceIndex === "0") {
+            dynamicAltText = `${businessKeywords.primary} professional consultation and service delivery`;
+          } else if (serviceIndex === "1") {
+            dynamicAltText = `${businessKeywords.secondary} technology and professional solutions`;
+          } else {
+            dynamicAltText = `${businessKeywords.primary} high quality professional service`;
+          }
         } else {
-          dynamicAltText = `${businessKeywords.primary} high quality professional service`;
+          dynamicAltText = `${businessKeywords.primary} professional business image`;
         }
       } else {
-        dynamicAltText = `${businessKeywords.primary} professional business image`;
+        dynamicAltText = "Professional business image";
       }
-    } else {
-      dynamicAltText = "Professional business image";
-    }
 
-    setSelectedImage({ blockId, field, currentUrl, altText: dynamicAltText });
-    setImageAltText(dynamicAltText);
-    setShowImageSettings(true);
+      setSelectedImage({ blockId, field, currentUrl, altText: dynamicAltText });
+      setImageAltText(dynamicAltText);
+      setShowImageSettings(true);
+    });
   };
 
   // Handle button clicks to show settings popup
@@ -2008,9 +2106,17 @@ Make it sound professional, engaging, and specific to the business type and loca
 
     event.stopPropagation();
 
-    setSelectedButton({ blockId, field, currentText });
-    setButtonLabel(currentText);
-    setShowButtonSettings(true);
+    createSmoothTransition("button", () => {
+      // Close other panels
+      setShowImageSettings(false);
+      setSelectedImage(null);
+      setShowEditPanel(false);
+      setSelectedElement(null);
+
+      setSelectedButton({ blockId, field, currentText });
+      setButtonLabel(currentText);
+      setShowButtonSettings(true);
+    });
   };
 
   const handleRegenerateImage = async () => {
@@ -2362,6 +2468,13 @@ Make it sound professional, engaging, and specific to the business type and loca
         onClick={() => {
           setSelectedBlock(null);
           setShowFloatingActions(false);
+          // Close all panels when clicking outside
+          setShowImageSettings(false);
+          setSelectedImage(null);
+          setShowButtonSettings(false);
+          setSelectedButton(null);
+          setShowEditPanel(false);
+          setSelectedElement(null);
         }}
       >
         {website.blocks.map((block) => renderBlock(block))}
@@ -2730,393 +2843,356 @@ Make it sound professional, engaging, and specific to the business type and loca
       )}
 
       {/* Image Settings Side Panel - Durable AI Style */}
-      {showImageSettings && selectedImage && !isPreviewMode && (
-        <>
-          {/* Side Panel - slides from right with Durable-like styling */}
-          <div
-            className={`fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-300 ease-in-out ${
-              showImageSettings ? "translate-x-0" : "translate-x-full"
-            }`}
-            style={{
-              left: `${
-                typeof window !== "undefined"
-                  ? Math.min(
-                      panelPosition.x,
-                      window.innerWidth - panelPosition.width
-                    )
-                  : panelPosition.x
-              }px`,
-              width: `${
-                typeof window !== "undefined"
-                  ? Math.min(panelPosition.width, window.innerWidth)
-                  : panelPosition.width
-              }px`,
-              borderRadius: "20px",
-              maxHeight: "520px",
-              boxShadow:
-                "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
-              border: "none",
-            }}
-          >
-            {/* Resize Handle - Hidden on mobile, better positioned */}
+      {(showImageSettings || panelVisibility.image.show) &&
+        selectedImage &&
+        !isPreviewMode && (
+          <>
+            {/* Side Panel - slides from right with Durable-like styling */}
             <div
-              className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
-              onMouseDown={handleMouseDown}
-              style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
-            />
+              className="fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-500 ease-out"
+              style={{
+                left: `${
+                  typeof window !== "undefined"
+                    ? Math.min(
+                        panelPosition.x,
+                        window.innerWidth - panelPosition.width
+                      )
+                    : panelPosition.x
+                }px`,
+                width: `${
+                  typeof window !== "undefined"
+                    ? Math.min(panelPosition.width, window.innerWidth)
+                    : panelPosition.width
+                }px`,
+                borderRadius: "20px",
+                maxHeight: "520px",
+                boxShadow:
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+                border: "none",
+                backdropFilter: "blur(20px)",
+                opacity: panelVisibility.image.show
+                  ? panelVisibility.image.opacity
+                  : showImageSettings
+                  ? 1
+                  : 0,
+                transform: `translateX(${
+                  showImageSettings || panelVisibility.image.show ? "0" : "100%"
+                })`,
+              }}
+            >
+              {/* Resize Handle - Hidden on mobile, better positioned */}
+              <div
+                className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
+                onMouseDown={handleMouseDown}
+                style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
+              />
 
-            <div className="p-6 h-full overflow-y-auto flex flex-col image-settings-panel">
-              {/* Header - More refined */}
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-                <button
-                  onClick={() => {
-                    setShowImageSettings(false);
-                    setSelectedImage(null);
-                  }}
-                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              <div className="p-6 h-full overflow-y-auto flex flex-col image-settings-panel">
+                {/* Header - More refined */}
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                  <button
+                    onClick={() => {
+                      setShowImageSettings(false);
+                      setSelectedImage(null);
+                    }}
+                    className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  <span className="text-sm font-medium">Back</span>
-                </button>
+                    <svg
+                      className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium">Back</span>
+                  </button>
 
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Image settings
-                </h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Image settings
+                  </h3>
 
-                <button
-                  onClick={() => {
-                    setShowImageSettings(false);
-                    setSelectedImage(null);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
-                >
-                  Done
-                </button>
-              </div>
-
-              {/* Image Preview - Enhanced styling */}
-              <div className="mb-6">
-                <div className="relative group">
-                  <img
-                    src={selectedImage.currentUrl}
-                    alt="Selected image"
-                    className="w-full h-36 object-cover rounded-2xl shadow-lg border border-gray-100 transition-transform duration-200 group-hover:scale-[1.02]"
-                  />
+                  <button
+                    onClick={() => {
+                      setShowImageSettings(false);
+                      setSelectedImage(null);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                  >
+                    Done
+                  </button>
                 </div>
-              </div>
 
-              {/* Action Buttons - More elegant */}
-              <div className="flex space-x-3 mb-6">
-                <button
-                  onClick={handleRegenerateImage}
-                  disabled={isRegenerating}
-                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 disabled:opacity-50 border border-gray-100 hover:border-gray-200 hover:shadow-sm"
-                >
-                  <svg
-                    className={`w-4 h-4 text-gray-600 ${
-                      isRegenerating ? "animate-spin" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                {/* Image Preview - Enhanced styling */}
+                <div className="mb-6">
+                  <div className="relative group">
+                    <img
+                      src={selectedImage.currentUrl}
+                      alt="Selected image"
+                      className="w-full h-36 object-cover rounded-2xl shadow-lg border border-gray-100 transition-transform duration-200 group-hover:scale-[1.02]"
                     />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">
-                    {isRegenerating ? "Regenerating..." : "Regenerate"}
-                  </span>
-                </button>
-
-                <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 cursor-pointer border border-gray-100 hover:border-gray-200 hover:shadow-sm">
-                  <svg
-                    className="w-4 h-4 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">
-                    Change
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChangeImage}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-
-              {/* Alt Text - Enhanced styling */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-800 mb-3">
-                  Alt text
-                </label>
-                <textarea
-                  value={imageAltText}
-                  onChange={(e) => setImageAltText(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                  rows={3}
-                  placeholder="Describe the image to improve SEO and accessibility"
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  Describe the image to improve SEO and accessibility
-                </p>
-              </div>
-
-              {/* Image Position - Enhanced controls */}
-              <div className="space-y-5">
-                <label className="block text-sm font-semibold text-gray-800">
-                  Image position
-                </label>
-
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="text-xs font-medium text-gray-600">
-                        Horizontal
-                      </label>
-                      <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                        {imagePosition.horizontal}%
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={imagePosition.horizontal}
-                        onChange={(e) =>
-                          setImagePosition({
-                            ...imagePosition,
-                            horizontal: parseInt(e.target.value),
-                          })
-                        }
-                        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                        style={{
-                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.horizontal}%, #e5e7eb ${imagePosition.horizontal}%, #e5e7eb 100%)`,
-                        }}
-                      />
-                    </div>
                   </div>
+                </div>
 
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="text-xs font-medium text-gray-600">
-                        Vertical
-                      </label>
-                      <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                        {imagePosition.vertical}%
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={imagePosition.vertical}
-                        onChange={(e) =>
-                          setImagePosition({
-                            ...imagePosition,
-                            vertical: parseInt(e.target.value),
-                          })
-                        }
-                        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                        style={{
-                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.vertical}%, #e5e7eb ${imagePosition.vertical}%, #e5e7eb 100%)`,
-                        }}
+                {/* Action Buttons - More elegant */}
+                <div className="flex space-x-3 mb-6">
+                  <button
+                    onClick={handleRegenerateImage}
+                    disabled={isRegenerating}
+                    className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 disabled:opacity-50 border border-gray-100 hover:border-gray-200 hover:shadow-sm"
+                  >
+                    <svg
+                      className={`w-4 h-4 text-gray-600 ${
+                        isRegenerating ? "animate-spin" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                       />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700">
+                      {isRegenerating ? "Regenerating..." : "Regenerate"}
+                    </span>
+                  </button>
+
+                  <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 cursor-pointer border border-gray-100 hover:border-gray-200 hover:shadow-sm">
+                    <svg
+                      className="w-4 h-4 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700">
+                      Change
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleChangeImage}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Alt Text - Enhanced styling */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Alt text
+                  </label>
+                  <textarea
+                    value={imageAltText}
+                    onChange={(e) => setImageAltText(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    rows={3}
+                    placeholder="Describe the image to improve SEO and accessibility"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Describe the image to improve SEO and accessibility
+                  </p>
+                </div>
+
+                {/* Image Position - Enhanced controls */}
+                <div className="space-y-5">
+                  <label className="block text-sm font-semibold text-gray-800">
+                    Image position
+                  </label>
+
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="text-xs font-medium text-gray-600">
+                          Horizontal
+                        </label>
+                        <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                          {imagePosition.horizontal}%
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={imagePosition.horizontal}
+                          onChange={(e) =>
+                            setImagePosition({
+                              ...imagePosition,
+                              horizontal: parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                          style={{
+                            background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.horizontal}%, #e5e7eb ${imagePosition.horizontal}%, #e5e7eb 100%)`,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="text-xs font-medium text-gray-600">
+                          Vertical
+                        </label>
+                        <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                          {imagePosition.vertical}%
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={imagePosition.vertical}
+                          onChange={(e) =>
+                            setImagePosition({
+                              ...imagePosition,
+                              vertical: parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                          style={{
+                            background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.vertical}%, #e5e7eb ${imagePosition.vertical}%, #e5e7eb 100%)`,
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
       {/* Button Settings Side Panel - Durable AI Style */}
-      {showButtonSettings && selectedButton && !isPreviewMode && (
-        <>
-          {/* Side Panel - slides from right with Durable-like styling */}
-          <div
-            className={`fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-300 ease-in-out ${
-              showButtonSettings ? "translate-x-0" : "translate-x-full"
-            }`}
-            style={{
-              left: `${
-                typeof window !== "undefined"
-                  ? Math.min(
-                      panelPosition.x,
-                      window.innerWidth - panelPosition.width
-                    )
-                  : panelPosition.x
-              }px`,
-              width: `${
-                typeof window !== "undefined"
-                  ? Math.min(panelPosition.width, window.innerWidth)
-                  : panelPosition.width
-              }px`,
-              borderRadius: "20px",
-              maxHeight: "520px",
-              boxShadow:
-                "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
-              border: "none",
-            }}
-          >
-            {/* Resize Handle - Hidden on mobile, better positioned */}
+      {(showButtonSettings || panelVisibility.button.show) &&
+        selectedButton &&
+        !isPreviewMode && (
+          <>
+            {/* Side Panel - slides from right with Durable-like styling */}
             <div
-              className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
-              onMouseDown={handleMouseDown}
-              style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
-            />
-
-            <div className="p-6 h-full overflow-y-auto flex flex-col">
-              {/* Header - More refined */}
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-                <button
-                  onClick={() => {
-                    setShowButtonSettings(false);
-                    setSelectedButton(null);
-                  }}
-                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  <span className="text-sm font-medium">Back</span>
-                </button>
-
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Button settings
-                </h3>
-
-                <button
-                  onClick={() => {
-                    setShowButtonSettings(false);
-                    setSelectedButton(null);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
-                >
-                  Done
-                </button>
-              </div>
-
-              {/* Link Type Dropdown */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-800 mb-3">
-                  Link type
-                </label>
-                <div className="relative">
-                  <select
-                    value={buttonLinkType}
-                    onChange={(e) =>
-                      setButtonLinkType(
-                        e.target.value as
-                          | "section"
-                          | "page"
-                          | "url"
-                          | "email"
-                          | "phone"
+              className="fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-500 ease-out"
+              style={{
+                left: `${
+                  typeof window !== "undefined"
+                    ? Math.min(
+                        panelPosition.x,
+                        window.innerWidth - panelPosition.width
                       )
-                    }
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                    : panelPosition.x
+                }px`,
+                width: `${
+                  typeof window !== "undefined"
+                    ? Math.min(panelPosition.width, window.innerWidth)
+                    : panelPosition.width
+                }px`,
+                borderRadius: "20px",
+                maxHeight: "520px",
+                boxShadow:
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+                border: "none",
+                backdropFilter: "blur(20px)",
+                opacity: panelVisibility.button.show
+                  ? panelVisibility.button.opacity
+                  : showButtonSettings
+                  ? 1
+                  : 0,
+                transform: `translateX(${
+                  showButtonSettings || panelVisibility.button.show
+                    ? "0"
+                    : "100%"
+                })`,
+              }}
+            >
+              {/* Resize Handle - Hidden on mobile, better positioned */}
+              <div
+                className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
+                onMouseDown={handleMouseDown}
+                style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
+              />
+
+              <div className="p-6 h-full overflow-y-auto flex flex-col">
+                {/* Header - More refined */}
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                  <button
+                    onClick={() => {
+                      setShowButtonSettings(false);
+                      setSelectedButton(null);
+                    }}
+                    className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
                   >
-                    <option value="section">Section</option>
-                    <option value="page">Page</option>
-                    <option value="url">External</option>
-                    <option value="email">Email</option>
-                    <option value="phone">Phone</option>
-                  </select>
-                  <svg
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg
+                      className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium">Back</span>
+                  </button>
+
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Button settings
+                  </h3>
+
+                  <button
+                    onClick={() => {
+                      setShowButtonSettings(false);
+                      setSelectedButton(null);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                    Done
+                  </button>
                 </div>
-              </div>
 
-              {/* Label Field */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-800 mb-3">
-                  Label
-                </label>
-                <input
-                  type="text"
-                  value={buttonLabel}
-                  onChange={(e) => {
-                    setButtonLabel(e.target.value);
-                    // Update the button text in real-time
-                    handleTextChange(
-                      selectedButton.blockId,
-                      selectedButton.field,
-                      e.target.value
-                    );
-                  }}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                  placeholder="Enter button text"
-                />
-              </div>
-
-              {/* Section Selection - Only show when Link Type is "Section" */}
-              {buttonLinkType === "section" && (
+                {/* Link Type Dropdown */}
                 <div className="mb-6">
                   <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    Section
+                    Link type
                   </label>
                   <div className="relative">
                     <select
-                      value={buttonSection}
-                      onChange={(e) => setButtonSection(e.target.value)}
+                      value={buttonLinkType}
+                      onChange={(e) =>
+                        setButtonLinkType(
+                          e.target.value as
+                            | "section"
+                            | "page"
+                            | "url"
+                            | "email"
+                            | "phone"
+                        )
+                      }
                       className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                     >
-                      <option value="hero">Hero</option>
-                      <option value="about">About</option>
-                      <option value="services">Service-list</option>
-                      <option value="features">Features</option>
-                      <option value="contact">Contact</option>
-                      <option value="cta">Banner</option>
+                      <option value="section">Section</option>
+                      <option value="page">Page</option>
+                      <option value="url">External</option>
+                      <option value="email">Email</option>
+                      <option value="phone">Phone</option>
                     </select>
                     <svg
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -3132,63 +3208,120 @@ Make it sound professional, engaging, and specific to the business type and loca
                       />
                     </svg>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    A section on this page
-                  </p>
                 </div>
-              )}
 
-              {/* URL Field - Only show when Link Type is "url" */}
-              {buttonLinkType === "url" && (
+                {/* Label Field */}
                 <div className="mb-6">
                   <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    URL
+                    Label
                   </label>
                   <input
-                    type="url"
-                    value={buttonUrl}
-                    onChange={(e) => setButtonUrl(e.target.value)}
+                    type="text"
+                    value={buttonLabel}
+                    onChange={(e) => {
+                      setButtonLabel(e.target.value);
+                      // Update the button text in real-time
+                      handleTextChange(
+                        selectedButton.blockId,
+                        selectedButton.field,
+                        e.target.value
+                      );
+                    }}
                     className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                    placeholder="https://example.com"
+                    placeholder="Enter button text"
                   />
                 </div>
-              )}
 
-              {/* Email Field - Only show when Link Type is "email" */}
-              {buttonLinkType === "email" && (
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={buttonEmail}
-                    onChange={(e) => setButtonEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                    placeholder="contact@example.com"
-                  />
-                </div>
-              )}
+                {/* Section Selection - Only show when Link Type is "Section" */}
+                {buttonLinkType === "section" && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-800 mb-3">
+                      Section
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={buttonSection}
+                        onChange={(e) => setButtonSection(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                      >
+                        <option value="hero">Hero</option>
+                        <option value="about">About</option>
+                        <option value="services">Service-list</option>
+                        <option value="features">Features</option>
+                        <option value="contact">Contact</option>
+                        <option value="cta">Banner</option>
+                      </select>
+                      <svg
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      A section on this page
+                    </p>
+                  </div>
+                )}
 
-              {/* Phone Field - Only show when Link Type is "phone" */}
-              {buttonLinkType === "phone" && (
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={buttonPhone}
-                    onChange={(e) => setButtonPhone(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
-              )}
+                {/* URL Field - Only show when Link Type is "url" */}
+                {buttonLinkType === "url" && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-800 mb-3">
+                      URL
+                    </label>
+                    <input
+                      type="url"
+                      value={buttonUrl}
+                      onChange={(e) => setButtonUrl(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                )}
+
+                {/* Email Field - Only show when Link Type is "email" */}
+                {buttonLinkType === "email" && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-800 mb-3">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={buttonEmail}
+                      onChange={(e) => setButtonEmail(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="contact@example.com"
+                    />
+                  </div>
+                )}
+
+                {/* Phone Field - Only show when Link Type is "phone" */}
+                {buttonLinkType === "phone" && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-800 mb-3">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      value={buttonPhone}
+                      onChange={(e) => setButtonPhone(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
     </div>
   );
 }
