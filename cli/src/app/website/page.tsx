@@ -179,7 +179,6 @@ export default function WebsiteBuilder() {
     x: typeof window !== "undefined" ? window.innerWidth - 320 : 320,
     width: 320,
   });
-  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -2124,7 +2123,6 @@ Make it sound professional, engaging, and specific to the business type and loca
   const handleMouseDown = (e: React.MouseEvent) => {
     if (typeof window === "undefined") return;
 
-    setIsDragging(true);
     const startX = e.clientX;
     const startPanelX = panelPosition.x;
 
@@ -2138,7 +2136,6 @@ Make it sound professional, engaging, and specific to the business type and loca
     };
 
     const handleMouseUp = () => {
-      setIsDragging(false);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
@@ -2149,6 +2146,59 @@ Make it sound professional, engaging, and specific to the business type and loca
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Custom CSS for range sliders */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          .image-settings-panel input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+          }
+          
+          .image-settings-panel input[type="range"]:hover {
+            opacity: 1;
+          }
+          
+          .image-settings-panel input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+          }
+          
+          .image-settings-panel input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+          }
+          
+          .image-settings-panel input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+          }
+          
+          .image-settings-panel input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
+          }
+        `,
+        }}
+      />
+
       {/* Top Navigation - Exact Match from Screenshot */}
       <nav className="bg-white border-b border-gray-200 px-2 sm:px-4 py-3">
         <div className="flex items-center justify-between">
@@ -2637,12 +2687,12 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Image Settings Side Panel - Mobile Responsive */}
+      {/* Image Settings Side Panel - Durable AI Style */}
       {showImageSettings && selectedImage && !isPreviewMode && (
         <>
-          {/* Side Panel - slides from right and draggable */}
+          {/* Side Panel - slides from right with Durable-like styling */}
           <div
-            className={`fixed top-0 h-full bg-white shadow-2xl z-50 transform transition-all duration-300 ease-in-out ${
+            className={`fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-300 ease-in-out ${
               showImageSettings ? "translate-x-0" : "translate-x-full"
             }`}
             style={{
@@ -2659,28 +2709,32 @@ Make it sound professional, engaging, and specific to the business type and loca
                   ? Math.min(panelPosition.width, window.innerWidth)
                   : panelPosition.width
               }px`,
-              cursor: isDragging ? "grabbing" : "default",
+              borderRadius: "20px",
+              maxHeight: "520px",
+              boxShadow:
+                "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+              border: "none",
             }}
           >
-            {/* Resize Handle - Hidden on mobile */}
+            {/* Resize Handle - Hidden on mobile, better positioned */}
             <div
-              className="absolute left-0 top-0 w-1 h-full bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors hidden sm:block"
+              className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
               onMouseDown={handleMouseDown}
-              style={{ cursor: "col-resize" }}
+              style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
             />
 
-            <div className="p-4 sm:p-6 h-full overflow-y-auto ml-0 sm:ml-1">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="p-6 h-full overflow-y-auto flex flex-col image-settings-panel">
+              {/* Header - More refined */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                 <button
                   onClick={() => {
                     setShowImageSettings(false);
                     setSelectedImage(null);
                   }}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -2692,51 +2746,46 @@ Make it sound professional, engaging, and specific to the business type and loca
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
+                  <span className="text-sm font-medium">Back</span>
                 </button>
-                <h3 className="text-base sm:text-lg font-semibold">
+
+                <h3 className="text-lg font-semibold text-gray-900">
                   Image settings
                 </h3>
-                <div className="flex items-center space-x-2">
-                  {/* Drag Handle - Hidden on mobile */}
-                  <div className="cursor-move p-1 hover:bg-gray-100 rounded hidden sm:block">
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                    </svg>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowImageSettings(false);
-                      setSelectedImage(null);
-                    }}
-                    className="px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded"
-                  >
-                    Done
-                  </button>
+
+                <button
+                  onClick={() => {
+                    setShowImageSettings(false);
+                    setSelectedImage(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+
+              {/* Image Preview - Enhanced styling */}
+              <div className="mb-6">
+                <div className="relative group">
+                  <img
+                    src={selectedImage.currentUrl}
+                    alt="Selected image"
+                    className="w-full h-36 object-cover rounded-2xl shadow-lg border border-gray-100 transition-transform duration-200 group-hover:scale-[1.02]"
+                  />
                 </div>
               </div>
 
-              {/* Image Preview */}
-              <div className="mb-4 sm:mb-6">
-                <img
-                  src={selectedImage.currentUrl}
-                  alt="Selected image"
-                  className="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mb-4 sm:mb-6">
+              {/* Action Buttons - More elegant */}
+              <div className="flex space-x-3 mb-6">
                 <button
                   onClick={handleRegenerateImage}
                   disabled={isRegenerating}
-                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 disabled:opacity-50 border border-gray-100 hover:border-gray-200 hover:shadow-sm"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className={`w-4 h-4 text-gray-600 ${
+                      isRegenerating ? "animate-spin" : ""
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -2748,14 +2797,14 @@ Make it sound professional, engaging, and specific to the business type and loca
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-gray-700">
                     {isRegenerating ? "Regenerating..." : "Regenerate"}
                   </span>
                 </button>
 
-                <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors cursor-pointer">
+                <label className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 cursor-pointer border border-gray-100 hover:border-gray-200 hover:shadow-sm">
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 text-gray-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -2767,7 +2816,9 @@ Make it sound professional, engaging, and specific to the business type and loca
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                     />
                   </svg>
-                  <span className="text-sm font-medium">Change</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Change
+                  </span>
                   <input
                     type="file"
                     accept="image/*"
@@ -2777,86 +2828,91 @@ Make it sound professional, engaging, and specific to the business type and loca
                 </label>
               </div>
 
-              {/* Alt Text */}
-              <div className="mb-4 sm:mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              {/* Alt Text - Enhanced styling */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-800 mb-3">
                   Alt text
                 </label>
                 <textarea
                   value={imageAltText}
                   onChange={(e) => setImageAltText(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-xl text-sm resize-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                   rows={3}
                   placeholder="Describe the image to improve SEO and accessibility"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-2">
                   Describe the image to improve SEO and accessibility
                 </p>
               </div>
 
-              {/* Image Position */}
-              <div className="mb-4 sm:mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-4">
+              {/* Image Position - Enhanced controls */}
+              <div className="space-y-5">
+                <label className="block text-sm font-semibold text-gray-800">
                   Image position
                 </label>
+
                 <div className="space-y-4">
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs text-gray-500">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-xs font-medium text-gray-600">
                         Horizontal
                       </label>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                         {imagePosition.horizontal}%
                       </span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={imagePosition.horizontal}
-                      onChange={(e) =>
-                        setImagePosition({
-                          ...imagePosition,
-                          horizontal: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                    />
+                    <div className="relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={imagePosition.horizontal}
+                        onChange={(e) =>
+                          setImagePosition({
+                            ...imagePosition,
+                            horizontal: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        style={{
+                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.horizontal}%, #e5e7eb ${imagePosition.horizontal}%, #e5e7eb 100%)`,
+                        }}
+                      />
+                    </div>
                   </div>
+
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs text-gray-500">Vertical</label>
-                      <span className="text-xs text-gray-500">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-xs font-medium text-gray-600">
+                        Vertical
+                      </label>
+                      <span className="text-xs font-semibold text-gray-900 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                         {imagePosition.vertical}%
                       </span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={imagePosition.vertical}
-                      onChange={(e) =>
-                        setImagePosition({
-                          ...imagePosition,
-                          vertical: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                    />
+                    <div className="relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={imagePosition.vertical}
+                        onChange={(e) =>
+                          setImagePosition({
+                            ...imagePosition,
+                            vertical: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        style={{
+                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${imagePosition.vertical}%, #e5e7eb ${imagePosition.vertical}%, #e5e7eb 100%)`,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Overlay for clicking outside to close */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => {
-              setShowImageSettings(false);
-              setSelectedImage(null);
-            }}
-          />
         </>
       )}
     </div>
