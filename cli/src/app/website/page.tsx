@@ -2379,62 +2379,6 @@ Make it sound professional, engaging, and specific to the business type and loca
   };
 
   // Apply style changes to the website
-  const applyStyleChanges = (styleUpdates: Partial<typeof textImageStyle>) => {
-    if (!selectedTextImageBlock) return;
-
-    setWebsite((prev) => {
-      if (!prev) return prev;
-      const updatedWebsite = {
-        ...prev,
-        blocks: prev.blocks.map((block) =>
-          block.id === selectedTextImageBlock.blockId
-            ? {
-                ...block,
-                styles: {
-                  ...block.styles,
-                  // Apply spacing
-                  paddingTop:
-                    styleUpdates.topSpacing === "large"
-                      ? "80px"
-                      : styleUpdates.topSpacing === "medium"
-                      ? "60px"
-                      : styleUpdates.topSpacing === "small"
-                      ? "40px"
-                      : "20px",
-                  paddingBottom:
-                    styleUpdates.bottomSpacing === "large"
-                      ? "80px"
-                      : styleUpdates.bottomSpacing === "medium"
-                      ? "60px"
-                      : styleUpdates.bottomSpacing === "small"
-                      ? "40px"
-                      : "20px",
-                  // Apply min height
-                  minHeight:
-                    styleUpdates.minHeight === "screen" ? "100vh" : "auto",
-                  // Apply background color if custom
-                  backgroundColor:
-                    styleUpdates.colorScheme === "custom"
-                      ? styleUpdates.backgroundColor
-                      : undefined,
-                },
-              }
-            : block
-        ),
-      };
-
-      // Save updated website to localStorage
-      if (user?.id) {
-        safeLocalStorage.setItem(
-          `generated_website_${user.id}`,
-          JSON.stringify(updatedWebsite)
-        );
-        saveToRecentProjects(updatedWebsite);
-      }
-
-      return updatedWebsite;
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
