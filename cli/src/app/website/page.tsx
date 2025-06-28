@@ -4011,15 +4011,49 @@ Return as JSON with this structure:
                               min="0"
                               max="100"
                               value={textImageContent.imagePosition.horizontal}
-                              onChange={(e) =>
+                              onChange={(e) => {
+                                const newPosition = {
+                                  ...textImageContent.imagePosition,
+                                  horizontal: parseInt(e.target.value),
+                                };
                                 setTextImageContent({
                                   ...textImageContent,
-                                  imagePosition: {
-                                    ...textImageContent.imagePosition,
-                                    horizontal: parseInt(e.target.value),
-                                  },
-                                })
-                              }
+                                  imagePosition: newPosition,
+                                });
+
+                                // Apply to website immediately
+                                if (selectedTextImageBlock) {
+                                  setWebsite((prev) => {
+                                    if (!prev) return prev;
+                                    const updatedWebsite = {
+                                      ...prev,
+                                      blocks: prev.blocks.map((block) =>
+                                        block.id ===
+                                        selectedTextImageBlock.blockId
+                                          ? {
+                                              ...block,
+                                              styles: {
+                                                ...block.styles,
+                                                backgroundPositionX: `${e.target.value}%`,
+                                                objectPosition: `${e.target.value}% ${textImageContent.imagePosition.vertical}%`,
+                                              },
+                                            }
+                                          : block
+                                      ),
+                                    };
+
+                                    if (user?.id) {
+                                      safeLocalStorage.setItem(
+                                        `generated_website_${user.id}`,
+                                        JSON.stringify(updatedWebsite)
+                                      );
+                                      saveToRecentProjects(updatedWebsite);
+                                    }
+
+                                    return updatedWebsite;
+                                  });
+                                }
+                              }}
                               className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                               style={{
                                 background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${textImageContent.imagePosition.horizontal}%, #e5e7eb ${textImageContent.imagePosition.horizontal}%, #e5e7eb 100%)`,
@@ -4040,15 +4074,49 @@ Return as JSON with this structure:
                               min="0"
                               max="100"
                               value={textImageContent.imagePosition.vertical}
-                              onChange={(e) =>
+                              onChange={(e) => {
+                                const newPosition = {
+                                  ...textImageContent.imagePosition,
+                                  vertical: parseInt(e.target.value),
+                                };
                                 setTextImageContent({
                                   ...textImageContent,
-                                  imagePosition: {
-                                    ...textImageContent.imagePosition,
-                                    vertical: parseInt(e.target.value),
-                                  },
-                                })
-                              }
+                                  imagePosition: newPosition,
+                                });
+
+                                // Apply to website immediately
+                                if (selectedTextImageBlock) {
+                                  setWebsite((prev) => {
+                                    if (!prev) return prev;
+                                    const updatedWebsite = {
+                                      ...prev,
+                                      blocks: prev.blocks.map((block) =>
+                                        block.id ===
+                                        selectedTextImageBlock.blockId
+                                          ? {
+                                              ...block,
+                                              styles: {
+                                                ...block.styles,
+                                                backgroundPositionY: `${e.target.value}%`,
+                                                objectPosition: `${textImageContent.imagePosition.horizontal}% ${e.target.value}%`,
+                                              },
+                                            }
+                                          : block
+                                      ),
+                                    };
+
+                                    if (user?.id) {
+                                      safeLocalStorage.setItem(
+                                        `generated_website_${user.id}`,
+                                        JSON.stringify(updatedWebsite)
+                                      );
+                                      saveToRecentProjects(updatedWebsite);
+                                    }
+
+                                    return updatedWebsite;
+                                  });
+                                }
+                              }}
                               className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                               style={{
                                 background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${textImageContent.imagePosition.vertical}%, #e5e7eb ${textImageContent.imagePosition.vertical}%, #e5e7eb 100%)`,
@@ -4071,12 +4139,47 @@ Return as JSON with this structure:
                             <input
                               type="checkbox"
                               checked={textImageContent.hasButton}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setTextImageContent({
                                   ...textImageContent,
                                   hasButton: e.target.checked,
-                                })
-                              }
+                                });
+
+                                // Apply to website immediately
+                                if (selectedTextImageBlock) {
+                                  setWebsite((prev) => {
+                                    if (!prev) return prev;
+                                    const updatedWebsite = {
+                                      ...prev,
+                                      blocks: prev.blocks.map((block) =>
+                                        block.id ===
+                                        selectedTextImageBlock.blockId
+                                          ? {
+                                              ...block,
+                                              content: {
+                                                ...block.content,
+                                                buttonText: e.target.checked
+                                                  ? textImageContent.buttonText ||
+                                                    "Learn More"
+                                                  : undefined,
+                                              },
+                                            }
+                                          : block
+                                      ),
+                                    };
+
+                                    if (user?.id) {
+                                      safeLocalStorage.setItem(
+                                        `generated_website_${user.id}`,
+                                        JSON.stringify(updatedWebsite)
+                                      );
+                                      saveToRecentProjects(updatedWebsite);
+                                    }
+
+                                    return updatedWebsite;
+                                  });
+                                }
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -4088,12 +4191,44 @@ Return as JSON with this structure:
                             <input
                               type="text"
                               value={textImageContent.buttonText}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setTextImageContent({
                                   ...textImageContent,
                                   buttonText: e.target.value,
-                                })
-                              }
+                                });
+
+                                // Apply to website immediately
+                                if (selectedTextImageBlock) {
+                                  setWebsite((prev) => {
+                                    if (!prev) return prev;
+                                    const updatedWebsite = {
+                                      ...prev,
+                                      blocks: prev.blocks.map((block) =>
+                                        block.id ===
+                                        selectedTextImageBlock.blockId
+                                          ? {
+                                              ...block,
+                                              content: {
+                                                ...block.content,
+                                                buttonText: e.target.value,
+                                              },
+                                            }
+                                          : block
+                                      ),
+                                    };
+
+                                    if (user?.id) {
+                                      safeLocalStorage.setItem(
+                                        `generated_website_${user.id}`,
+                                        JSON.stringify(updatedWebsite)
+                                      );
+                                      saveToRecentProjects(updatedWebsite);
+                                    }
+
+                                    return updatedWebsite;
+                                  });
+                                }
+                              }}
                               className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                               placeholder="Button text"
                             />
@@ -4166,16 +4301,58 @@ Return as JSON with this structure:
                         {["left", "center", "right", "full"].map((position) => (
                           <button
                             key={position}
-                            onClick={() =>
-                              setTextImageStyle({
+                            onClick={() => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 imagePosition: position as
                                   | "left"
                                   | "center"
                                   | "right"
                                   | "full",
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              flexDirection:
+                                                position === "left"
+                                                  ? "row"
+                                                  : position === "right"
+                                                  ? "row-reverse"
+                                                  : "column",
+                                              textAlign:
+                                                position === "center"
+                                                  ? "center"
+                                                  : "left",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className={`flex-1 p-3 border-2 rounded-xl transition-all duration-200 ${
                               textImageStyle.imagePosition === position
                                 ? "border-blue-500 bg-blue-50"
@@ -4197,15 +4374,48 @@ Return as JSON with this structure:
                         {["left", "center", "right"].map((align) => (
                           <button
                             key={align}
-                            onClick={() =>
-                              setTextImageStyle({
+                            onClick={() => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 contentAlignment: align as
                                   | "left"
                                   | "center"
                                   | "right",
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              textAlign: align,
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className={`flex-1 p-3 border-2 rounded-xl transition-all duration-200 ${
                               textImageStyle.contentAlignment === align
                                 ? "border-blue-500 bg-blue-50"
@@ -4240,12 +4450,47 @@ Return as JSON with this structure:
                           <input
                             type="checkbox"
                             checked={textImageStyle.invertMobile}
-                            onChange={(e) =>
-                              setTextImageStyle({
+                            onChange={(e) => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 invertMobile: e.target.checked,
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              flexDirection: e.target.checked
+                                                ? "column-reverse"
+                                                : "row",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -4263,12 +4508,50 @@ Return as JSON with this structure:
                           <input
                             type="checkbox"
                             checked={textImageStyle.borderlessImage}
-                            onChange={(e) =>
-                              setTextImageStyle({
+                            onChange={(e) => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 borderlessImage: e.target.checked,
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately - this would affect image border radius and shadows
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              borderRadius: e.target.checked
+                                                ? "0"
+                                                : "1rem",
+                                              boxShadow: e.target.checked
+                                                ? "none"
+                                                : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -4291,15 +4574,47 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.imageFit}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               imageFit: e.target.value as
                                 | "cover"
                                 | "contain"
                                 | "fill",
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            objectFit: e.target.value,
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="cover">Cover</option>
@@ -4330,16 +4645,51 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.aspectRatio}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               aspectRatio: e.target.value as
                                 | "1:1"
                                 | "2:3"
                                 | "3:2"
                                 | "16:9",
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            aspectRatio: e.target.value.replace(
+                                              ":",
+                                              "/"
+                                            ),
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="1:1">1:1 square</option>
@@ -4371,16 +4721,55 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.roundedCorners}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               roundedCorners: e.target.value as
                                 | "none"
                                 | "small"
                                 | "medium"
                                 | "large",
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            borderRadius:
+                                              e.target.value === "none"
+                                                ? "0"
+                                                : e.target.value === "small"
+                                                ? "0.5rem"
+                                                : e.target.value === "medium"
+                                                ? "1rem"
+                                                : "2rem",
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="none">From theme (None)</option>
@@ -4415,12 +4804,54 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.animationStyle}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               animationStyle: e.target.value,
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            animation:
+                                              e.target.value === "slideUp"
+                                                ? "slideInUp 0.6s ease-out"
+                                                : e.target.value === "fadeIn"
+                                                ? "fadeIn 0.6s ease-out"
+                                                : e.target.value === "slideLeft"
+                                                ? "slideInLeft 0.6s ease-out"
+                                                : e.target.value ===
+                                                  "slideRight"
+                                                ? "slideInRight 0.6s ease-out"
+                                                : "none",
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="slideUp">From theme (Slide up)</option>
@@ -4459,12 +4890,53 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.topSpacing}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               topSpacing: e.target.value,
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            paddingTop:
+                                              e.target.value === "xlarge"
+                                                ? "120px"
+                                                : e.target.value === "large"
+                                                ? "80px"
+                                                : e.target.value === "medium"
+                                                ? "60px"
+                                                : e.target.value === "small"
+                                                ? "40px"
+                                                : "20px",
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="none">None</option>
@@ -4497,12 +4969,53 @@ Return as JSON with this structure:
                       <div className="relative">
                         <select
                           value={textImageStyle.bottomSpacing}
-                          onChange={(e) =>
-                            setTextImageStyle({
+                          onChange={(e) => {
+                            const newStyle = {
                               ...textImageStyle,
                               bottomSpacing: e.target.value,
-                            })
-                          }
+                            };
+                            setTextImageStyle(newStyle);
+
+                            // Apply to website immediately
+                            if (selectedTextImageBlock) {
+                              setWebsite((prev) => {
+                                if (!prev) return prev;
+                                const updatedWebsite = {
+                                  ...prev,
+                                  blocks: prev.blocks.map((block) =>
+                                    block.id === selectedTextImageBlock.blockId
+                                      ? {
+                                          ...block,
+                                          styles: {
+                                            ...block.styles,
+                                            paddingBottom:
+                                              e.target.value === "xlarge"
+                                                ? "120px"
+                                                : e.target.value === "large"
+                                                ? "80px"
+                                                : e.target.value === "medium"
+                                                ? "60px"
+                                                : e.target.value === "small"
+                                                ? "40px"
+                                                : "20px",
+                                          },
+                                        }
+                                      : block
+                                  ),
+                                };
+
+                                if (user?.id) {
+                                  safeLocalStorage.setItem(
+                                    `generated_website_${user.id}`,
+                                    JSON.stringify(updatedWebsite)
+                                  );
+                                  saveToRecentProjects(updatedWebsite);
+                                }
+
+                                return updatedWebsite;
+                              });
+                            }
+                          }}
                           className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
                         >
                           <option value="none">None</option>
@@ -4535,12 +5048,45 @@ Return as JSON with this structure:
                         </label>
                         <div className="flex space-x-2">
                           <button
-                            onClick={() =>
-                              setTextImageStyle({
+                            onClick={() => {
+                              const newStyle = {
                                 ...textImageStyle,
-                                minHeight: "content",
-                              })
-                            }
+                                minHeight: "content" as "content" | "screen",
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              minHeight: "auto",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 ${
                               textImageStyle.minHeight === "content"
                                 ? "bg-blue-100 text-blue-700"
@@ -4550,12 +5096,45 @@ Return as JSON with this structure:
                             Content
                           </button>
                           <button
-                            onClick={() =>
-                              setTextImageStyle({
+                            onClick={() => {
+                              const newStyle = {
                                 ...textImageStyle,
-                                minHeight: "screen",
-                              })
-                            }
+                                minHeight: "screen" as "content" | "screen",
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              minHeight: "100vh",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 ${
                               textImageStyle.minHeight === "screen"
                                 ? "bg-blue-100 text-blue-700"
@@ -4578,12 +5157,50 @@ Return as JSON with this structure:
                           <input
                             type="checkbox"
                             checked={textImageStyle.hasDivider}
-                            onChange={(e) =>
-                              setTextImageStyle({
+                            onChange={(e) => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 hasDivider: e.target.checked,
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              borderTop: e.target.checked
+                                                ? "1px solid #e5e7eb"
+                                                : "none",
+                                              borderBottom: e.target.checked
+                                                ? "1px solid #e5e7eb"
+                                                : "none",
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -4610,12 +5227,50 @@ Return as JSON with this structure:
                           <input
                             type="checkbox"
                             checked={textImageStyle.hasBorder}
-                            onChange={(e) =>
-                              setTextImageStyle({
+                            onChange={(e) => {
+                              const newStyle = {
                                 ...textImageStyle,
                                 hasBorder: e.target.checked,
-                              })
-                            }
+                              };
+                              setTextImageStyle(newStyle);
+
+                              // Apply to website immediately
+                              if (selectedTextImageBlock) {
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  const updatedWebsite = {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id ===
+                                      selectedTextImageBlock.blockId
+                                        ? {
+                                            ...block,
+                                            styles: {
+                                              ...block.styles,
+                                              border: e.target.checked
+                                                ? "2px solid #e5e7eb"
+                                                : "none",
+                                              borderRadius: e.target.checked
+                                                ? "1rem"
+                                                : undefined,
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+
+                                  if (user?.id) {
+                                    safeLocalStorage.setItem(
+                                      `generated_website_${user.id}`,
+                                      JSON.stringify(updatedWebsite)
+                                    );
+                                    saveToRecentProjects(updatedWebsite);
+                                  }
+
+                                  return updatedWebsite;
+                                });
+                              }
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
