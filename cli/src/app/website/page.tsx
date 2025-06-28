@@ -180,6 +180,22 @@ export default function WebsiteBuilder() {
     width: 320,
   });
 
+  // Button settings states
+  const [showButtonSettings, setShowButtonSettings] = useState(false);
+  const [selectedButton, setSelectedButton] = useState<{
+    blockId: string;
+    field: string;
+    currentText: string;
+  } | null>(null);
+  const [buttonLinkType, setButtonLinkType] = useState<
+    "section" | "page" | "url" | "email" | "phone"
+  >("section");
+  const [buttonLabel, setButtonLabel] = useState("");
+  const [buttonSection, setButtonSection] = useState("hero");
+  const [buttonUrl, setButtonUrl] = useState("");
+  const [buttonEmail, setButtonEmail] = useState("");
+  const [buttonPhone, setButtonPhone] = useState("");
+
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       window.location.href = "/";
@@ -1367,7 +1383,12 @@ Make it sound professional, engaging, and specific to the business type and loca
               <button
                 className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
                 onClick={(e) =>
-                  handleElementClick(block.id, "button", "buttonText", e)
+                  handleButtonClick(
+                    block.id,
+                    "buttonText",
+                    block.content.buttonText || "",
+                    e
+                  )
                 }
                 onDoubleClick={() =>
                   handleTextDoubleClick(block.id, "buttonText")
@@ -1874,7 +1895,12 @@ Make it sound professional, engaging, and specific to the business type and loca
               <button
                 className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
                 onClick={(e) =>
-                  handleElementClick(block.id, "button", "buttonText", e)
+                  handleButtonClick(
+                    block.id,
+                    "buttonText",
+                    block.content.buttonText || "",
+                    e
+                  )
                 }
                 onDoubleClick={() =>
                   handleTextDoubleClick(block.id, "buttonText")
@@ -1969,6 +1995,22 @@ Make it sound professional, engaging, and specific to the business type and loca
     setSelectedImage({ blockId, field, currentUrl, altText: dynamicAltText });
     setImageAltText(dynamicAltText);
     setShowImageSettings(true);
+  };
+
+  // Handle button clicks to show settings popup
+  const handleButtonClick = (
+    blockId: string,
+    field: string,
+    currentText: string,
+    event: React.MouseEvent
+  ) => {
+    if (isPreviewMode) return;
+
+    event.stopPropagation();
+
+    setSelectedButton({ blockId, field, currentText });
+    setButtonLabel(currentText);
+    setShowButtonSettings(true);
   };
 
   const handleRegenerateImage = async () => {
@@ -2911,6 +2953,238 @@ Make it sound professional, engaging, and specific to the business type and loca
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Button Settings Side Panel - Durable AI Style */}
+      {showButtonSettings && selectedButton && !isPreviewMode && (
+        <>
+          {/* Side Panel - slides from right with Durable-like styling */}
+          <div
+            className={`fixed top-6 bottom-6 bg-white z-50 transform transition-all duration-300 ease-in-out ${
+              showButtonSettings ? "translate-x-0" : "translate-x-full"
+            }`}
+            style={{
+              left: `${
+                typeof window !== "undefined"
+                  ? Math.min(
+                      panelPosition.x,
+                      window.innerWidth - panelPosition.width
+                    )
+                  : panelPosition.x
+              }px`,
+              width: `${
+                typeof window !== "undefined"
+                  ? Math.min(panelPosition.width, window.innerWidth)
+                  : panelPosition.width
+              }px`,
+              borderRadius: "20px",
+              maxHeight: "520px",
+              boxShadow:
+                "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+              border: "none",
+            }}
+          >
+            {/* Resize Handle - Hidden on mobile, better positioned */}
+            <div
+              className="absolute left-0 top-4 bottom-4 w-1 bg-gray-200 hover:bg-blue-400 cursor-col-resize transition-all duration-200 hidden sm:block opacity-0 hover:opacity-100"
+              onMouseDown={handleMouseDown}
+              style={{ borderRadius: "0 2px 2px 0", marginLeft: "-1px" }}
+            />
+
+            <div className="p-6 h-full overflow-y-auto flex flex-col">
+              {/* Header - More refined */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                <button
+                  onClick={() => {
+                    setShowButtonSettings(false);
+                    setSelectedButton(null);
+                  }}
+                  className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group"
+                >
+                  <svg
+                    className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <span className="text-sm font-medium">Back</span>
+                </button>
+
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Button settings
+                </h3>
+
+                <button
+                  onClick={() => {
+                    setShowButtonSettings(false);
+                    setSelectedButton(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+
+              {/* Link Type Dropdown */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-800 mb-3">
+                  Link type
+                </label>
+                <div className="relative">
+                  <select
+                    value={buttonLinkType}
+                    onChange={(e) =>
+                      setButtonLinkType(
+                        e.target.value as
+                          | "section"
+                          | "page"
+                          | "url"
+                          | "email"
+                          | "phone"
+                      )
+                    }
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                  >
+                    <option value="section">Section</option>
+                    <option value="page">Page</option>
+                    <option value="url">External</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                  </select>
+                  <svg
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Label Field */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-800 mb-3">
+                  Label
+                </label>
+                <input
+                  type="text"
+                  value={buttonLabel}
+                  onChange={(e) => {
+                    setButtonLabel(e.target.value);
+                    // Update the button text in real-time
+                    handleTextChange(
+                      selectedButton.blockId,
+                      selectedButton.field,
+                      e.target.value
+                    );
+                  }}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                  placeholder="Enter button text"
+                />
+              </div>
+
+              {/* Section Selection - Only show when Link Type is "Section" */}
+              {buttonLinkType === "section" && (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Section
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={buttonSection}
+                      onChange={(e) => setButtonSection(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                    >
+                      <option value="hero">Hero</option>
+                      <option value="about">About</option>
+                      <option value="services">Service-list</option>
+                      <option value="features">Features</option>
+                      <option value="contact">Contact</option>
+                      <option value="cta">Banner</option>
+                    </select>
+                    <svg
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    A section on this page
+                  </p>
+                </div>
+              )}
+
+              {/* URL Field - Only show when Link Type is "url" */}
+              {buttonLinkType === "url" && (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    URL
+                  </label>
+                  <input
+                    type="url"
+                    value={buttonUrl}
+                    onChange={(e) => setButtonUrl(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="https://example.com"
+                  />
+                </div>
+              )}
+
+              {/* Email Field - Only show when Link Type is "email" */}
+              {buttonLinkType === "email" && (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={buttonEmail}
+                    onChange={(e) => setButtonEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="contact@example.com"
+                  />
+                </div>
+              )}
+
+              {/* Phone Field - Only show when Link Type is "phone" */}
+              {buttonLinkType === "phone" && (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={buttonPhone}
+                    onChange={(e) => setButtonPhone(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </>
