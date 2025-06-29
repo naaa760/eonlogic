@@ -1169,6 +1169,17 @@ export default function WebsiteBuilder() {
         };
 
       case "services":
+        const serviceImages = await Promise.all([
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "service1", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "service2", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "service3", location)
+          ),
+        ]);
         return {
           title: "Our Services",
           subtitle: `Comprehensive ${businessType} solutions`,
@@ -1177,22 +1188,19 @@ export default function WebsiteBuilder() {
               title: "Premium Service",
               description: "High-quality service tailored to your needs",
               icon: "⭐",
-              image:
-                "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&h=400&fit=crop&q=80",
+              image: serviceImages[0],
             },
             {
               title: "Expert Consultation",
               description: "Professional guidance from industry experts",
               icon: "🎯",
-              image:
-                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=400&fit=crop&q=80",
+              image: serviceImages[1],
             },
             {
               title: "24/7 Support",
               description: "Round-the-clock assistance when you need it",
               icon: "🛟",
-              image:
-                "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&h=400&fit=crop&q=80",
+              image: serviceImages[2],
             },
           ],
         };
@@ -1265,11 +1273,13 @@ export default function WebsiteBuilder() {
         };
 
       case "about":
+        const aboutImage = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(businessType, "about", location)
+        );
         return {
           title: `About ${businessName}`,
           description: `We are a leading ${businessType} company dedicated to providing exceptional service and innovative solutions. Our team of experts brings years of experience to help you achieve your goals.`,
-          image:
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
+          image: aboutImage,
           highlights: ["Quality Service", "Expert Team", "Proven Results"],
         };
 
@@ -1432,21 +1442,45 @@ export default function WebsiteBuilder() {
         };
 
       case "logo-showcase":
+        const logoImages = await Promise.all([
+          fetchPexelsImage("company logo"),
+          fetchPexelsImage("business logo"),
+          fetchPexelsImage("startup logo"),
+          fetchPexelsImage("brand logo"),
+          fetchPexelsImage("creative logo"),
+          fetchPexelsImage("modern logo"),
+        ]);
         return {
           title: "Trusted by Leading Companies",
           subtitle: "Join hundreds of satisfied clients",
-          images: [
-            "https://via.placeholder.com/200x100/4F46E5/FFFFFF?text=Company+1",
-            "https://via.placeholder.com/200x100/7C3AED/FFFFFF?text=Company+2",
-            "https://via.placeholder.com/200x100/2563EB/FFFFFF?text=Company+3",
-            "https://via.placeholder.com/200x100/DC2626/FFFFFF?text=Company+4",
-            "https://via.placeholder.com/200x100/059669/FFFFFF?text=Company+5",
-            "https://via.placeholder.com/200x100/D97706/FFFFFF?text=Company+6",
-          ],
+          images: logoImages,
         };
 
       case "testimonials":
       case "google-reviews":
+        const testimonialImages = await Promise.all([
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(
+              businessType,
+              "testimonial1",
+              location
+            )
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(
+              businessType,
+              "testimonial2",
+              location
+            )
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(
+              businessType,
+              "testimonial3",
+              location
+            )
+          ),
+        ]);
         return {
           title: "What Our Clients Say",
           subtitle: "Real feedback from real customers",
@@ -1456,63 +1490,51 @@ export default function WebsiteBuilder() {
               author: "Sarah Johnson",
               company: "Tech Solutions Inc.",
               rating: 5,
-              image:
-                "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=100&h=100&fit=crop&q=80",
+              image: testimonialImages[0],
             },
             {
               text: "Outstanding results and excellent customer service. Highly recommend their services.",
               author: "Michael Chen",
               company: "Innovation Labs",
               rating: 5,
-              image:
-                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&q=80",
+              image: testimonialImages[1],
             },
             {
               text: "Professional, reliable, and delivers on promises. Great experience working with them.",
               author: "Emily Rodriguez",
               company: "Growth Partners",
               rating: 5,
-              image:
-                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80",
+              image: testimonialImages[2],
             },
           ],
         };
 
       case "image-carousel":
+      case "image-grid":
+        const galleryImages = await Promise.all([
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery1", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery2", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery3", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery4", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery5", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "gallery6", location)
+          ),
+        ]);
         return {
           title: "Our Gallery",
           subtitle: "Explore our work and achievements",
-          images: [
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop&q=80",
-          ],
-        };
-
-      case "image-grid":
-        return {
-          title: "Our Portfolio",
-          subtitle: "A showcase of our best work",
-          images: [
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80",
-          ],
-        };
-
-      case "gallery":
-        return {
-          title: "Featured Image",
-          subtitle: "Highlighting our excellence",
-          image:
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
-          description:
-            "This image represents our commitment to quality and excellence in everything we do.",
+          images: galleryImages,
         };
 
       case "video":
@@ -1525,6 +1547,17 @@ export default function WebsiteBuilder() {
         };
 
       case "team":
+        const teamImages = await Promise.all([
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "team1", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "team2", location)
+          ),
+          fetchPexelsImage(
+            createBusinessSpecificImageQuery(businessType, "team3", location)
+          ),
+        ]);
         return {
           title: "Meet Our Team",
           subtitle: "The experts behind our success",
@@ -1533,8 +1566,7 @@ export default function WebsiteBuilder() {
               title: "John Smith",
               description: "CEO & Founder - 15+ years of industry experience",
               icon: "👨‍💼",
-              image:
-                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&q=80",
+              image: teamImages[0],
               role: "CEO & Founder",
               bio: "John leads our company with vision and expertise, bringing over 15 years of industry experience.",
             },
@@ -1542,8 +1574,7 @@ export default function WebsiteBuilder() {
               title: "Sarah Wilson",
               description: "Lead Consultant - Expert in client relations",
               icon: "👩‍💼",
-              image:
-                "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=300&h=300&fit=crop&q=80",
+              image: teamImages[1],
               role: "Lead Consultant",
               bio: "Sarah ensures our clients receive exceptional service and achieve their goals.",
             },
@@ -1551,8 +1582,7 @@ export default function WebsiteBuilder() {
               title: "David Brown",
               description: "Technical Director - Innovation specialist",
               icon: "👨‍💻",
-              image:
-                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&q=80",
+              image: teamImages[2],
               role: "Technical Director",
               bio: "David drives our technical innovation and ensures we stay ahead of industry trends.",
             },
@@ -2645,15 +2675,13 @@ Make it sound professional, engaging, and specific to the business type and loca
           title: "Your Amazing Title",
           subtitle: "Describe your business in a compelling way",
           buttonText: "Get Started",
-          backgroundImage:
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
+          backgroundImage: "",
         };
       case "about":
         return {
           title: "About Us",
           description: "Tell your story and what makes your business unique.",
-          image:
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
+          image: "",
           highlights: ["Quality", "Innovation", "Excellence"],
         };
       case "services":
@@ -2664,15 +2692,13 @@ Make it sound professional, engaging, and specific to the business type and loca
             {
               title: "Service 1",
               description: "Description of your first service",
-              image:
-                "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&h=400&fit=crop&q=80",
+              image: "",
               icon: "🎯",
             },
             {
               title: "Service 2",
               description: "Description of your second service",
-              image:
-                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=400&fit=crop&q=80",
+              image: "",
               icon: "⚡",
             },
           ],
@@ -2686,11 +2712,13 @@ Make it sound professional, engaging, and specific to the business type and loca
               title: "Feature 1",
               description: "Feature description",
               icon: "⭐",
+              image: "",
             },
             {
               title: "Feature 2",
               description: "Feature description",
               icon: "🏆",
+              image: "",
             },
           ],
         };
@@ -2722,11 +2750,7 @@ Make it sound professional, engaging, and specific to the business type and loca
       case "gallery":
         return {
           title: "Our Work",
-          images: [
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&h=300&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=300&fit=crop&q=80",
-          ],
+          images: ["", "", ""],
         };
       default:
         return {};
@@ -2775,11 +2799,16 @@ Make it sound professional, engaging, and specific to the business type and loca
 
   const renderBlock = (block: ContentBlock) => {
     const isSelected = selectedBlock === block.id;
+    // Animation: fade/slide-in for new blocks
+    const animationClass =
+      "animate-section-entry transition-all duration-500 ease-out";
 
     return (
       <div
         key={block.id}
-        className={`relative group ${isSelected ? "ring-2 ring-blue-500" : ""}`}
+        className={`relative group ${
+          isSelected ? "ring-2 ring-blue-500" : ""
+        } ${animationClass} bg-white rounded-2xl shadow-lg mb-8 overflow-hidden`}
         onClick={(e) => handleBlockClick(block.id, e)}
         style={block.styles as React.CSSProperties}
       >
@@ -3034,8 +3063,8 @@ Make it sound professional, engaging, and specific to the business type and loca
                   </div>
                 </div>
                 <div className="relative mt-8 md:mt-0">
-                  <img
-                    src={block.content.image}
+                  <ImageWithShimmer
+                    src={block.content.image || ""}
                     alt="About us"
                     className="rounded-2xl shadow-xl w-full h-64 sm:h-80 md:h-96 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
                     onClick={() =>
@@ -3125,9 +3154,9 @@ Make it sound professional, engaging, and specific to the business type and loca
                       key={index}
                       className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
                     >
-                      <img
-                        src={service.image}
-                        alt={service.title}
+                      <ImageWithShimmer
+                        src={service.image || ""}
+                        alt={service.title || ""}
                         className="w-full h-40 sm:h-48 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
                         onClick={() =>
                           handleImageClick(
@@ -5220,7 +5249,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 {/* Image Section */}
                 <div className="mb-6">
                   <div className="relative mb-4">
-                    <img
+                    <ImageWithShimmer
                       src={
                         website?.blocks.find(
                           (b) => b.id === selectedTextImageBlock?.blockId
@@ -6134,6 +6163,38 @@ Make it sound professional, engaging, and specific to the business type and loca
       )}
 
       {/* Remove old section selector */}
+    </div>
+  );
+}
+
+// 2. Add shimmer component for image loading
+type ImageWithShimmerProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
+};
+function ImageWithShimmer({
+  src,
+  alt,
+  className,
+  ...props
+}: ImageWithShimmerProps) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative">
+      {!loaded && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-2xl" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} ${
+          !loaded ? "opacity-0" : "opacity-100"
+        } transition-opacity duration-300`}
+        onLoad={() => setLoaded(true)}
+        {...props}
+      />
     </div>
   );
 }
