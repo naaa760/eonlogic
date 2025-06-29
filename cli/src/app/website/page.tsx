@@ -270,6 +270,7 @@ export default function WebsiteBuilder() {
     string | null
   >(null);
   const [sectionSearchQuery, setSectionSearchQuery] = useState("");
+  const [currentBlockId, setCurrentBlockId] = useState<string | null>(null);
 
   // Carousel state management for banner auto-rotation
   const [carouselStates, setCarouselStates] = useState<Record<string, number>>(
@@ -921,6 +922,7 @@ export default function WebsiteBuilder() {
     setShowSectionPanel(false);
     setActiveSectionCategory(null);
     setSectionSearchQuery("");
+    setCurrentBlockId(null);
   };
 
   // Map section IDs to block types
@@ -3598,6 +3600,7 @@ Make it sound professional, engaging, and specific to the business type and loca
           <button
             onClick={(e) => {
               e.stopPropagation();
+              setCurrentBlockId(block.id);
               setShowSectionPanel(true);
             }}
             className="bg-transparent text-gray-500 px-5 py-2 rounded-full border border-gray-200 shadow-none hover:bg-gray-100 hover:text-gray-700 transition-all duration-200 flex items-center space-x-2 text-sm font-medium whitespace-nowrap pointer-events-auto"
@@ -4498,6 +4501,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         setShowSectionPanel(false);
                         setActiveSectionCategory(null);
                         setSectionSearchQuery("");
+                        setCurrentBlockId(null);
                       }}
                       className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
@@ -4611,6 +4615,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                         setShowSectionPanel(false);
                         setActiveSectionCategory(null);
                         setSectionSearchQuery("");
+                        setCurrentBlockId(null);
                       }}
                       className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
@@ -4638,10 +4643,14 @@ Make it sound professional, engaging, and specific to the business type and loca
                       <button
                         key={section.id}
                         onClick={async () => {
-                          await createAdvancedSection(section.id);
+                          await createAdvancedSection(
+                            section.id,
+                            currentBlockId || undefined
+                          );
                           setShowSectionPanel(false);
                           setActiveSectionCategory(null);
                           setSectionSearchQuery("");
+                          setCurrentBlockId(null);
                         }}
                         className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-b-0"
                       >
