@@ -22,18 +22,37 @@ interface ServiceItem {
   description: string;
   icon: string;
   image?: string;
+  price?: string;
+  period?: string;
+  features?: string[];
+  buttonText?: string;
+  popular?: boolean;
+  items?: Array<{
+    name: string;
+    price: string;
+    description: string;
+  }>;
+  role?: string;
+  bio?: string;
 }
 
 interface FeatureItem {
   title: string;
   description: string;
   icon: string;
+  image?: string;
+  date?: string;
+  readTime?: string;
+  role?: string;
+  bio?: string;
 }
 
 interface TestimonialItem {
   text: string;
   author: string;
   company: string;
+  rating?: number;
+  image?: string;
 }
 
 interface ContentBlock {
@@ -62,6 +81,31 @@ interface ContentBlock {
     address?: string;
     email?: string;
     phone?: string;
+    slides?: Array<{
+      title: string;
+      subtitle: string;
+      buttonText: string;
+      backgroundImage: string;
+    }>;
+    videoUrl?: string;
+    mapUrl?: string;
+    formFields?: Array<{
+      name: string;
+      label: string;
+      type: string;
+      required: boolean;
+    }>;
+    hours?: Array<{
+      day: string;
+      time: string;
+    }>;
+    calendarUrl?: string;
+    socialLinks?: Array<{
+      platform: string;
+      url: string;
+      icon: string;
+    }>;
+    htmlContent?: string;
   };
   styles: {
     backgroundColor?: string;
@@ -70,6 +114,11 @@ interface ContentBlock {
     textAlign?: string;
     height?: string;
     minHeight?: string;
+    position?: string;
+    overflow?: string;
+    maxWidth?: string;
+    margin?: string;
+    paddingLeft?: string;
   };
 }
 
@@ -869,6 +918,7 @@ export default function WebsiteBuilder() {
       : null;
     const businessName = businessInfo?.name || "Your Business";
     const businessType = businessInfo?.type || "Business";
+    const location = businessInfo?.location || "Your City";
 
     switch (sectionId) {
       case "hero":
@@ -887,6 +937,105 @@ export default function WebsiteBuilder() {
           buttonText: "Learn More",
           backgroundImage:
             "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
+        };
+
+      case "hero-slider":
+        return {
+          title: `Premium ${businessType} Solutions`,
+          subtitle: "Discover excellence in every service we provide",
+          buttonText: "Explore Services",
+          images: [
+            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop&q=80",
+          ],
+        };
+
+      case "hero-double":
+        return {
+          title: `${businessName} Excellence`,
+          subtitle: "Two decades of trusted service and innovation",
+          buttonText: "Get Quote",
+          images: [
+            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=800&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&h=800&fit=crop&q=80",
+          ],
+        };
+
+      case "hero-carousel":
+        return {
+          title: "Multiple Solutions, One Company",
+          slides: [
+            {
+              title: `${businessName} Services`,
+              subtitle: "Professional solutions for your needs",
+              buttonText: "Learn More",
+              backgroundImage:
+                "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
+            },
+            {
+              title: "Expert Consultation",
+              subtitle: "Get professional advice from industry experts",
+              buttonText: "Book Consultation",
+              backgroundImage:
+                "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
+            },
+            {
+              title: "24/7 Support",
+              subtitle: "Round-the-clock assistance when you need it",
+              buttonText: "Contact Support",
+              backgroundImage:
+                "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop&q=80",
+            },
+          ],
+        };
+
+      case "hero-split":
+        return {
+          title: `Why Choose ${businessName}?`,
+          subtitle: `Leading ${businessType} provider with proven results`,
+          description:
+            "We combine innovation with expertise to deliver outstanding results. Our team is dedicated to your success.",
+          buttonText: "Start Today",
+          image:
+            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop&q=80",
+          highlights: ["Expert Team", "Proven Results", "24/7 Support"],
+        };
+
+      case "hero-grid":
+        return {
+          title: `${businessName} Services`,
+          subtitle: "Comprehensive solutions for your business",
+          services: [
+            {
+              title: "Service 1",
+              description: "Professional service description",
+              icon: "⭐",
+              image:
+                "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80",
+            },
+            {
+              title: "Service 2",
+              description: "Expert consultation and support",
+              icon: "🎯",
+              image:
+                "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=300&fit=crop&q=80",
+            },
+            {
+              title: "Service 3",
+              description: "24/7 customer assistance",
+              icon: "🛟",
+              image:
+                "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop&q=80",
+            },
+            {
+              title: "Service 4",
+              description: "Custom solutions for your needs",
+              icon: "🚀",
+              image:
+                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop&q=80",
+            },
+          ],
         };
 
       case "services":
@@ -918,6 +1067,20 @@ export default function WebsiteBuilder() {
           ],
         };
 
+      case "services-list":
+        return {
+          title: "What We Offer",
+          subtitle: `Complete ${businessType} services`,
+          highlights: [
+            "Professional Consultation",
+            "Custom Solutions",
+            "Implementation Support",
+            "Ongoing Maintenance",
+            "24/7 Customer Service",
+            "Quality Guarantee",
+          ],
+        };
+
       case "pricing":
         return {
           title: "Choose Your Plan",
@@ -927,31 +1090,46 @@ export default function WebsiteBuilder() {
               title: "Basic",
               description: "Perfect for getting started",
               icon: "💎",
-              price: "$99/month",
-              features: ["Feature 1", "Feature 2", "Feature 3"],
+              price: "$99",
+              period: "/month",
+              features: [
+                "Feature 1",
+                "Feature 2",
+                "Feature 3",
+                "Email Support",
+              ],
+              buttonText: "Get Started",
+              popular: false,
             },
             {
               title: "Professional",
               description: "Most popular choice",
               icon: "🚀",
-              price: "$199/month",
+              price: "$199",
+              period: "/month",
               features: [
                 "Everything in Basic",
-                "Feature 4",
-                "Feature 5",
+                "Advanced Features",
                 "Priority Support",
+                "Custom Integration",
               ],
+              buttonText: "Choose Plan",
+              popular: true,
             },
             {
               title: "Enterprise",
               description: "For large organizations",
               icon: "🏢",
               price: "Custom",
+              period: "",
               features: [
                 "Everything in Professional",
-                "Custom Integration",
+                "Custom Development",
                 "Dedicated Manager",
+                "SLA Guarantee",
               ],
+              buttonText: "Contact Sales",
+              popular: false,
             },
           ],
         };
@@ -962,19 +1140,140 @@ export default function WebsiteBuilder() {
           description: `We are a leading ${businessType} company dedicated to providing exceptional service and innovative solutions. Our team of experts brings years of experience to help you achieve your goals.`,
           image:
             "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
-          highlights: ["Quality", "Innovation", "Excellence"],
+          highlights: ["Quality Service", "Expert Team", "Proven Results"],
         };
 
       case "text":
         return {
           title: "Your Content Header",
           description:
-            "Add your text content here. You can include multiple paragraphs, format text, and create engaging content for your visitors.",
+            "Add your text content here. You can include multiple paragraphs, format text, and create engaging content for your visitors. This section is perfect for detailed explanations, company information, or any other text-based content.",
+        };
+
+      case "header-text":
+        return {
+          title: `Welcome to ${businessName}`,
+          subtitle: `Your trusted ${businessType} partner in ${location}`,
+          description:
+            "We deliver exceptional results through innovative solutions and dedicated service.",
+        };
+
+      case "restaurant-menu":
+        return {
+          title: "Our Menu",
+          subtitle: "Delicious options for every taste",
+          services: [
+            {
+              title: "Appetizers",
+              description: "Fresh starters to begin your meal",
+              icon: "🥗",
+              items: [
+                {
+                  name: "Caesar Salad",
+                  price: "$12",
+                  description: "Fresh romaine, parmesan, croutons",
+                },
+                {
+                  name: "Soup of the Day",
+                  price: "$8",
+                  description: "Chef's daily selection",
+                },
+                {
+                  name: "Bruschetta",
+                  price: "$10",
+                  description: "Toasted bread with tomato and basil",
+                },
+              ],
+            },
+            {
+              title: "Main Courses",
+              description: "Hearty dishes made with premium ingredients",
+              icon: "🍽️",
+              items: [
+                {
+                  name: "Grilled Salmon",
+                  price: "$24",
+                  description: "Atlantic salmon with seasonal vegetables",
+                },
+                {
+                  name: "Ribeye Steak",
+                  price: "$32",
+                  description: "12oz prime cut with garlic mashed potatoes",
+                },
+                {
+                  name: "Pasta Primavera",
+                  price: "$18",
+                  description: "Fresh vegetables in cream sauce",
+                },
+              ],
+            },
+            {
+              title: "Desserts",
+              description: "Sweet endings to your perfect meal",
+              icon: "🍰",
+              items: [
+                {
+                  name: "Chocolate Cake",
+                  price: "$8",
+                  description: "Rich chocolate with berry compote",
+                },
+                {
+                  name: "Tiramisu",
+                  price: "$9",
+                  description: "Classic Italian dessert",
+                },
+                {
+                  name: "Ice Cream",
+                  price: "$6",
+                  description: "Vanilla, chocolate, or strawberry",
+                },
+              ],
+            },
+          ],
+        };
+
+      case "blog-posts":
+        return {
+          title: "Latest News & Updates",
+          subtitle: "Stay informed with our latest insights",
+          features: [
+            {
+              title: "Industry Trends 2024",
+              description:
+                "Discover the latest trends shaping our industry and how they impact your business.",
+              icon: "📈",
+              image:
+                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=250&fit=crop&q=80",
+              date: "March 15, 2024",
+              readTime: "5 min read",
+            },
+            {
+              title: "Success Story: Client Achievement",
+              description:
+                "Learn how we helped a client achieve remarkable results through our innovative approach.",
+              icon: "🏆",
+              image:
+                "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=250&fit=crop&q=80",
+              date: "March 10, 2024",
+              readTime: "3 min read",
+            },
+            {
+              title: "Tips for Better Results",
+              description:
+                "Expert advice and best practices to help you maximize your success.",
+              icon: "💡",
+              image:
+                "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=250&fit=crop&q=80",
+              date: "March 5, 2024",
+              readTime: "7 min read",
+            },
+          ],
         };
 
       case "faq":
         return {
           title: "Frequently Asked Questions",
+          subtitle: "Find answers to common questions",
           features: [
             {
               title: "What services do you offer?",
@@ -993,34 +1292,79 @@ export default function WebsiteBuilder() {
                 "We're open Monday through Friday, 9 AM to 6 PM. Emergency support is available 24/7.",
               icon: "🕒",
             },
+            {
+              title: "Do you offer support?",
+              description:
+                "Yes, we provide comprehensive support including phone, email, and live chat assistance.",
+              icon: "🛟",
+            },
+          ],
+        };
+
+      case "logo-showcase":
+        return {
+          title: "Trusted by Leading Companies",
+          subtitle: "Join hundreds of satisfied clients",
+          images: [
+            "https://via.placeholder.com/200x100/4F46E5/FFFFFF?text=Company+1",
+            "https://via.placeholder.com/200x100/7C3AED/FFFFFF?text=Company+2",
+            "https://via.placeholder.com/200x100/2563EB/FFFFFF?text=Company+3",
+            "https://via.placeholder.com/200x100/DC2626/FFFFFF?text=Company+4",
+            "https://via.placeholder.com/200x100/059669/FFFFFF?text=Company+5",
+            "https://via.placeholder.com/200x100/D97706/FFFFFF?text=Company+6",
           ],
         };
 
       case "testimonials":
+      case "google-reviews":
         return {
           title: "What Our Clients Say",
+          subtitle: "Real feedback from real customers",
           testimonials: [
             {
               text: `${businessName} exceeded our expectations. Their professional service and attention to detail made all the difference.`,
               author: "Sarah Johnson",
               company: "Tech Solutions Inc.",
+              rating: 5,
+              image:
+                "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=100&h=100&fit=crop&q=80",
             },
             {
               text: "Outstanding results and excellent customer service. Highly recommend their services.",
               author: "Michael Chen",
               company: "Innovation Labs",
+              rating: 5,
+              image:
+                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&q=80",
             },
             {
               text: "Professional, reliable, and delivers on promises. Great experience working with them.",
               author: "Emily Rodriguez",
               company: "Growth Partners",
+              rating: 5,
+              image:
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80",
             },
           ],
         };
 
-      case "gallery":
+      case "image-carousel":
         return {
-          title: "Our Work",
+          title: "Our Gallery",
+          subtitle: "Explore our work and achievements",
+          images: [
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop&q=80",
+          ],
+        };
+
+      case "image-grid":
+        return {
+          title: "Our Portfolio",
+          subtitle: "A showcase of our best work",
           images: [
             "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop&q=80",
             "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&h=300&fit=crop&q=80",
@@ -1031,9 +1375,29 @@ export default function WebsiteBuilder() {
           ],
         };
 
+      case "gallery":
+        return {
+          title: "Featured Image",
+          subtitle: "Highlighting our excellence",
+          image:
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&q=80",
+          description:
+            "This image represents our commitment to quality and excellence in everything we do.",
+        };
+
+      case "video":
+        return {
+          title: "Watch Our Story",
+          subtitle: "Learn more about what we do",
+          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          description:
+            "Discover how we can help transform your business with our innovative solutions.",
+        };
+
       case "team":
         return {
           title: "Meet Our Team",
+          subtitle: "The experts behind our success",
           features: [
             {
               title: "John Smith",
@@ -1041,6 +1405,8 @@ export default function WebsiteBuilder() {
               icon: "👨‍💼",
               image:
                 "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&q=80",
+              role: "CEO & Founder",
+              bio: "John leads our company with vision and expertise, bringing over 15 years of industry experience.",
             },
             {
               title: "Sarah Wilson",
@@ -1048,6 +1414,8 @@ export default function WebsiteBuilder() {
               icon: "👩‍💼",
               image:
                 "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=300&h=300&fit=crop&q=80",
+              role: "Lead Consultant",
+              bio: "Sarah ensures our clients receive exceptional service and achieve their goals.",
             },
             {
               title: "David Brown",
@@ -1055,7 +1423,28 @@ export default function WebsiteBuilder() {
               icon: "👨‍💻",
               image:
                 "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&q=80",
+              role: "Technical Director",
+              bio: "David drives our technical innovation and ensures we stay ahead of industry trends.",
             },
+          ],
+        };
+
+      case "hours":
+        return {
+          title: "Business Hours",
+          subtitle: "When you can reach us",
+          address:
+            businessInfo?.location || "123 Business St, City, State 12345",
+          phone: "+1 (555) 123-4567",
+          email: `info@${businessName.toLowerCase().replace(/\s+/g, "")}.com`,
+          hours: [
+            { day: "Monday", time: "9:00 AM - 6:00 PM" },
+            { day: "Tuesday", time: "9:00 AM - 6:00 PM" },
+            { day: "Wednesday", time: "9:00 AM - 6:00 PM" },
+            { day: "Thursday", time: "9:00 AM - 6:00 PM" },
+            { day: "Friday", time: "9:00 AM - 6:00 PM" },
+            { day: "Saturday", time: "10:00 AM - 4:00 PM" },
+            { day: "Sunday", time: "Closed" },
           ],
         };
 
@@ -1069,13 +1458,98 @@ export default function WebsiteBuilder() {
             .toLowerCase()
             .replace(/\s+/g, "")}.com`,
           phone: "+1 (555) 123-4567",
+          mapUrl: `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(
+            businessInfo?.location || "New York, NY"
+          )}`,
         };
 
       case "contact-form":
         return {
           title: "Get In Touch",
           subtitle: "Send us a message and we'll get back to you soon",
-          formFields: ["name", "email", "phone", "message"],
+          formFields: [
+            { name: "name", label: "Full Name", type: "text", required: true },
+            {
+              name: "email",
+              label: "Email Address",
+              type: "email",
+              required: true,
+            },
+            {
+              name: "phone",
+              label: "Phone Number",
+              type: "tel",
+              required: false,
+            },
+            { name: "subject", label: "Subject", type: "text", required: true },
+            {
+              name: "message",
+              label: "Message",
+              type: "textarea",
+              required: true,
+            },
+          ],
+          buttonText: "Send Message",
+        };
+
+      case "calendar":
+        return {
+          title: "Schedule an Appointment",
+          subtitle: "Book a time that works for you",
+          description:
+            "Choose from our available time slots and we'll confirm your appointment.",
+          calendarUrl: "https://calendly.com/your-business",
+          services: [
+            { name: "Consultation", duration: "30 min", price: "Free" },
+            { name: "Strategy Session", duration: "60 min", price: "$150" },
+            { name: "Full Assessment", duration: "90 min", price: "$250" },
+          ],
+        };
+
+      case "social-links":
+        return {
+          title: "Follow Us",
+          subtitle: "Stay connected on social media",
+          socialLinks: [
+            {
+              platform: "Facebook",
+              url: "https://facebook.com/yourbusiness",
+              icon: "📘",
+            },
+            {
+              platform: "Twitter",
+              url: "https://twitter.com/yourbusiness",
+              icon: "🐦",
+            },
+            {
+              platform: "LinkedIn",
+              url: "https://linkedin.com/company/yourbusiness",
+              icon: "💼",
+            },
+            {
+              platform: "Instagram",
+              url: "https://instagram.com/yourbusiness",
+              icon: "📷",
+            },
+            {
+              platform: "YouTube",
+              url: "https://youtube.com/yourbusiness",
+              icon: "📺",
+            },
+          ],
+        };
+
+      case "custom-html":
+        return {
+          title: "Custom Content",
+          subtitle: "Add your custom HTML, CSS, or JavaScript",
+          htmlContent: `<div style="text-align: center; padding: 40px; background: #f8fafc; border-radius: 8px;">
+            <h3>Custom HTML Section</h3>
+            <p>You can add any custom HTML, CSS, or JavaScript code here.</p>
+            <button style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+              Custom Button
+            </button>
+          </div>`,
         };
 
       default:
