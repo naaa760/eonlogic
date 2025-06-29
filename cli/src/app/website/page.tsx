@@ -236,253 +236,530 @@ export default function WebsiteBuilder() {
     sections: SectionItem[];
   }
 
+  // Section Categories Data
   const sectionCategories: Record<string, SectionCategory> = {
     banner: {
       name: "Banner",
-      icon: "🎯",
+      icon: "banner",
       sections: [
         {
           id: "hero",
           name: "Banner",
           description: "Add a hero section with headline and CTA",
-          icon: "🎯",
+          icon: "banner",
         },
         {
           id: "hero-left",
           name: "Banner centered left",
           description: "Hero section with left-aligned content",
-          icon: "📍",
+          icon: "banner",
         },
         {
           id: "hero-slider",
           name: "Banner image slider",
           description: "Rotating background images",
-          icon: "🖼️",
+          icon: "banner",
         },
         {
           id: "hero-double",
           name: "Banner double image slider",
           description: "Two side-by-side image areas",
-          icon: "🔄",
+          icon: "banner",
         },
         {
           id: "hero-carousel",
           name: "Banner carousel",
           description: "Multiple slides with different content",
-          icon: "🎠",
+          icon: "banner",
         },
         {
           id: "hero-split",
           name: "Banner large split",
           description: "Half image, half text layout",
-          icon: "➗",
+          icon: "banner",
         },
         {
           id: "hero-grid",
           name: "Banner grid",
           description: "Grid of smaller banner elements",
-          icon: "⬜",
+          icon: "banner",
         },
       ],
     },
     services: {
       name: "Services",
-      icon: "⚙️",
+      icon: "services",
       sections: [
         {
           id: "services",
           name: "Services",
           description: "Grid of service cards with icons",
-          icon: "⚙️",
+          icon: "services",
         },
         {
           id: "services-list",
           name: "List",
           description: "Simple bulleted list of services",
-          icon: "📋",
+          icon: "list",
         },
         {
           id: "pricing",
           name: "Pricing tables",
           description: "Comparison tables with pricing tiers",
-          icon: "💰",
+          icon: "pricing",
         },
       ],
     },
     content: {
       name: "Content",
-      icon: "📝",
+      icon: "content",
       sections: [
         {
           id: "about",
           name: "Text + image",
           description: "Side-by-side text and image blocks",
-          icon: "📝",
+          icon: "text-image",
         },
         {
           id: "text",
           name: "Text",
           description: "Simple text blocks with rich formatting",
-          icon: "📄",
+          icon: "text",
         },
         {
           id: "header-text",
           name: "Header text",
           description: "Large headline sections",
-          icon: "📰",
+          icon: "header",
         },
         {
           id: "restaurant-menu",
           name: "Restaurant menu",
           description: "Special menu layout with prices",
-          icon: "🍽️",
+          icon: "menu",
         },
         {
           id: "blog-posts",
           name: "Recent blog posts",
           description: "Auto-pulls from blog if connected",
-          icon: "📰",
+          icon: "blog",
         },
         {
           id: "faq",
           name: "FAQ",
           description: "Expandable question/answer sections",
-          icon: "❓",
+          icon: "faq",
         },
       ],
     },
     clients: {
       name: "Clients",
-      icon: "👥",
+      icon: "clients",
       sections: [
         {
           id: "logo-showcase",
           name: "Logo showcase",
           description: "Grid of client logos",
-          icon: "🏢",
+          icon: "logos",
         },
         {
           id: "testimonials",
           name: "Quote/testimonial",
           description: "Customer testimonial cards",
-          icon: "💬",
+          icon: "testimonial",
         },
       ],
     },
     "image-gallery": {
       name: "Image gallery",
-      icon: "🖼️",
+      icon: "gallery",
       sections: [
         {
           id: "image-carousel",
           name: "Image carousel",
           description: "Sliding image gallery",
-          icon: "🎠",
+          icon: "carousel",
         },
         {
           id: "image-grid",
           name: "Image grid",
           description: "Static grid layout of images",
-          icon: "⬜",
+          icon: "grid",
         },
         {
           id: "gallery",
           name: "Image",
           description: "Single image display",
-          icon: "🖼️",
+          icon: "image",
         },
       ],
     },
     "video-content": {
       name: "Video content",
-      icon: "🎥",
+      icon: "video",
       sections: [
         {
           id: "video",
           name: "Video",
           description: "Embed YouTube, Vimeo, or upload direct video",
-          icon: "🎥",
+          icon: "video",
         },
       ],
     },
     "team-members": {
       name: "Team members",
-      icon: "👨‍👩‍👧‍👦",
+      icon: "team",
       sections: [
         {
           id: "team",
           name: "Team members",
           description: "Staff profile cards with photos and details",
-          icon: "👨‍👩‍👧‍👦",
+          icon: "team",
         },
       ],
     },
     "business-hours": {
       name: "Business hours",
-      icon: "🕒",
+      icon: "hours",
       sections: [
         {
           id: "hours",
           name: "Business hours",
           description: "Display operating hours and location",
-          icon: "🕒",
+          icon: "hours",
         },
       ],
     },
     testimonials: {
       name: "Testimonials",
-      icon: "⭐",
+      icon: "testimonials",
       sections: [
         {
           id: "testimonials",
           name: "Quote/testimonial",
           description: "Customer review cards",
-          icon: "💬",
+          icon: "testimonial",
         },
         {
           id: "google-reviews",
           name: "Google reviews",
           description: "Auto-import from Google Business",
-          icon: "⭐",
+          icon: "reviews",
         },
       ],
     },
     "map-location": {
       name: "Map location",
-      icon: "📍",
+      icon: "map",
       sections: [
         {
           id: "contact",
           name: "Location",
           description: "Interactive map with business location",
-          icon: "📍",
+          icon: "location",
         },
       ],
     },
     "contact-form": {
       name: "Contact form",
-      icon: "📧",
+      icon: "contact",
       sections: [
         {
           id: "contact-form",
           name: "Contact form",
           description: "Lead capture form with fields",
-          icon: "📧",
+          icon: "form",
         },
       ],
     },
     schedule: {
       name: "Schedule",
-      icon: "📅",
+      icon: "schedule",
       sections: [
         {
           id: "calendar",
           name: "Calendar",
           description: "Allow customers to book meetings",
-          icon: "📅",
+          icon: "calendar",
         },
       ],
     },
+    "social-media": {
+      name: "Social media",
+      icon: "social",
+      sections: [
+        {
+          id: "social-links",
+          name: "Social media links",
+          description: "Links to your social media profiles",
+          icon: "social",
+        },
+      ],
+    },
+    "custom-code": {
+      name: "Custom code",
+      icon: "code",
+      sections: [
+        {
+          id: "custom-html",
+          name: "Custom HTML",
+          description: "Add custom HTML, CSS, or JavaScript",
+          icon: "code",
+        },
+      ],
+    },
+  };
+
+  // Function to render clean minimal icons
+  const renderSectionIcon = (iconType: string) => {
+    switch (iconType) {
+      case "banner":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        );
+      case "services":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            />
+          </svg>
+        );
+      case "content":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        );
+      case "clients":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+            />
+          </svg>
+        );
+      case "gallery":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        );
+      case "video":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+          </svg>
+        );
+      case "team":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+        );
+      case "hours":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        );
+      case "testimonials":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+            />
+          </svg>
+        );
+      case "map":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        );
+      case "contact":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+            />
+          </svg>
+        );
+      case "schedule":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        );
+      case "social":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 12l2 2 4-4"
+            />
+          </svg>
+        );
+      case "code":
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+            />
+          </svg>
+        );
+      default:
+        return (
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        );
+    }
   };
 
   // Filter sections based on search query
@@ -3373,14 +3650,14 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Comprehensive Section Panel - Exact Durable AI Style */}
+      {/* Add Section Panel */}
       {showSectionPanel && !isPreviewMode && (
         <div
           className="fixed bg-white shadow-xl border border-gray-200 z-50"
           style={{
             right: "20px",
             top: "80px",
-            width: "360px",
+            width: "300px",
             height: "calc(100vh - 100px)",
             borderRadius: "12px",
           }}
@@ -3390,7 +3667,7 @@ Make it sound professional, engaging, and specific to the business type and loca
               /* Main Categories View */
               <>
                 {/* Header */}
-                <div className="p-4 border-b border-gray-200">
+                <div className="px-4 pt-4 pb-3 border-b border-gray-100">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
                       Add section
@@ -3401,9 +3678,21 @@ Make it sound professional, engaging, and specific to the business type and loca
                         setActiveSectionCategory(null);
                         setSectionSearchQuery("");
                       }}
-                      className="text-gray-400 hover:text-gray-600 p-1"
+                      className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
-                      ✕
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
                     </button>
                   </div>
 
@@ -3414,10 +3703,10 @@ Make it sound professional, engaging, and specific to the business type and loca
                       placeholder="Search"
                       value={sectionSearchQuery}
                       onChange={(e) => setSectionSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
                     />
                     <svg
-                      className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                      className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -3439,16 +3728,18 @@ Make it sound professional, engaging, and specific to the business type and loca
                       <button
                         key={key}
                         onClick={() => setActiveSectionCategory(key)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 text-left"
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-b-0"
                       >
                         <div className="flex items-center space-x-3">
-                          <span className="text-lg">{category.icon}</span>
-                          <span className="font-medium text-gray-900">
+                          <div className="w-6 h-6 flex items-center justify-center">
+                            {renderSectionIcon(category.icon)}
+                          </div>
+                          <span className="text-sm font-medium text-gray-900">
                             {category.name}
                           </span>
                         </div>
                         <svg
-                          className="h-4 w-4 text-gray-400"
+                          className="w-4 h-4 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -3466,17 +3757,44 @@ Make it sound professional, engaging, and specific to the business type and loca
                 </div>
               </>
             ) : (
-              /* Category Sections View */
+              /* Individual Category Sections View */
               <>
-                {/* Category Header */}
-                <div className="p-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
+                {/* Header with Back Button */}
+                <div className="px-4 pt-4 pb-3 border-b border-gray-100">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => setActiveSectionCategory(null)}
+                        className="text-gray-600 hover:text-gray-800 p-1"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {sectionCategories[activeSectionCategory]?.name}
+                      </h3>
+                    </div>
                     <button
-                      onClick={() => setActiveSectionCategory(null)}
-                      className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+                      onClick={() => {
+                        setShowSectionPanel(false);
+                        setActiveSectionCategory(null);
+                        setSectionSearchQuery("");
+                      }}
+                      className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
                       <svg
-                        className="w-4 h-4 mr-1"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -3485,101 +3803,41 @@ Make it sound professional, engaging, and specific to the business type and loca
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
+                          d="M6 18L18 6M6 6l12 12"
                         />
                       </svg>
                     </button>
-                    <button
-                      onClick={() => {
-                        setShowSectionPanel(false);
-                        setActiveSectionCategory(null);
-                        setSectionSearchQuery("");
-                      }}
-                      className="text-gray-400 hover:text-gray-600 p-1"
-                    >
-                      ✕
-                    </button>
                   </div>
-                  <h4 className="text-lg font-semibold text-gray-900">
-                    {getFilteredSections()[activeSectionCategory]?.name}
-                  </h4>
                 </div>
 
-                {/* Section Options */}
+                {/* Sections List */}
                 <div className="flex-1 overflow-y-auto">
-                  {getFilteredSections()[activeSectionCategory]?.sections.map(
+                  {sectionCategories[activeSectionCategory]?.sections.map(
                     (section) => (
-                      <div
+                      <button
                         key={section.id}
-                        className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                        onClick={() => {
+                          createAdvancedSection(section.id);
+                          setShowSectionPanel(false);
+                          setActiveSectionCategory(null);
+                          setSectionSearchQuery("");
+                        }}
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-b-0"
                       >
-                        <button
-                          onClick={() => createAdvancedSection(section.id)}
-                          className="w-full text-left"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h5 className="font-medium text-gray-900 mb-1">
-                                {section.name}
-                              </h5>
-                              <p className="text-sm text-gray-600 mb-2">
-                                {section.description}
-                              </p>
-                              <span className="text-xs text-gray-500">
-                                By Durable
-                              </span>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-6 h-6 flex items-center justify-center">
+                            {renderSectionIcon(section.icon)}
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-gray-900">
+                              {section.name}
                             </div>
-                            <div className="ml-4 flex-shrink-0">
-                              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                                {section.id === "services" && (
-                                  <div className="flex flex-col space-y-0.5">
-                                    <div className="flex space-x-0.5">
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                    </div>
-                                    <div className="flex space-x-0.5">
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                    </div>
-                                  </div>
-                                )}
-                                {section.id === "services-list" && (
-                                  <div className="flex flex-col space-y-1">
-                                    <div className="flex items-center space-x-1">
-                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
-                                    </div>
-                                    <div className="flex items-center space-x-1">
-                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
-                                    </div>
-                                    <div className="flex items-center space-x-1">
-                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
-                                    </div>
-                                  </div>
-                                )}
-                                {section.id === "pricing" && (
-                                  <div className="text-blue-500 text-xs font-bold">
-                                    $
-                                  </div>
-                                )}
-                                {![
-                                  "services",
-                                  "services-list",
-                                  "pricing",
-                                ].includes(section.id) && (
-                                  <span className="text-lg">
-                                    {section.icon}
-                                  </span>
-                                )}
-                              </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              {section.description}
                             </div>
                           </div>
-                        </button>
-                      </div>
+                        </div>
+                      </button>
                     )
                   )}
                 </div>
