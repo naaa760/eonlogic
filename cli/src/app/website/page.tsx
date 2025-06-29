@@ -2767,15 +2767,16 @@ Make it sound professional, engaging, and specific to the business type and loca
 
         {/* Hover Add Section Button */}
         {!isPreviewMode && (
-          <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowSectionPanel(true);
               }}
-              className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm font-medium whitespace-nowrap"
             >
               <Plus className="h-4 w-4" />
+              <span>Add section</span>
             </button>
           </div>
         )}
