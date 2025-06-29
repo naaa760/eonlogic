@@ -173,10 +173,6 @@ export default function WebsiteBuilder() {
     horizontal: 50,
     vertical: 50,
   });
-  const [panelPosition, setPanelPosition] = useState({
-    x: typeof window !== "undefined" ? window.innerWidth - 320 : 320,
-    width: 320,
-  });
 
   // Button settings states
   const [showButtonSettings, setShowButtonSettings] = useState(false);
@@ -205,14 +201,6 @@ export default function WebsiteBuilder() {
     toPanel: null,
   });
 
-  // Panel visibility states for smooth fading
-  const [panelVisibility, setPanelVisibility] = useState({
-    image: { show: false, opacity: 0 },
-    button: { show: false, opacity: 0 },
-    edit: { show: false, opacity: 0 },
-    textImage: { show: false, opacity: 0 },
-  });
-
   // Text + Image panel states
   const [showTextImagePanel, setShowTextImagePanel] = useState(false);
   const [selectedTextImageBlock, setSelectedTextImageBlock] = useState<{
@@ -226,55 +214,6 @@ export default function WebsiteBuilder() {
   // Content regeneration states
   const [isRegeneratingContent, setIsRegeneratingContent] = useState(false);
   const [isRegeneratingTextImage, setIsRegeneratingTextImage] = useState(false);
-
-  // Style states for current block
-  const [currentBlockStyles, setCurrentBlockStyles] = useState({
-    imagePosition: "right" as "left" | "center" | "right" | "full",
-    contentAlignment: "left" as "left" | "center" | "right",
-    invertMobile: false,
-    borderlessImage: false,
-    imageFit: "cover" as "cover" | "contain" | "fill",
-    aspectRatio: "3:2" as "1:1" | "2:3" | "3:2" | "16:9",
-    animationStyle: "slideUp",
-    topSpacing: "large",
-    bottomSpacing: "large",
-    minHeight: "content" as "content" | "screen",
-    hasDivider: false,
-    hasBorder: false,
-    roundedCorners: "none" as "none" | "small" | "medium" | "large",
-  });
-
-  // Content tab settings
-  const [textImageContent, setTextImageContent] = useState({
-    title: "",
-    description: "",
-    imageUrl: "",
-    imageAltText: "",
-    imagePosition: { horizontal: 50, vertical: 50 },
-    hasButton: false,
-    buttonText: "",
-  });
-
-  // Style tab settings
-  const [textImageStyle, setTextImageStyle] = useState({
-    writingStyle: "professional",
-    colorScheme: "theme", // 'theme' or 'custom'
-    backgroundColor: "#F0F3F3",
-    accentColor: "#054691",
-    imagePosition: "right" as "left" | "center" | "right" | "full",
-    contentAlignment: "left" as "left" | "center" | "right",
-    invertMobile: false,
-    borderlessImage: false,
-    imageFit: "cover" as "cover" | "contain" | "fill",
-    aspectRatio: "3:2" as "1:1" | "2:3" | "3:2" | "16:9",
-    animationStyle: "slideUp",
-    topSpacing: "large",
-    bottomSpacing: "large",
-    minHeight: "content" as "content" | "screen",
-    hasDivider: false,
-    hasBorder: false,
-    roundedCorners: "none" as "none" | "small" | "medium" | "large",
-  });
 
   // New comprehensive section system states
   const [showSectionPanel, setShowSectionPanel] = useState(false);
@@ -2592,50 +2531,17 @@ Make it sound professional, engaging, and specific to the business type and loca
       toPanel: targetPanel,
     });
 
-    if (currentPanel) {
-      // Start fade out current panel
-      setPanelVisibility((prev) => ({
-        ...prev,
-        [currentPanel]: { show: true, opacity: 0 },
-      }));
+    // Setup new panel data immediately
+    setupCallback();
 
-      // After fade out starts, setup new panel and fade it in
-      setTimeout(() => {
-        // Setup new panel data
-        setupCallback();
-
-        // Show new panel with fade in
-        setPanelVisibility((prev) => ({
-          ...prev,
-          [currentPanel]: { show: false, opacity: 0 },
-          [targetPanel]: { show: true, opacity: 1 },
-        }));
-
-        // Clean up transition state
-        setTimeout(() => {
-          setPanelTransition({
-            isTransitioning: false,
-            fromPanel: null,
-            toPanel: null,
-          });
-        }, 400); // Wait for fade in to complete
-      }, 200); // Overlap timing for smooth transition
-    } else {
-      // No current panel, immediate fade in
-      setupCallback();
-      setPanelVisibility((prev) => ({
-        ...prev,
-        [targetPanel]: { show: true, opacity: 1 },
-      }));
-
-      setTimeout(() => {
-        setPanelTransition({
-          isTransitioning: false,
-          fromPanel: null,
-          toPanel: null,
-        });
-      }, 400);
-    }
+    // Clean up transition state
+    setTimeout(() => {
+      setPanelTransition({
+        isTransitioning: false,
+        fromPanel: null,
+        toPanel: null,
+      });
+    }, 300);
   };
 
   // Handle image clicks to show settings popup
@@ -2783,19 +2689,48 @@ Make it sound professional, engaging, and specific to the business type and loca
       // Update the image in the website
       setWebsite((prev) => {
         if (!prev) return null;
+
         const updatedWebsite = {
           ...prev,
-          blocks: prev.blocks.map((block) =>
-            block.id === selectedImage.blockId
-              ? {
+          blocks: prev.blocks.map((block) => {
+            if (block.id !== selectedImage.blockId) return block;
+
+            // Handle nested service images
+            if (
+              selectedImage.field.includes("services[") &&
+              selectedImage.field.includes("].image")
+            ) {
+              const serviceIndexMatch = selectedImage.field.match(
+                /services\[(\d+)\]\.image/
+              );
+              if (serviceIndexMatch && block.content.services) {
+                const serviceIndex = parseInt(serviceIndexMatch[1]);
+                const updatedServices = [...block.content.services];
+                if (updatedServices[serviceIndex]) {
+                  updatedServices[serviceIndex] = {
+                    ...updatedServices[serviceIndex],
+                    image: newImageUrl,
+                  };
+                }
+                return {
                   ...block,
                   content: {
                     ...block.content,
-                    [selectedImage.field]: newImageUrl,
+                    services: updatedServices,
                   },
-                }
-              : block
-          ),
+                };
+              }
+            }
+
+            // Handle direct field updates (like backgroundImage, image)
+            return {
+              ...block,
+              content: {
+                ...block.content,
+                [selectedImage.field]: newImageUrl,
+              },
+            };
+          }),
         };
 
         // Save updated website to localStorage
@@ -2840,19 +2775,48 @@ Make it sound professional, engaging, and specific to the business type and loca
     // Update the image in the website
     setWebsite((prev) => {
       if (!prev) return null;
+
       return {
         ...prev,
-        blocks: prev.blocks.map((block) =>
-          block.id === selectedImage.blockId
-            ? {
+        blocks: prev.blocks.map((block) => {
+          if (block.id !== selectedImage.blockId) return block;
+
+          // Handle nested service images
+          if (
+            selectedImage.field.includes("services[") &&
+            selectedImage.field.includes("].image")
+          ) {
+            const serviceIndexMatch = selectedImage.field.match(
+              /services\[(\d+)\]\.image/
+            );
+            if (serviceIndexMatch && block.content.services) {
+              const serviceIndex = parseInt(serviceIndexMatch[1]);
+              const updatedServices = [...block.content.services];
+              if (updatedServices[serviceIndex]) {
+                updatedServices[serviceIndex] = {
+                  ...updatedServices[serviceIndex],
+                  image: imageUrl,
+                };
+              }
+              return {
                 ...block,
                 content: {
                   ...block.content,
-                  [selectedImage.field]: imageUrl,
+                  services: updatedServices,
                 },
-              }
-            : block
-        ),
+              };
+            }
+          }
+
+          // Handle direct field updates (like backgroundImage, image)
+          return {
+            ...block,
+            content: {
+              ...block.content,
+              [selectedImage.field]: imageUrl,
+            },
+          };
+        }),
       };
     });
 
@@ -2864,31 +2828,6 @@ Make it sound professional, engaging, and specific to the business type and loca
         currentUrl: imageUrl,
       };
     });
-  };
-
-  // Handle panel dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (typeof window === "undefined") return;
-
-    const startX = e.clientX;
-    const startPanelX = panelPosition.x;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - startX;
-      const newX = Math.max(
-        0,
-        Math.min(window.innerWidth - panelPosition.width, startPanelX + deltaX)
-      );
-      setPanelPosition((prev) => ({ ...prev, x: newX }));
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
   };
 
   // Handle text+image section clicks
@@ -2909,22 +2848,6 @@ Make it sound professional, engaging, and specific to the business type and loca
       setSelectedButton(null);
       setShowEditPanel(false);
       setSelectedElement(null);
-
-      // Get current block data
-      const currentBlock = website?.blocks.find((b) => b.id === blockId);
-      if (currentBlock) {
-        setTextImageContent({
-          title: currentBlock.content.title || "",
-          description: currentBlock.content.description || "",
-          imageUrl: currentBlock.content.image || "",
-          imageAltText: `Professional ${
-            website?.businessType || "business"
-          } image`,
-          imagePosition: { horizontal: 50, vertical: 50 },
-          hasButton: false,
-          buttonText: "",
-        });
-      }
 
       setSelectedTextImageBlock({ blockId, blockType });
       setShowTextImagePanel(true);
@@ -3450,114 +3373,110 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Comprehensive Section Panel - Durable AI Style */}
+      {/* Comprehensive Section Panel - Exact Durable AI Style */}
       {showSectionPanel && !isPreviewMode && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-4xl h-[80vh] flex overflow-hidden shadow-2xl">
-            {/* Left Sidebar - Categories */}
-            <div className="w-80 bg-gray-50 border-r border-gray-200 flex flex-col">
-              {/* Header */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Add section
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setShowSectionPanel(false);
-                      setActiveSectionCategory(null);
-                      setSectionSearchQuery("");
-                    }}
-                    className="text-gray-500 hover:text-gray-700 p-1"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Search */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    value={sectionSearchQuery}
-                    onChange={(e) => setSectionSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <svg
-                    className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Categories List */}
-              <div className="flex-1 overflow-y-auto p-2">
-                {Object.entries(getFilteredSections()).map(
-                  ([key, category]) => (
+        <div
+          className="fixed bg-white shadow-xl border border-gray-200 z-50"
+          style={{
+            right: "20px",
+            top: "80px",
+            width: "360px",
+            height: "calc(100vh - 100px)",
+            borderRadius: "12px",
+          }}
+        >
+          <div className="w-full h-full flex flex-col overflow-hidden">
+            {!activeSectionCategory ? (
+              /* Main Categories View */
+              <>
+                {/* Header */}
+                <div className="p-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Add section
+                    </h3>
                     <button
-                      key={key}
-                      onClick={() =>
-                        setActiveSectionCategory(
-                          activeSectionCategory === key ? null : key
-                        )
-                      }
-                      className={`w-full flex items-center justify-between p-3 mb-1 rounded-lg text-left transition-all duration-200 ${
-                        activeSectionCategory === key
-                          ? "bg-blue-50 text-blue-700 border border-blue-200"
-                          : "hover:bg-gray-100 text-gray-700"
-                      }`}
+                      onClick={() => {
+                        setShowSectionPanel(false);
+                        setActiveSectionCategory(null);
+                        setSectionSearchQuery("");
+                      }}
+                      className="text-gray-400 hover:text-gray-600 p-1"
                     >
-                      <div className="flex items-center space-x-3">
-                        <span className="text-lg">{category.icon}</span>
-                        <span className="font-medium">{category.name}</span>
-                      </div>
-                      <svg
-                        className={`h-4 w-4 transition-transform ${
-                          activeSectionCategory === key ? "rotate-90" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+                      ✕
                     </button>
-                  )
-                )}
-              </div>
+                  </div>
 
-              {/* Footer */}
-              <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
-                with <span className="font-semibold">Durable</span>
-              </div>
-            </div>
+                  {/* Search */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      value={sectionSearchQuery}
+                      onChange={(e) => setSectionSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <svg
+                      className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
 
-            {/* Right Content - Section Options */}
-            <div className="flex-1 flex flex-col">
-              {activeSectionCategory ? (
-                <>
-                  {/* Category Header */}
-                  <div className="p-6 border-b border-gray-200">
+                {/* Categories List */}
+                <div className="flex-1 overflow-y-auto">
+                  {Object.entries(getFilteredSections()).map(
+                    ([key, category]) => (
+                      <button
+                        key={key}
+                        onClick={() => setActiveSectionCategory(key)}
+                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 text-left"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <span className="text-lg">{category.icon}</span>
+                          <span className="font-medium text-gray-900">
+                            {category.name}
+                          </span>
+                        </div>
+                        <svg
+                          className="h-4 w-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    )
+                  )}
+                </div>
+              </>
+            ) : (
+              /* Category Sections View */
+              <>
+                {/* Category Header */}
+                <div className="p-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
                     <button
                       onClick={() => setActiveSectionCategory(null)}
-                      className="flex items-center text-gray-500 hover:text-gray-700 mb-4 transition-colors"
+                      className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
                     >
                       <svg
-                        className="w-4 h-4 mr-2"
+                        className="w-4 h-4 mr-1"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -3569,75 +3488,103 @@ Make it sound professional, engaging, and specific to the business type and loca
                           d="M15 19l-7-7 7-7"
                         />
                       </svg>
-                      <span className="text-sm font-medium">Back</span>
                     </button>
-                    <h4 className="text-lg font-bold text-gray-900">
-                      {getFilteredSections()[activeSectionCategory]?.name}
-                    </h4>
+                    <button
+                      onClick={() => {
+                        setShowSectionPanel(false);
+                        setActiveSectionCategory(null);
+                        setSectionSearchQuery("");
+                      }}
+                      className="text-gray-400 hover:text-gray-600 p-1"
+                    >
+                      ✕
+                    </button>
                   </div>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    {getFilteredSections()[activeSectionCategory]?.name}
+                  </h4>
+                </div>
 
-                  {/* Section Options */}
-                  <div className="flex-1 overflow-y-auto p-6">
-                    <div className="space-y-3">
-                      {getFilteredSections()[
-                        activeSectionCategory
-                      ]?.sections.map((section) => (
+                {/* Section Options */}
+                <div className="flex-1 overflow-y-auto">
+                  {getFilteredSections()[activeSectionCategory]?.sections.map(
+                    (section) => (
+                      <div
+                        key={section.id}
+                        className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      >
                         <button
-                          key={section.id}
                           onClick={() => createAdvancedSection(section.id)}
-                          className="w-full p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 text-left group"
+                          className="w-full text-left"
                         >
-                          <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-lg group-hover:bg-blue-100 transition-colors">
-                              {section.icon}
-                            </div>
+                          <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <h5 className="font-semibold text-gray-900 mb-1">
+                              <h5 className="font-medium text-gray-900 mb-1">
                                 {section.name}
                               </h5>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 mb-2">
                                 {section.description}
                               </p>
-                              <span className="text-xs text-gray-500 mt-2 block">
+                              <span className="text-xs text-gray-500">
                                 By Durable
                               </span>
                             </div>
+                            <div className="ml-4 flex-shrink-0">
+                              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                {section.id === "services" && (
+                                  <div className="flex flex-col space-y-0.5">
+                                    <div className="flex space-x-0.5">
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                    </div>
+                                    <div className="flex space-x-0.5">
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                    </div>
+                                  </div>
+                                )}
+                                {section.id === "services-list" && (
+                                  <div className="flex flex-col space-y-1">
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                                      <div className="w-4 h-0.5 bg-blue-500 rounded"></div>
+                                    </div>
+                                  </div>
+                                )}
+                                {section.id === "pricing" && (
+                                  <div className="text-blue-500 text-xs font-bold">
+                                    $
+                                  </div>
+                                )}
+                                {![
+                                  "services",
+                                  "services-list",
+                                  "pricing",
+                                ].includes(section.id) && (
+                                  <span className="text-lg">
+                                    {section.icon}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                /* Default view when no category selected */
-                <div className="flex-1 flex items-center justify-center p-8">
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg
-                        className="w-10 h-10 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
-                    </div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                      Select a category
-                    </h4>
-                    <p className="text-gray-600 max-w-sm">
-                      Choose from the categories on the left to see available
-                      sections you can add to your website.
-                    </p>
-                  </div>
+                      </div>
+                    )
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -3682,7 +3629,15 @@ Make it sound professional, engaging, and specific to the business type and loca
                 Image settings
               </h3>
             </div>
-            <button className="text-blue-600 text-sm font-medium">Done</button>
+            <button
+              onClick={() => {
+                setShowImageSettings(false);
+                setSelectedImage(null);
+              }}
+              className="text-blue-600 text-sm font-medium hover:text-blue-700 cursor-pointer"
+            >
+              Done
+            </button>
           </div>
 
           {/* Content */}
@@ -3697,6 +3652,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                   src={selectedImage.currentUrl}
                   alt="Preview"
                   className="w-full h-40 object-cover rounded-lg"
+                  key={selectedImage.currentUrl} // Force re-render when URL changes
                 />
                 <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center">
                   <svg
@@ -3867,7 +3823,15 @@ Make it sound professional, engaging, and specific to the business type and loca
                 Button settings
               </h3>
             </div>
-            <button className="text-blue-600 text-sm font-medium">Done</button>
+            <button
+              onClick={() => {
+                setShowButtonSettings(false);
+                setSelectedButton(null);
+              }}
+              className="text-blue-600 text-sm font-medium hover:text-blue-700 cursor-pointer"
+            >
+              Done
+            </button>
           </div>
 
           {/* Content */}
@@ -4078,7 +4042,15 @@ Make it sound professional, engaging, and specific to the business type and loca
                 Text + Image
               </h3>
             </div>
-            <button className="text-blue-600 text-sm font-medium">Done</button>
+            <button
+              onClick={() => {
+                setShowTextImagePanel(false);
+                setSelectedTextImageBlock(null);
+              }}
+              className="text-blue-600 text-sm font-medium hover:text-blue-700 cursor-pointer"
+            >
+              Done
+            </button>
           </div>
 
           {/* Tabs */}
