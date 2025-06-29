@@ -271,6 +271,39 @@ export default function WebsiteBuilder() {
   >(null);
   const [sectionSearchQuery, setSectionSearchQuery] = useState("");
 
+  // Carousel state management for banner auto-rotation
+  const [carouselStates, setCarouselStates] = useState<Record<string, number>>(
+    {}
+  );
+
+  // Auto-rotate carousel slides every 2 seconds
+  useEffect(() => {
+    if (!website?.blocks) return;
+
+    const intervals: NodeJS.Timeout[] = [];
+
+    website.blocks.forEach((block) => {
+      if (
+        block.type === "hero" &&
+        block.content.slides &&
+        block.content.slides.length > 1
+      ) {
+        const interval = setInterval(() => {
+          setCarouselStates((prev) => ({
+            ...prev,
+            [block.id]:
+              ((prev[block.id] || 0) + 1) % block.content.slides!.length,
+          }));
+        }, 2000);
+        intervals.push(interval);
+      }
+    });
+
+    return () => {
+      intervals.forEach(clearInterval);
+    };
+  }, [website?.blocks]);
+
   // Section categories and their subsections
   interface SectionItem {
     id: string;
@@ -834,13 +867,22 @@ export default function WebsiteBuilder() {
   };
 
   // Enhanced section creation with proper content
-  const createAdvancedSection = (sectionId: string, afterBlockId?: string) => {
+  const createAdvancedSection = async (
+    sectionId: string,
+    afterBlockId?: string
+  ) => {
+    console.log(`Creating section: ${sectionId}`);
+    const content = await getAdvancedDefaultContent(sectionId);
+    console.log(`Generated content for ${sectionId}:`, content);
+
     const newBlock: ContentBlock = {
       id: `${sectionId}-${Date.now()}`,
       type: getBlockTypeFromSectionId(sectionId),
-      content: getAdvancedDefaultContent(sectionId),
+      content,
       styles: getAdvancedDefaultStyles(sectionId),
     };
+
+    console.log(`Created block:`, newBlock);
 
     setWebsite((prev) => {
       if (!prev) return null;
@@ -909,7 +951,7 @@ export default function WebsiteBuilder() {
   };
 
   // Enhanced content generation for different section types
-  const getAdvancedDefaultContent = (sectionId: string) => {
+  const getAdvancedDefaultContent = async (sectionId: string) => {
     const businessInfoStr = safeLocalStorage.getItem(
       `business_info_${user?.id}`
     );
@@ -922,47 +964,108 @@ export default function WebsiteBuilder() {
 
     switch (sectionId) {
       case "hero":
+        const heroImage = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "hero banner",
+            location
+          )
+        );
         return {
           title: `Welcome to ${businessName}`,
           subtitle: `Professional ${businessType} services you can trust`,
           buttonText: "Get Started",
-          backgroundImage:
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
+          backgroundImage: heroImage,
         };
 
       case "hero-left":
+        const heroLeftImage = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "professional team",
+            location
+          )
+        );
         return {
           title: `Transform Your ${businessType} Experience`,
           subtitle: `${businessName} delivers exceptional results with personalized service`,
           buttonText: "Learn More",
-          backgroundImage:
-            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
+          backgroundImage: heroLeftImage,
         };
 
       case "hero-slider":
+        const sliderImage1 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "modern office",
+            location
+          )
+        );
+        const sliderImage2 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "professional workspace",
+            location
+          )
+        );
+        const sliderImage3 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "business team",
+            location
+          )
+        );
         return {
           title: `Premium ${businessType} Solutions`,
           subtitle: "Discover excellence in every service we provide",
           buttonText: "Explore Services",
-          images: [
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop&q=80",
-          ],
+          images: [sliderImage1, sliderImage2, sliderImage3],
         };
 
       case "hero-double":
+        const doubleImage1 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "corporate office",
+            location
+          )
+        );
+        const doubleImage2 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "business meeting",
+            location
+          )
+        );
         return {
           title: `${businessName} Excellence`,
           subtitle: "Two decades of trusted service and innovation",
           buttonText: "Get Quote",
-          images: [
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=800&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&h=800&fit=crop&q=80",
-          ],
+          images: [doubleImage1, doubleImage2],
         };
 
       case "hero-carousel":
+        const carouselImage1 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "professional service",
+            location
+          )
+        );
+        const carouselImage2 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "expert consultation",
+            location
+          )
+        );
+        const carouselImage3 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "customer support",
+            location
+          )
+        );
         return {
           title: "Multiple Solutions, One Company",
           slides: [
@@ -970,39 +1073,70 @@ export default function WebsiteBuilder() {
               title: `${businessName} Services`,
               subtitle: "Professional solutions for your needs",
               buttonText: "Learn More",
-              backgroundImage:
-                "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop&q=80",
+              backgroundImage: carouselImage1,
             },
             {
               title: "Expert Consultation",
               subtitle: "Get professional advice from industry experts",
               buttonText: "Book Consultation",
-              backgroundImage:
-                "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=800&fit=crop&q=80",
+              backgroundImage: carouselImage2,
             },
             {
               title: "24/7 Support",
               subtitle: "Round-the-clock assistance when you need it",
               buttonText: "Contact Support",
-              backgroundImage:
-                "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop&q=80",
+              backgroundImage: carouselImage3,
             },
           ],
         };
 
       case "hero-split":
+        const splitImage = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "professional team",
+            location
+          )
+        );
         return {
           title: `Why Choose ${businessName}?`,
           subtitle: `Leading ${businessType} provider with proven results`,
           description:
             "We combine innovation with expertise to deliver outstanding results. Our team is dedicated to your success.",
           buttonText: "Start Today",
-          image:
-            "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop&q=80",
+          image: splitImage,
           highlights: ["Expert Team", "Proven Results", "24/7 Support"],
         };
 
       case "hero-grid":
+        const gridImage1 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "service quality",
+            location
+          )
+        );
+        const gridImage2 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "expert consultation",
+            location
+          )
+        );
+        const gridImage3 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "customer support",
+            location
+          )
+        );
+        const gridImage4 = await fetchPexelsImage(
+          createBusinessSpecificImageQuery(
+            businessType,
+            "custom solutions",
+            location
+          )
+        );
         return {
           title: `${businessName} Services`,
           subtitle: "Comprehensive solutions for your business",
@@ -1011,29 +1145,25 @@ export default function WebsiteBuilder() {
               title: "Service 1",
               description: "Professional service description",
               icon: "⭐",
-              image:
-                "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80",
+              image: gridImage1,
             },
             {
               title: "Service 2",
               description: "Expert consultation and support",
               icon: "🎯",
-              image:
-                "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=300&fit=crop&q=80",
+              image: gridImage2,
             },
             {
               title: "Service 3",
               description: "24/7 customer assistance",
               icon: "🛟",
-              image:
-                "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop&q=80",
+              image: gridImage3,
             },
             {
               title: "Service 4",
               description: "Custom solutions for your needs",
               icon: "🚀",
-              image:
-                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop&q=80",
+              image: gridImage4,
             },
           ],
         };
@@ -1500,9 +1630,27 @@ export default function WebsiteBuilder() {
             "Choose from our available time slots and we'll confirm your appointment.",
           calendarUrl: "https://calendly.com/your-business",
           services: [
-            { name: "Consultation", duration: "30 min", price: "Free" },
-            { name: "Strategy Session", duration: "60 min", price: "$150" },
-            { name: "Full Assessment", duration: "90 min", price: "$250" },
+            {
+              title: "Consultation",
+              description: "30 minute consultation session",
+              icon: "📅",
+              price: "Free",
+              period: "",
+            },
+            {
+              title: "Strategy Session",
+              description: "60 minute strategy planning session",
+              icon: "💡",
+              price: "$150",
+              period: "",
+            },
+            {
+              title: "Full Assessment",
+              description: "90 minute comprehensive assessment",
+              icon: "📊",
+              price: "$250",
+              period: "",
+            },
           ],
         };
 
@@ -2347,12 +2495,18 @@ Make it sound professional, engaging, and specific to the business type and loca
     if (isPreviewMode) return;
 
     event.stopPropagation();
+
+    // Single click - just select the block, don't show floating actions yet
     setSelectedBlock(blockId);
-    setShowFloatingActions(true);
-    setFloatingActionsPosition({
-      x: event.clientX,
-      y: event.clientY - 60,
-    });
+
+    // Only show floating actions on double click
+    if (event.detail === 2) {
+      setShowFloatingActions(true);
+      setFloatingActionsPosition({
+        x: event.clientX,
+        y: event.clientY - 60,
+      });
+    }
   };
 
   const handleTextDoubleClick = (blockId: string, field: string) => {
@@ -2421,12 +2575,25 @@ Make it sound professional, engaging, and specific to the business type and loca
   };
 
   const deleteBlock = (blockId: string) => {
+    console.log("🗑️ Delete function called with blockId:", blockId);
+
     setWebsite((prev) => {
       if (!prev) return null;
+
+      console.log(
+        "📝 Current blocks before deletion:",
+        prev.blocks.map((b) => b.id)
+      );
+
       const updatedWebsite = {
         ...prev,
         blocks: prev.blocks.filter((b) => b.id !== blockId),
       };
+
+      console.log(
+        "✅ Updated blocks after deletion:",
+        updatedWebsite.blocks.map((b) => b.id)
+      );
 
       // Save updated website to localStorage
       if (user?.id) {
@@ -2436,12 +2603,16 @@ Make it sound professional, engaging, and specific to the business type and loca
         );
         // Update recent projects with the change
         saveToRecentProjects(updatedWebsite);
+        console.log("💾 Website saved to localStorage");
       }
+
+      // Hide floating actions after deletion
+      setShowFloatingActions(false);
+      setSelectedBlock(null);
+      console.log("🎯 Floating actions hidden and selectedBlock cleared");
 
       return updatedWebsite;
     });
-    setSelectedBlock(null);
-    setShowFloatingActions(false);
   };
 
   const regenerateImages = async (blockId: string) => {
@@ -2614,116 +2785,162 @@ Make it sound professional, engaging, and specific to the business type and loca
       >
         {/* Block Content */}
         {block.type === "hero" && (
-          <div
-            className="relative h-full flex items-center justify-center text-white cursor-pointer"
-            style={{
-              backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${block.content.backgroundImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              minHeight: block.styles.minHeight || "600px",
-            }}
-            onClick={(e) =>
-              handleImageClick(
-                block.id,
-                "backgroundImage",
-                block.content.backgroundImage || "",
-                e
-              )
-            }
-          >
-            <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
-              <h1
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
-                onClick={(e) =>
-                  handleElementClick(block.id, "text", "title", e)
-                }
-                onDoubleClick={() => handleTextDoubleClick(block.id, "title")}
-              >
-                {editingText === `${block.id}-title` ? (
-                  <input
-                    type="text"
-                    value={
-                      (
-                        website?.blocks.find((b) => b.id === block.id)
-                          ?.content as Record<string, string>
-                      )?.[block.id + "-title"] || ""
-                    }
-                    onChange={(e) =>
-                      handleTextChange(block.id, "title", e.target.value)
-                    }
-                    onBlur={() => setEditingText(null)}
-                    onKeyDown={(e) => e.key === "Enter" && setEditingText(null)}
-                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
-                    autoFocus
-                  />
-                ) : (
-                  block.content.title
-                )}
-              </h1>
-              <p
-                className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
-                onClick={(e) =>
-                  handleElementClick(block.id, "text", "subtitle", e)
-                }
-                onDoubleClick={() =>
-                  handleTextDoubleClick(block.id, "subtitle")
-                }
-              >
-                {editingText === `${block.id}-subtitle` ? (
-                  <textarea
-                    value={
-                      (
-                        website?.blocks.find((b) => b.id === block.id)
-                          ?.content as Record<string, string>
-                      )?.[block.id + "-subtitle"] || ""
-                    }
-                    onChange={(e) =>
-                      handleTextChange(block.id, "subtitle", e.target.value)
-                    }
-                    onBlur={() => setEditingText(null)}
-                    className="bg-transparent border-b-2 border-white text-white text-center w-full outline-none resize-none text-lg sm:text-xl md:text-2xl"
-                    autoFocus
-                  />
-                ) : (
-                  block.content.subtitle
-                )}
-              </p>
-              <button
-                className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
-                onClick={(e) =>
-                  handleButtonClick(
+          <>
+            {/* Banner Image Slider - Rotating background images, static content */}
+            {block.content.images && block.content.images.length > 0 ? (
+              <div className="relative h-full overflow-hidden">
+                {block.content.images.map((img, index) => {
+                  const currentImg = carouselStates[block.id] || 0;
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                        index === currentImg
+                          ? "opacity-100 z-10"
+                          : "opacity-0 z-0"
+                      }`}
+                      style={{
+                        backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${img})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        minHeight: block.styles.minHeight || "600px",
+                      }}
+                    >
+                      <div className="relative h-full flex items-center justify-center text-white">
+                        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
+                          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
+                            {block.content.title}
+                          </h1>
+                          <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90">
+                            {block.content.subtitle}
+                          </p>
+                          {block.content.buttonText && (
+                            <button className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors">
+                              {block.content.buttonText}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {/* Image slider indicators */}
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {block.content.images.map((_, index) => {
+                    const currentImg = carouselStates[block.id] || 0;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() =>
+                          setCarouselStates((prev) => ({
+                            ...prev,
+                            [block.id]: index,
+                          }))
+                        }
+                        className={`w-3 h-3 rounded-full transition-colors ${
+                          index === currentImg ? "bg-white" : "bg-white/50"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ) : block.content.slides && block.content.slides.length > 0 ? (
+              // ... existing carousel code ...
+              <div className="relative h-full overflow-hidden">
+                {block.content.slides.map((slide, index) => {
+                  const currentSlide = carouselStates[block.id] || 0;
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-transform duration-1000 ease-in-out ${
+                        index === currentSlide
+                          ? "translate-x-0"
+                          : index < currentSlide
+                          ? "-translate-x-full"
+                          : "translate-x-full"
+                      }`}
+                    >
+                      <div
+                        className="relative h-full flex items-center justify-center text-white"
+                        style={{
+                          backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${slide.backgroundImage})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          minHeight: block.styles.minHeight || "600px",
+                        }}
+                      >
+                        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
+                          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
+                            {slide.title}
+                          </h1>
+                          <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90">
+                            {slide.subtitle}
+                          </p>
+                          <button className="bg-white text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-100 transition-colors">
+                            {slide.buttonText}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Carousel indicators */}
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {block.content.slides.map((_, index) => {
+                    const currentSlide = carouselStates[block.id] || 0;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() =>
+                          setCarouselStates((prev) => ({
+                            ...prev,
+                            [block.id]: index,
+                          }))
+                        }
+                        className={`w-3 h-3 rounded-full transition-colors ${
+                          index === currentSlide ? "bg-white" : "bg-white/50"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* Standard Banner (static) - Durable AI Style */
+              <div
+                className="relative h-full flex items-center justify-center text-white"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${block.content.backgroundImage})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  minHeight: "80vh",
+                }}
+                onClick={() =>
+                  handleImageClick(
                     block.id,
-                    "buttonText",
-                    block.content.buttonText || "",
-                    e
+                    "backgroundImage",
+                    block.content.backgroundImage || ""
                   )
                 }
-                onDoubleClick={() =>
-                  handleTextDoubleClick(block.id, "buttonText")
-                }
               >
-                {editingText === `${block.id}-buttonText` ? (
-                  <input
-                    type="text"
-                    value={
-                      (
-                        website?.blocks.find((b) => b.id === block.id)
-                          ?.content as Record<string, string>
-                      )?.[block.id + "-buttonText"] || ""
-                    }
-                    onChange={(e) =>
-                      handleTextChange(block.id, "buttonText", e.target.value)
-                    }
-                    onBlur={() => setEditingText(null)}
-                    className="bg-transparent text-gray-900 text-center outline-none"
-                    autoFocus
-                  />
-                ) : (
-                  block.content.buttonText
-                )}
-              </button>
-            </div>
-          </div>
+                <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+                    {block.content.title}
+                  </h1>
+                  <p className="text-xl md:text-2xl mb-10 opacity-95 max-w-3xl mx-auto leading-relaxed font-light">
+                    {block.content.subtitle}
+                  </p>
+                  {block.content.buttonText && (
+                    <button className="bg-white text-gray-900 px-10 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                      {block.content.buttonText}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {block.type === "about" && (
@@ -2821,12 +3038,11 @@ Make it sound professional, engaging, and specific to the business type and loca
                     src={block.content.image}
                     alt="About us"
                     className="rounded-2xl shadow-xl w-full h-64 sm:h-80 md:h-96 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
-                    onClick={(e) =>
+                    onClick={() =>
                       handleImageClick(
                         block.id,
                         "image",
-                        block.content.image || "",
-                        e
+                        block.content.image || ""
                       )
                     }
                   />
@@ -2913,12 +3129,11 @@ Make it sound professional, engaging, and specific to the business type and loca
                         src={service.image}
                         alt={service.title}
                         className="w-full h-40 sm:h-48 object-cover cursor-pointer hover:outline hover:outline-2 hover:outline-blue-400 hover:outline-offset-2 transition-all"
-                        onClick={(e) =>
+                        onClick={() =>
                           handleImageClick(
                             block.id,
                             `services[${index}].image`,
-                            service.image || "",
-                            e
+                            service.image || ""
                           )
                         }
                       />
@@ -3300,55 +3515,15 @@ Make it sound professional, engaging, and specific to the business type and loca
   const handleImageClick = (
     blockId: string,
     field: string,
-    currentUrl: string,
-    event: React.MouseEvent
+    currentUrl: string
   ) => {
     if (isPreviewMode) return;
 
-    event.stopPropagation();
-
     createSmoothTransition("image", () => {
-      // Close other panels
-      setShowButtonSettings(false);
-      setSelectedButton(null);
-      setShowEditPanel(false);
-      setSelectedElement(null);
-
-      // Generate business-specific alt text
-      let dynamicAltText = "";
-      const businessInfoStr = safeLocalStorage.getItem(
-        `business_info_${user?.id}`
-      );
-      const businessInfo: BusinessInfo = businessInfoStr
-        ? JSON.parse(businessInfoStr)
-        : null;
-
-      if (businessInfo) {
-        const businessKeywords = extractBusinessKeywords(businessInfo.type);
-
-        if (field === "backgroundImage") {
-          dynamicAltText = `${businessKeywords.primary} professional office workspace in ${businessInfo.location}`;
-        } else if (field === "image") {
-          dynamicAltText = `${businessKeywords.primary} team collaboration and professional meeting`;
-        } else if (field.includes("services")) {
-          const serviceIndex = field.match(/\[(\d+)\]/)?.[1];
-          if (serviceIndex === "0") {
-            dynamicAltText = `${businessKeywords.primary} professional consultation and service delivery`;
-          } else if (serviceIndex === "1") {
-            dynamicAltText = `${businessKeywords.secondary} technology and professional solutions`;
-          } else {
-            dynamicAltText = `${businessKeywords.primary} high quality professional service`;
-          }
-        } else {
-          dynamicAltText = `${businessKeywords.primary} professional business image`;
-        }
-      } else {
-        dynamicAltText = "Professional business image";
-      }
-
-      setSelectedImage({ blockId, field, currentUrl, altText: dynamicAltText });
-      setImageAltText(dynamicAltText);
+      setSelectedImage({ blockId, field, currentUrl, altText: "" });
       setShowImageSettings(true);
+      setImageAltText("");
+      setImagePosition({ horizontal: 50, vertical: 50 });
     });
   };
 
@@ -4116,7 +4291,13 @@ Make it sound professional, engaging, and specific to the business type and loca
             <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
           <button
-            onClick={() => deleteBlock(selectedBlock)}
+            onClick={() => {
+              console.log(
+                "🖱️ Delete button clicked! selectedBlock:",
+                selectedBlock
+              );
+              deleteBlock(selectedBlock);
+            }}
             className="p-2 hover:bg-red-100 rounded text-red-600 hover:text-red-700"
             title="Delete"
           >
@@ -4291,8 +4472,8 @@ Make it sound professional, engaging, and specific to the business type and loca
                     (section) => (
                       <button
                         key={section.id}
-                        onClick={() => {
-                          createAdvancedSection(section.id);
+                        onClick={async () => {
+                          await createAdvancedSection(section.id);
                           setShowSectionPanel(false);
                           setActiveSectionCategory(null);
                           setSectionSearchQuery("");
