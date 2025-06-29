@@ -65,7 +65,8 @@ interface ContentBlock {
     | "testimonials"
     | "contact"
     | "cta"
-    | "gallery";
+    | "gallery"
+    | "banner-grid";
   content: {
     title?: string;
     subtitle?: string;
@@ -263,6 +264,19 @@ export default function WebsiteBuilder() {
   // Content regeneration states
   const [isRegeneratingContent, setIsRegeneratingContent] = useState(false);
   const [isRegeneratingTextImage, setIsRegeneratingTextImage] = useState(false);
+
+  // Banner grid panel states
+  const [showBannerGridPanel, setShowBannerGridPanel] = useState(false);
+  const [selectedBannerGrid, setSelectedBannerGrid] = useState<{
+    blockId: string;
+  } | null>(null);
+  const [bannerGridActiveTab, setBannerGridActiveTab] = useState<
+    "content" | "style"
+  >("content");
+
+  // Color customization states
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [customColor, setCustomColor] = useState("#663399");
 
   // New comprehensive section system states
   const [showSectionPanel, setShowSectionPanel] = useState(false);
@@ -936,7 +950,7 @@ export default function WebsiteBuilder() {
       "hero-double": "hero",
       "hero-carousel": "hero",
       "hero-split": "hero",
-      "hero-grid": "hero",
+      "hero-grid": "banner-grid",
       services: "services",
       "services-list": "services",
       pricing: "services",
@@ -1124,60 +1138,30 @@ export default function WebsiteBuilder() {
         const gridImage1 = await fetchPexelsImage(
           createBusinessSpecificImageQuery(
             businessType,
-            "service quality",
+            "network security technology",
             location
           )
         );
         const gridImage2 = await fetchPexelsImage(
           createBusinessSpecificImageQuery(
             businessType,
-            "expert consultation",
+            "business automation",
             location
           )
         );
         const gridImage3 = await fetchPexelsImage(
           createBusinessSpecificImageQuery(
             businessType,
-            "customer support",
-            location
-          )
-        );
-        const gridImage4 = await fetchPexelsImage(
-          createBusinessSpecificImageQuery(
-            businessType,
-            "custom solutions",
+            "digital connection technology",
             location
           )
         );
         return {
-          title: `${businessName} Services`,
-          subtitle: "Comprehensive solutions for your business",
-          services: [
-            {
-              title: "Service 1",
-              description: "Professional service description",
-              icon: "⭐",
-              image: gridImage1,
-            },
-            {
-              title: "Service 2",
-              description: "Expert consultation and support",
-              icon: "🎯",
-              image: gridImage2,
-            },
-            {
-              title: "Service 3",
-              description: "24/7 customer assistance",
-              icon: "🛟",
-              image: gridImage3,
-            },
-            {
-              title: "Service 4",
-              description: "Custom solutions for your needs",
-              icon: "🚀",
-              image: gridImage4,
-            },
-          ],
+          subtitle: `Unlock ${location}'s`,
+          title: "Technological Advances",
+          description: `Explore cutting-edge technology innovations from ${location}, driving progress and transforming the future with ${businessName}'s expert insights.`,
+          buttonText: "Explore Innovations",
+          images: [gridImage1, gridImage2, gridImage3],
         };
 
       case "services":
@@ -1758,6 +1742,14 @@ export default function WebsiteBuilder() {
           minHeight: "700px",
           textAlign: "center",
           position: "relative",
+        };
+
+      case "hero-grid":
+        return {
+          padding: "80px 0",
+          backgroundColor: "#663399",
+          color: "white",
+          textAlign: "left",
         };
 
       case "pricing":
@@ -2796,6 +2788,12 @@ Make it sound professional, engaging, and specific to the business type and loca
           padding: "80px 0",
           backgroundColor: "#ffffff",
         };
+      case "banner-grid":
+        return {
+          padding: "80px 0",
+          backgroundColor: "#663399",
+          color: "white",
+        };
       default:
         return {};
     }
@@ -3592,6 +3590,233 @@ Make it sound professional, engaging, and specific to the business type and loca
           </div>
         )}
 
+        {block.type === "banner-grid" && (
+          <div className="py-12 sm:py-16 md:py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                {/* Left Content */}
+                <div className="space-y-6">
+                  {/* Tagline */}
+                  {block.content.subtitle && (
+                    <p
+                      className="text-lg font-medium text-white/90 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                      onClick={(e) =>
+                        handleElementClick(block.id, "text", "subtitle", e)
+                      }
+                      onDoubleClick={() =>
+                        handleTextDoubleClick(block.id, "subtitle")
+                      }
+                    >
+                      {editingText === `${block.id}-subtitle` ? (
+                        <input
+                          type="text"
+                          value={
+                            (
+                              website?.blocks.find((b) => b.id === block.id)
+                                ?.content as Record<string, string>
+                            )?.[block.id + "-subtitle"] || ""
+                          }
+                          onChange={(e) =>
+                            handleTextChange(
+                              block.id,
+                              "subtitle",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingText(null)}
+                          className="w-full outline-none bg-transparent border-b-2 border-white/50 text-lg text-white"
+                          autoFocus
+                        />
+                      ) : (
+                        block.content.subtitle
+                      )}
+                    </p>
+                  )}
+
+                  {/* Main Headline */}
+                  {block.content.title && (
+                    <h1
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                      onClick={(e) =>
+                        handleElementClick(block.id, "text", "title", e)
+                      }
+                      onDoubleClick={() =>
+                        handleTextDoubleClick(block.id, "title")
+                      }
+                    >
+                      {editingText === `${block.id}-title` ? (
+                        <textarea
+                          value={
+                            (
+                              website?.blocks.find((b) => b.id === block.id)
+                                ?.content as Record<string, string>
+                            )?.[block.id + "-title"] || ""
+                          }
+                          onChange={(e) =>
+                            handleTextChange(block.id, "title", e.target.value)
+                          }
+                          onBlur={() => setEditingText(null)}
+                          className="w-full outline-none bg-transparent border-b-2 border-white/50 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white resize-none"
+                          autoFocus
+                          rows={2}
+                        />
+                      ) : (
+                        block.content.title
+                      )}
+                    </h1>
+                  )}
+
+                  {/* Description */}
+                  {block.content.description && (
+                    <p
+                      className="text-lg text-white/80 leading-relaxed cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 rounded transition-all"
+                      onClick={(e) =>
+                        handleElementClick(block.id, "text", "description", e)
+                      }
+                      onDoubleClick={() =>
+                        handleTextDoubleClick(block.id, "description")
+                      }
+                    >
+                      {editingText === `${block.id}-description` ? (
+                        <textarea
+                          value={
+                            (
+                              website?.blocks.find((b) => b.id === block.id)
+                                ?.content as Record<string, string>
+                            )?.[block.id + "-description"] || ""
+                          }
+                          onChange={(e) =>
+                            handleTextChange(
+                              block.id,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingText(null)}
+                          className="w-full outline-none bg-transparent border-b-2 border-white/50 text-lg text-white resize-none"
+                          autoFocus
+                          rows={3}
+                        />
+                      ) : (
+                        block.content.description
+                      )}
+                    </p>
+                  )}
+
+                  {/* Button */}
+                  {block.content.buttonText && (
+                    <button
+                      className="inline-block bg-white text-purple-700 px-8 py-4 rounded-lg font-semibold text-base hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2"
+                      onClick={(e) =>
+                        handleButtonClick(
+                          block.id,
+                          "buttonText",
+                          block.content.buttonText || "",
+                          e
+                        )
+                      }
+                      onDoubleClick={() =>
+                        handleTextDoubleClick(block.id, "buttonText")
+                      }
+                    >
+                      {editingText === `${block.id}-buttonText` ? (
+                        <input
+                          type="text"
+                          value={
+                            (
+                              website?.blocks.find((b) => b.id === block.id)
+                                ?.content as Record<string, string>
+                            )?.[block.id + "-buttonText"] || ""
+                          }
+                          onChange={(e) =>
+                            handleTextChange(
+                              block.id,
+                              "buttonText",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingText(null)}
+                          className="outline-none bg-transparent text-purple-700 font-semibold"
+                          autoFocus
+                        />
+                      ) : (
+                        block.content.buttonText
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* Right Image Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Large image top right */}
+                  {block.content.images && block.content.images[0] && (
+                    <div className="col-span-2">
+                      <ImageWithShimmer
+                        src={block.content.images[0] || ""}
+                        alt="Banner grid image 1"
+                        className="w-full h-48 sm:h-56 object-cover rounded-xl cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 transition-all duration-300 hover:scale-105"
+                        onClick={() =>
+                          handleImageClick(
+                            block.id,
+                            "images[0]",
+                            block.content.images?.[0] || ""
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* Two smaller images bottom */}
+                  {block.content.images && block.content.images[1] && (
+                    <div>
+                      <ImageWithShimmer
+                        src={block.content.images[1] || ""}
+                        alt="Banner grid image 2"
+                        className="w-full h-32 sm:h-40 object-cover rounded-xl cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 transition-all duration-300 hover:scale-105"
+                        onClick={() =>
+                          handleImageClick(
+                            block.id,
+                            "images[1]",
+                            block.content.images?.[1] || ""
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {block.content.images && block.content.images[2] && (
+                    <div>
+                      <ImageWithShimmer
+                        src={block.content.images[2] || ""}
+                        alt="Banner grid image 3"
+                        className="w-full h-32 sm:h-40 object-cover rounded-xl cursor-pointer hover:outline hover:outline-2 hover:outline-white/50 hover:outline-offset-2 transition-all duration-300 hover:scale-105"
+                        onClick={() =>
+                          handleImageClick(
+                            block.id,
+                            "images[2]",
+                            block.content.images?.[2] || ""
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Banner Grid Settings Button - positioned to trigger side panel */}
+            {!isPreviewMode && (
+              <button
+                onClick={(e) => handleBannerGridClick(block.id, e)}
+                className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-200 backdrop-blur-sm"
+                title="Edit Banner Grid"
+              >
+                <Settings className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Hover Add Section Button */}
         <div
           className="absolute left-1/2 -translate-x-1/2 -top-2 z-30"
@@ -3689,6 +3914,50 @@ Make it sound professional, engaging, and specific to the business type and loca
       setSelectedButton({ blockId, field, currentText });
       setButtonLabel(currentText);
       setShowButtonSettings(true);
+    });
+  };
+
+  // Handle banner grid block clicks to show side panel
+  const handleBannerGridClick = (blockId: string, event: React.MouseEvent) => {
+    if (isPreviewMode) return;
+
+    event.stopPropagation();
+
+    // Close other panels
+    setShowImageSettings(false);
+    setSelectedImage(null);
+    setShowButtonSettings(false);
+    setSelectedButton(null);
+    setShowEditPanel(false);
+    setSelectedElement(null);
+    setShowTextImagePanel(false);
+    setSelectedTextImageBlock(null);
+
+    // Open banner grid panel
+    setSelectedBannerGrid({ blockId });
+    setShowBannerGridPanel(true);
+    setBannerGridActiveTab("content");
+  };
+
+  // Handle banner grid color change
+  const handleBannerGridColorChange = (blockId: string, color: string) => {
+    setWebsite((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        blocks: prev.blocks.map((block) =>
+          block.id === blockId
+            ? {
+                ...block,
+                styles: {
+                  ...block.styles,
+                  backgroundColor: color,
+                },
+              }
+            : block
+        ),
+      };
     });
   };
 
@@ -6306,7 +6575,39 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Remove old section selector */}
+      {/* Banner Grid Settings Panel - Minimal Implementation */}
+      {showBannerGridPanel && selectedBannerGrid && !isPreviewMode && (
+        <div className="fixed bg-white shadow-xl border border-gray-200 z-50 right-5 top-20 w-80 h-96 rounded-lg">
+          <div className="p-4 border-b">
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">Banner Grid Settings</h3>
+              <button
+                onClick={() => setShowBannerGridPanel(false)}
+                className="text-blue-600"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Colors</label>
+              <input
+                type="color"
+                value={customColor}
+                onChange={(e) => {
+                  setCustomColor(e.target.value);
+                  handleBannerGridColorChange(
+                    selectedBannerGrid.blockId,
+                    e.target.value
+                  );
+                }}
+                className="w-full h-12 rounded border"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
