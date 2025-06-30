@@ -284,7 +284,7 @@ export default function WebsiteBuilder() {
   >("solid");
   const [customColor, setCustomColor] = useState("#663399");
   const [customAccent, setCustomAccent] = useState("#054691");
-  const [buttonEnabled, setButtonEnabled] = useState(true);
+  const [] = useState(true);
 
   // New comprehensive section system states
   const [showSectionPanel, setShowSectionPanel] = useState(false);
@@ -4441,6 +4441,61 @@ Make it sound professional, engaging, and specific to the business type and loca
     });
   };
 
+  // Regenerate all 3 banner-grid images at once
+  const regenerateBannerGridImages = async (blockId: string) => {
+    if (!website) return;
+    setIsRegenerating(true);
+    try {
+      const infoStr = safeLocalStorage.getItem(`business_info_${user?.id}`);
+      const businessInfo: BusinessInfo | null = infoStr
+        ? JSON.parse(infoStr)
+        : null;
+      const bizType = businessInfo?.type ?? "business";
+      const location = businessInfo?.location ?? "";
+
+      const getImg = async () => {
+        const q = createBusinessSpecificImageQuery(bizType, "about", location);
+        return await fetchPexelsImage(q);
+      };
+
+      const newImages = await Promise.all([getImg(), getImg(), getImg()]);
+
+      setWebsite((prev) => {
+        if (!prev) return prev;
+        const updated = {
+          ...prev,
+          blocks: prev.blocks.map((b) =>
+            b.id === blockId
+              ? {
+                  ...b,
+                  content: {
+                    ...b.content,
+                    images: newImages,
+                  },
+                }
+              : b
+          ),
+        } as Website;
+
+        if (user?.id) {
+          safeLocalStorage.setItem(
+            `generated_website_${user.id}`,
+            JSON.stringify(updated)
+          );
+          saveToRecentProjects(updated);
+        }
+        return updated;
+      });
+    } catch (err) {
+      console.error("Failed to regenerate banner-grid images", err);
+      alert(
+        "Could not regenerate images – please check your API key / connection."
+      );
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Custom CSS for range sliders */}
@@ -6665,10 +6720,78 @@ Make it sound professional, engaging, and specific to the business type and loca
                   <div className="space-y-2">
                     <input
                       type="text"
+                      value={
+                        website?.blocks.find(
+                          (b) => b.id === selectedBannerGrid.blockId
+                        )?.content.subtitle || ""
+                      }
+                      onChange={(e) => {
+                        handleTextChange(
+                          selectedBannerGrid.blockId,
+                          "subtitle",
+                          e.target.value
+                        );
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter tagline..."
+                      placeholder="Your business tagline..."
                     />
-                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                    <button
+                      onClick={async () => {
+                        const businessInfoStr = safeLocalStorage.getItem(
+                          `business_info_${user?.id}`
+                        );
+                        const businessInfo: BusinessInfo = businessInfoStr
+                          ? JSON.parse(businessInfoStr)
+                          : null;
+
+                        if (!businessInfo) {
+                          alert(
+                            "Business information not found. Please go back to onboarding."
+                          );
+                          return;
+                        }
+
+                        try {
+                          const prompt = `Generate a compelling tagline for a ${businessInfo.type} business called "${businessInfo.name}" located in ${businessInfo.location}. The tagline should be short, catchy, and professional. Just return the tagline text, nothing else.`;
+
+                          const response = await fetch(
+                            "/api/generate-content",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            const generatedTagline = data.content.trim();
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "subtitle",
+                              generatedTagline
+                            );
+                          } else {
+                            // Fallback tagline generation
+                            const fallbackTagline = `Leading ${businessInfo.type} in ${businessInfo.location}`;
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "subtitle",
+                              fallbackTagline
+                            );
+                          }
+                        } catch (error) {
+                          console.error("Failed to generate tagline:", error);
+                          const fallbackTagline = `Professional ${businessInfo.type} Services`;
+                          handleTextChange(
+                            selectedBannerGrid.blockId,
+                            "subtitle",
+                            fallbackTagline
+                          );
+                        }
+                      }}
+                      className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                    >
                       Generate
                       <svg
                         className="w-4 h-4"
@@ -6695,10 +6818,78 @@ Make it sound professional, engaging, and specific to the business type and loca
                   <div className="space-y-2">
                     <input
                       type="text"
+                      value={
+                        website?.blocks.find(
+                          (b) => b.id === selectedBannerGrid.blockId
+                        )?.content.title || ""
+                      }
+                      onChange={(e) => {
+                        handleTextChange(
+                          selectedBannerGrid.blockId,
+                          "title",
+                          e.target.value
+                        );
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter headline..."
+                      placeholder="Your main headline..."
                     />
-                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                    <button
+                      onClick={async () => {
+                        const businessInfoStr = safeLocalStorage.getItem(
+                          `business_info_${user?.id}`
+                        );
+                        const businessInfo: BusinessInfo = businessInfoStr
+                          ? JSON.parse(businessInfoStr)
+                          : null;
+
+                        if (!businessInfo) {
+                          alert(
+                            "Business information not found. Please go back to onboarding."
+                          );
+                          return;
+                        }
+
+                        try {
+                          const prompt = `Generate a powerful headline for a ${businessInfo.type} business called "${businessInfo.name}" in ${businessInfo.location}. The headline should be compelling, professional, and highlight their main value proposition. Keep it under 10 words. Just return the headline text, nothing else.`;
+
+                          const response = await fetch(
+                            "/api/generate-content",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            const generatedHeadline = data.content.trim();
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "title",
+                              generatedHeadline
+                            );
+                          } else {
+                            // Fallback headline generation
+                            const fallbackHeadline = `Transform Your Business with ${businessInfo.name}`;
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "title",
+                              fallbackHeadline
+                            );
+                          }
+                        } catch (error) {
+                          console.error("Failed to generate headline:", error);
+                          const fallbackHeadline = `Exceptional ${businessInfo.type} Services`;
+                          handleTextChange(
+                            selectedBannerGrid.blockId,
+                            "title",
+                            fallbackHeadline
+                          );
+                        }
+                      }}
+                      className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                    >
                       Regenerate
                       <svg
                         className="w-4 h-4"
@@ -6725,10 +6916,82 @@ Make it sound professional, engaging, and specific to the business type and loca
                   <div className="space-y-2">
                     <textarea
                       rows={3}
+                      value={
+                        website?.blocks.find(
+                          (b) => b.id === selectedBannerGrid.blockId
+                        )?.content.description || ""
+                      }
+                      onChange={(e) => {
+                        handleTextChange(
+                          selectedBannerGrid.blockId,
+                          "description",
+                          e.target.value
+                        );
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter subtext..."
+                      placeholder="Describe your services and value proposition..."
                     />
-                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                    <button
+                      onClick={async () => {
+                        const businessInfoStr = safeLocalStorage.getItem(
+                          `business_info_${user?.id}`
+                        );
+                        const businessInfo: BusinessInfo = businessInfoStr
+                          ? JSON.parse(businessInfoStr)
+                          : null;
+
+                        if (!businessInfo) {
+                          alert(
+                            "Business information not found. Please go back to onboarding."
+                          );
+                          return;
+                        }
+
+                        try {
+                          const prompt = `Generate compelling subtext for a ${businessInfo.type} business called "${businessInfo.name}" in ${businessInfo.location}. The subtext should explain their value proposition and services in 2-3 sentences. Make it professional and engaging. Just return the subtext, nothing else.`;
+
+                          const response = await fetch(
+                            "/api/generate-content",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+
+                          if (response.ok) {
+                            const data = await response.json();
+                            const generatedSubtext = data.content.trim();
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "description",
+                              generatedSubtext
+                            );
+                          } else {
+                            // Fallback subtext generation
+                            const fallbackSubtext = `${
+                              businessInfo.name
+                            } provides exceptional ${businessInfo.type.toLowerCase()} services in ${
+                              businessInfo.location
+                            }. We're committed to delivering outstanding results for our clients with professional expertise and personalized attention.`;
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "description",
+                              fallbackSubtext
+                            );
+                          }
+                        } catch (error) {
+                          console.error("Failed to generate subtext:", error);
+                          const fallbackSubtext = `Professional ${businessInfo.type.toLowerCase()} services tailored to your needs. Experience excellence with our dedicated team.`;
+                          handleTextChange(
+                            selectedBannerGrid.blockId,
+                            "description",
+                            fallbackSubtext
+                          );
+                        }
+                      }}
+                      className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                    >
                       Regenerate
                       <svg
                         className="w-4 h-4"
@@ -6749,53 +7012,127 @@ Make it sound professional, engaging, and specific to the business type and loca
 
                 {/* Grid Images */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Grid images
-                  </label>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-gray-700">
+                      Grid images
+                    </label>
+                    <button
+                      onClick={() =>
+                        regenerateBannerGridImages(selectedBannerGrid.blockId)
+                      }
+                      disabled={isRegenerating}
+                      className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+                    >
+                      Regenerate
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-3 gap-2">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="relative group">
-                        <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                          <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
-                            <span className="text-gray-500 text-xs">
-                              Image {i}
-                            </span>
+                    {[0, 1, 2].map((index) => {
+                      const currentBlock = website?.blocks.find(
+                        (b) => b.id === selectedBannerGrid.blockId
+                      );
+                      const imageUrl = currentBlock?.content.images?.[index];
+
+                      return (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                            {imageUrl ? (
+                              <img
+                                src={imageUrl}
+                                alt={`Grid image ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                                <span className="text-gray-500 text-xs">
+                                  Image {index + 1}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                            <button
+                              onClick={() => {
+                                handleImageClick(
+                                  selectedBannerGrid.blockId,
+                                  `images[${index}]`,
+                                  imageUrl || ""
+                                );
+                              }}
+                              className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50"
+                            >
+                              <svg
+                                className="w-3 h-3 text-gray-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => {
+                                // Remove the image by setting it to empty
+                                setWebsite((prev) => {
+                                  if (!prev) return prev;
+                                  return {
+                                    ...prev,
+                                    blocks: prev.blocks.map((block) =>
+                                      block.id === selectedBannerGrid.blockId
+                                        ? {
+                                            ...block,
+                                            content: {
+                                              ...block.content,
+                                              images:
+                                                block.content.images?.map(
+                                                  (img, i) =>
+                                                    i === index ? "" : img
+                                                ) || [],
+                                            },
+                                          }
+                                        : block
+                                    ),
+                                  };
+                                });
+                              }}
+                              className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50"
+                            >
+                              <svg
+                                className="w-3 h-3 text-red-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
                           </div>
                         </div>
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                          <button className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50">
-                            <svg
-                              className="w-3 h-3 text-gray-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                              />
-                            </svg>
-                          </button>
-                          <button className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50">
-                            <svg
-                              className="w-3 h-3 text-red-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -6809,17 +7146,50 @@ Make it sound professional, engaging, and specific to the business type and loca
                       <input
                         type="checkbox"
                         className="sr-only peer"
-                        checked={buttonEnabled}
-                        onChange={(e) => setButtonEnabled(e.target.checked)}
+                        checked={
+                          !!website?.blocks.find(
+                            (b) => b.id === selectedBannerGrid.blockId
+                          )?.content.buttonText
+                        }
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "buttonText",
+                              "Get Started"
+                            );
+                          } else {
+                            handleTextChange(
+                              selectedBannerGrid.blockId,
+                              "buttonText",
+                              ""
+                            );
+                          }
+                        }}
                       />
                       <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
                   </div>
-                  {buttonEnabled && (
-                    <button className="w-full px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-2">
-                      <span className="text-lg">+</span>
-                      Add button
-                    </button>
+                  {website?.blocks.find(
+                    (b) => b.id === selectedBannerGrid.blockId
+                  )?.content.buttonText && (
+                    <input
+                      type="text"
+                      value={
+                        website?.blocks.find(
+                          (b) => b.id === selectedBannerGrid.blockId
+                        )?.content.buttonText || ""
+                      }
+                      onChange={(e) => {
+                        handleTextChange(
+                          selectedBannerGrid.blockId,
+                          "buttonText",
+                          e.target.value
+                        );
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Button text..."
+                    />
                   )}
                 </div>
               </div>
@@ -6833,10 +7203,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                     <label className="text-sm font-medium text-gray-700">
                       Colors
                     </label>
-                    <button
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                      className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
+                    <button className="text-xs text-blue-600 font-medium">
                       Change
                     </button>
                   </div>
@@ -7242,7 +7609,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Min height
-                  </label>
+                  </label>{" "}
                   <div className="flex space-x-2">
                     <button className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-50 text-blue-600 rounded-lg">
                       Content

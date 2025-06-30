@@ -12,6 +12,7 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000",
     NEXT_PUBLIC_APP_URL:
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    PEXELS_API_KEY: process.env.PEXELS_API_KEY,
   },
   images: {
     domains: [
