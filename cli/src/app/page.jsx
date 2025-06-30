@@ -640,6 +640,120 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Feature Cards Section */}
+      <section className="relative w-full bg-white py-12 sm:py-20">
+        <div className="mx-auto max-w-4xl text-center mb-12 px-4">
+          <p className="text-xs font-semibold tracking-widest text-amber-700 mb-2">
+            The #1 AI website builder
+          </p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-normal text-gray-900 mb-3">
+            A website that
+            <br className="sm:hidden" /> works for you
+          </h2>
+          <p className="font-cursive italic text-xs sm:text-sm text-gray-800 max-w-md mx-auto">
+            Professionally designed, optimised for search, and ready to grow
+            your business.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-6xl mx-auto px-4">
+          {/* Card 1 */}
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+            <p className="text-xs font-semibold text-amber-800 mb-1">
+              AI websites
+            </p>
+            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              Designed for you
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Skip hiring a designer, and get a beautiful customisable website
+              out of the box.
+            </p>
+            <a
+              href="#"
+              className="text-sm font-medium text-amber-500 hover:text-amber-200 inline-flex items-center gap-1 mb-4"
+            >
+              AI Website Builder <span className="text-lg">→</span>
+            </a>
+            <img
+              src="/l1.png"
+              alt="Designed for you"
+              className="w-full rounded-lg object-contain"
+            />
+          </div>
+
+          {/* Card 2 */}
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+            <p className="text-xs font-semibold text-amber-600 mb-1">
+              AI copywriter
+            </p>
+            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              Written for you
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Not a wordsmith? No problem. Durable writes high converting copy.
+            </p>
+            <a
+              href="#"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+            >
+              AI Copywriter <span className="text-lg">→</span>
+            </a>
+            <img
+              src="/l2.png"
+              alt="Written for you"
+              className="w-full rounded-lg object-contain"
+            />
+          </div>
+
+          {/* Card 3 */}
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+            <p className="text-xs font-semibold text-amber-600 mb-1">SEO</p>
+            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              Optimized for you
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Get found on Google faster. Your website is SEO-ready the moment
+              it's live.
+            </p>
+            <a
+              href="#"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+            >
+              SEO Tools <span className="text-lg">→</span>
+            </a>
+            <img
+              src="/l3.png"
+              alt="Optimized for you"
+              className="w-full rounded-lg object-contain"
+            />
+          </div>
+
+          {/* Card 4 */}
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+            <p className="text-xs font-semibold text-amber-600 mb-1">AI blog</p>
+            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              Content created for you
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Put your marketing on autopilot. Durable writes and publishes new
+              blog content weekly.
+            </p>
+            <a
+              href="#"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+            >
+              AI Blog Builder <span className="text-lg">→</span>
+            </a>
+            <img
+              src="/l4.png"
+              alt="Content created for you"
+              className="w-full rounded-lg object-contain"
+            />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
