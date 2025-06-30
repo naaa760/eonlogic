@@ -473,7 +473,7 @@ export default function LandingPage() {
                 rotate: useTransform(scrollY, [1000, 2000], [14, -14]),
               }}
             >
-              {/* More elongated semi-circle visual guide */}
+              {/* More visible but subtle semi-circle visual guide */}
               <div
                 className="absolute left-1/2 bottom-0 w-[600px] h-36 border-2 border-dashed border-gray-300 rounded-t-full transform -translate-x-1/2 opacity-30"
                 style={{ borderRadius: "300px 300px 0 0" }}
@@ -483,8 +483,9 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  left: "5%",
-                  bottom: "30%",
+                  left: "8%",
+                  bottom: "28%",
+                  transform: "rotate(-12deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
@@ -502,7 +503,7 @@ export default function LandingPage() {
                     0s
                   </div>
                 </div>
-                <p className="text-sm font-medium text-center">
+                <p className="text-sm font-thin text-center transform rotate-12deg">
                   Designing
                   <br />
                   website
@@ -513,8 +514,9 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  left: "28%",
-                  top: "15%",
+                  left: "30%",
+                  top: "12%",
+                  transform: "rotate(-6deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
@@ -532,7 +534,7 @@ export default function LandingPage() {
                     10s
                   </div>
                 </div>
-                <p className="text-sm font-medium text-center">
+                <p className="text-sm font-thin text-center transform rotate-6deg">
                   Writing
                   <br />
                   content
@@ -543,8 +545,9 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  right: "28%",
-                  top: "15%",
+                  right: "30%",
+                  top: "12%",
+                  transform: "rotate(6deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
@@ -562,7 +565,7 @@ export default function LandingPage() {
                     20s
                   </div>
                 </div>
-                <p className="text-sm font-medium text-center">
+                <p className="text-sm font-thin text-center transform -rotate-6deg">
                   Optimizing
                   <br />
                   for SEO
@@ -573,8 +576,9 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  right: "5%",
-                  bottom: "30%",
+                  right: "8%",
+                  bottom: "28%",
+                  transform: "rotate(12deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
@@ -592,7 +596,7 @@ export default function LandingPage() {
                     30s
                   </div>
                 </div>
-                <p className="text-sm font-medium text-center">
+                <p className="text-sm font-thin text-center transform -rotate-12deg">
                   Ready to
                   <br />
                   go live
@@ -602,7 +606,7 @@ export default function LandingPage() {
               {/* More elongated connection lines */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
                 <path
-                  d="M 60 240 Q 400 40 740 240"
+                  d="M 80 230 Q 400 40 720 230"
                   stroke="#d1d5db"
                   strokeWidth="2"
                   fill="none"
