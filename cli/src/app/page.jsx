@@ -446,6 +446,173 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Rotating Semi-Circle Wheel Section */}
+      <section className="relative w-full overflow-hidden py-12 bg-white">
+        <div className="relative mx-auto max-w-6xl flex flex-col items-center justify-center gap-8">
+          {/* Section Header */}
+          <div className="mx-auto max-w-2xl flex flex-col items-center text-center">
+            <p className="text-sm font-medium text-purple-600 mb-4">
+              Your AI business partner
+            </p>
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              Get online in record time
+            </h2>
+            <p className="text-lg text-gray-600 max-w-md">
+              Millions of businesses trust Durable to grow their business with
+              AI.
+            </p>
+          </div>
+
+          {/* Rotating Semi-Circle Container */}
+          <div className="relative w-full max-w-5xl h-80 flex items-center justify-center">
+            <motion.div
+              className="relative w-full h-full"
+              style={{
+                transformOrigin: "center bottom",
+                rotate: useTransform(scrollY, [1000, 2000], [14, -14]),
+              }}
+            >
+              {/* More elongated semi-circle visual guide */}
+              <div
+                className="absolute left-1/2 bottom-0 w-[600px] h-36 border-2 border-dashed border-gray-300 rounded-t-full transform -translate-x-1/2 opacity-30"
+                style={{ borderRadius: "300px 300px 0 0" }}
+              ></div>
+
+              {/* Image 1 - Designing website (0s) - Far Left */}
+              <motion.div
+                className="absolute flex flex-col items-center"
+                style={{
+                  left: "5%",
+                  bottom: "30%",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className="relative mb-2">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                    <img
+                      alt="Designing website"
+                      width="40"
+                      height="40"
+                      className="object-contain"
+                      src="/a.png"
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 absolute -top-6 left-1/2 transform -translate-x-1/2">
+                    0s
+                  </div>
+                </div>
+                <p className="text-sm font-medium text-center">
+                  Designing
+                  <br />
+                  website
+                </p>
+              </motion.div>
+
+              {/* Image 2 - Writing content (10s) - Left */}
+              <motion.div
+                className="absolute flex flex-col items-center"
+                style={{
+                  left: "28%",
+                  top: "15%",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className="relative mb-2">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                    <img
+                      alt="Writing content"
+                      width="40"
+                      height="40"
+                      className="object-contain"
+                      src="/b.png"
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 absolute -top-6 left-1/2 transform -translate-x-1/2">
+                    10s
+                  </div>
+                </div>
+                <p className="text-sm font-medium text-center">
+                  Writing
+                  <br />
+                  content
+                </p>
+              </motion.div>
+
+              {/* Image 3 - Optimizing for SEO (20s) - Right */}
+              <motion.div
+                className="absolute flex flex-col items-center"
+                style={{
+                  right: "28%",
+                  top: "15%",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className="relative mb-2">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                    <img
+                      alt="Optimizing for SEO"
+                      width="40"
+                      height="40"
+                      className="object-contain"
+                      src="/c.png"
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 absolute -top-6 left-1/2 transform -translate-x-1/2">
+                    20s
+                  </div>
+                </div>
+                <p className="text-sm font-medium text-center">
+                  Optimizing
+                  <br />
+                  for SEO
+                </p>
+              </motion.div>
+
+              {/* Image 4 - Ready to go live (30s) - Far Right */}
+              <motion.div
+                className="absolute flex flex-col items-center"
+                style={{
+                  right: "5%",
+                  bottom: "30%",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className="relative mb-2">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                    <img
+                      alt="Ready to go live"
+                      width="40"
+                      height="40"
+                      className="object-contain"
+                      src="/d.png"
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 absolute -top-6 left-1/2 transform -translate-x-1/2">
+                    30s
+                  </div>
+                </div>
+                <p className="text-sm font-medium text-center">
+                  Ready to
+                  <br />
+                  go live
+                </p>
+              </motion.div>
+
+              {/* More elongated connection lines */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+                <path
+                  d="M 60 240 Q 400 40 740 240"
+                  stroke="#d1d5db"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeDasharray="5,5"
+                />
+              </svg>
+            </motion.div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
