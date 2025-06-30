@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import Head from "next/head";
@@ -80,6 +80,7 @@ const Snow = () => {
 export default function LandingPage() {
   const { isSignedIn } = useUser();
   const [businessType, setBusinessType] = useState("");
+  const { scrollY } = useScroll();
 
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
@@ -248,6 +249,123 @@ export default function LandingPage() {
               )}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Image Gallery Section with Pyramid Layout */}
+      <section className="relative min-h-screen overflow-hidden bg-white py-20">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Scattered Pyramid Layout - 5 Images with Bottom Fade */}
+          <div className="relative h-96 mb-16">
+            {/* Image 1 - Top center, slightly left */}
+            <motion.div
+              className="absolute top-0 left-1/4 overflow-hidden rounded-xl bg-neutral-50 w-64 h-48 z-10"
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              style={{
+                y: useTransform(scrollY, [0, 1000], [0, -50]),
+              }}
+            >
+              <img
+                src="/1.png"
+                alt="Website example"
+                className="w-full h-full object-cover"
+                width={294}
+                height={221}
+              />
+            </motion.div>
+
+            {/* Image 2 - Top right, overlapping */}
+            <motion.div
+              className="absolute top-8 right-1/4 overflow-hidden rounded-xl bg-neutral-50 w-56 h-42 z-20"
+              initial={{ y: 120, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+              style={{
+                y: useTransform(scrollY, [0, 1000], [0, -40]),
+              }}
+            >
+              <img
+                src="/2.png"
+                alt="Website example"
+                className="w-full h-full object-cover"
+                width={294}
+                height={221}
+              />
+            </motion.div>
+
+            {/* Image 3 - Center, large and prominent */}
+            <motion.div
+              className="absolute top-16 left-1/2 transform -translate-x-1/2 overflow-hidden rounded-xl bg-neutral-50 w-72 h-54 z-30"
+              initial={{ y: 120, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              style={{
+                y: useTransform(scrollY, [0, 1000], [0, -60]),
+              }}
+            >
+              <img
+                src="/3.png"
+                alt="Website example"
+                className="w-full h-full object-cover"
+                width={294}
+                height={221}
+              />
+            </motion.div>
+
+            {/* Image 4 - Bottom left */}
+            <motion.div
+              className="absolute bottom-8 left-16 overflow-hidden rounded-xl bg-neutral-50 w-52 h-40 z-15"
+              initial={{ y: 140, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              style={{
+                y: useTransform(scrollY, [0, 1000], [0, -30]),
+              }}
+            >
+              <img
+                src="/4.png"
+                alt="Website example"
+                className="w-full h-full object-cover"
+                width={294}
+                height={221}
+              />
+            </motion.div>
+
+            {/* Image 5 - Bottom right, partially behind center */}
+            <motion.div
+              className="absolute bottom-0 right-20 overflow-hidden rounded-xl bg-neutral-50 w-60 h-44 z-25"
+              initial={{ y: 140, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              style={{
+                y: useTransform(scrollY, [0, 1000], [0, -70]),
+              }}
+            >
+              <img
+                src="/5.png"
+                alt="Website example"
+                className="w-full h-full object-cover"
+                width={294}
+                height={221}
+              />
+            </motion.div>
+
+            {/* Bottom fade effect overlay for the scattered images */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-40"
+              style={{
+                background:
+                  "linear-gradient(to top, white 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.6) 60%, transparent 100%)",
+              }}
+            />
+          </div>
         </div>
       </section>
     </div>
