@@ -182,7 +182,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[34px] sm:text-[44px] md:text-[64px] lg:text-[80px] xl:text-[96px] mx-auto text-center mb-6 sm:mb-8">
+            <h1 className="text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[48px] sm:text-[56px] md:text-[72px] lg:text-[88px] xl:text-[96px] mx-auto text-center mb-6 sm:mb-8">
               AI that builds a <br />
               website for you
             </h1>
@@ -199,24 +199,24 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="mb-20"
           >
-            <div className="relative w-full max-w-3xl mx-auto">
+            <div className="relative w-full max-w-[18rem] sm:max-w-md mx-auto">
               <Input
                 type="text"
                 placeholder="What type of business are you building?"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                className="w-full h-14 pl-6 pr-40 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="w-full h-8 sm:h-10 pl-3 pr-28 sm:pr-32 text-xs sm:text-sm border-2 border-gray-200 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
               />
               {isSignedIn ? (
                 <Link href="/dashboard">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-2 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 right-1 bottom-1 rounded-lg">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-2 sm:px-3 text-[10px] sm:text-xs bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 bottom-1 right-1 rounded-md h-auto">
                     Generate website
                     <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-2 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 right-1 bottom-1 rounded-lg">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-2 sm:px-3 text-[10px] sm:text-xs bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 bottom-1 right-1 rounded-md h-auto">
                     Generate website
                     <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
