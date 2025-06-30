@@ -659,7 +659,8 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-6xl mx-auto px-4">
           {/* Card 1 */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+          <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">
               AI websites
             </p>
@@ -684,7 +685,8 @@ export default function LandingPage() {
           </div>
 
           {/* Card 2 */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+          <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">
               AI copywriter
             </p>
@@ -708,7 +710,8 @@ export default function LandingPage() {
           </div>
 
           {/* Card 3 */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+          <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">SEO</p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Optimized for you
@@ -731,7 +734,8 @@ export default function LandingPage() {
           </div>
 
           {/* Card 4 */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
+          <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">AI blog</p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Content created for you
