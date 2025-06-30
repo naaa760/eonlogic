@@ -6848,164 +6848,263 @@ Make it sound professional, engaging, and specific to the business type and loca
 
                 {/* Color Picker Modal */}
                 {showColorPicker && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-6 w-80 max-w-sm">
-                      <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-lg font-semibold">Choose Color</h4>
-                        <button
-                          onClick={() => setShowColorPicker(false)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          ✕
-                        </button>
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-sm border border-gray-200">
+                      {/* Header */}
+                      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={() => setShowColorPicker(false)}
+                            className="text-gray-600 hover:text-gray-800"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                              />
+                            </svg>
+                          </button>
+                          <h4 className="text-lg font-semibold text-gray-900">
+                            Colors
+                          </h4>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => setShowColorPicker(false)}
+                            className="text-blue-600 text-sm font-medium"
+                          >
+                            Done
+                          </button>
+                        </div>
                       </div>
 
                       {/* Color Tabs */}
-                      <div className="flex border-b border-gray-200 mb-4">
+                      <div className="flex border-b border-gray-200">
                         <button
                           onClick={() => setColorPickerTab("theme")}
-                          className={`flex-1 py-2 text-sm font-medium ${
+                          className={`flex-1 py-3 px-4 text-sm font-medium text-center ${
                             colorPickerTab === "theme"
                               ? "text-blue-600 border-b-2 border-blue-600"
-                              : "text-gray-500"
+                              : "text-gray-500 hover:text-gray-700"
                           }`}
                         >
-                          Theme
+                          From theme
                         </button>
                         <button
                           onClick={() => setColorPickerTab("custom")}
-                          className={`flex-1 py-2 text-sm font-medium ${
+                          className={`flex-1 py-3 px-4 text-sm font-medium text-center ${
                             colorPickerTab === "custom"
                               ? "text-blue-600 border-b-2 border-blue-600"
-                              : "text-gray-500"
+                              : "text-gray-500 hover:text-gray-700"
                           }`}
                         >
                           Custom
                         </button>
                       </div>
 
-                      {colorPickerTab === "theme" && (
-                        <div className="grid grid-cols-4 gap-3">
-                          {[
-                            "#3B82F6",
-                            "#8B5CF6",
-                            "#EF4444",
-                            "#10B981",
-                            "#F59E0B",
-                            "#EC4899",
-                            "#6366F1",
-                            "#84CC16",
-                          ].map((color) => (
-                            <button
-                              key={color}
+                      <div className="p-4 max-h-96 overflow-y-auto">
+                        {colorPickerTab === "theme" && (
+                          <div className="space-y-1">
+                            {/* Solid Dropdown */}
+                            <div className="mb-4">
+                              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm">
+                                <option>Solid</option>
+                                <option>Linear</option>
+                                <option>Radial</option>
+                              </select>
+                            </div>
+
+                            {/* Theme Color Options - Aa, Bb, Cc, Dd */}
+                            <div
                               onClick={() => {
-                                setCustomColor(color);
+                                setCustomColor("#E5E7EB");
                                 handleBannerGridColorChange(
                                   selectedBannerGrid.blockId,
-                                  color
+                                  "#E5E7EB"
                                 );
+                                setShowColorPicker(false);
                               }}
-                              className="w-10 h-10 rounded-lg border-2 border-gray-200 hover:border-gray-400 transition-colors"
-                              style={{ backgroundColor: color }}
-                            />
-                          ))}
-                        </div>
-                      )}
-
-                      {colorPickerTab === "custom" && (
-                        <div className="space-y-4">
-                          {/* Gradient Type Selector */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Type
-                            </label>
-                            <div className="flex space-x-2">
-                              {["solid", "linear", "radial"].map((type) => (
-                                <button
-                                  key={type}
-                                  onClick={() =>
-                                    setGradientType(type as typeof gradientType)
-                                  }
-                                  className={`px-3 py-2 text-sm rounded-lg border ${
-                                    gradientType === type
-                                      ? "bg-blue-600 text-white border-blue-600"
-                                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                                  }`}
-                                >
-                                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                                </button>
-                              ))}
+                              className="flex items-center p-4 rounded-xl bg-gray-100 border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors"
+                            >
+                              <div className="w-4 h-4 bg-blue-600 rounded-full mr-3"></div>
+                              <span className="text-lg font-medium text-gray-700">
+                                Aa
+                              </span>
                             </div>
-                          </div>
 
-                          {/* Color Inputs */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Primary Color
-                            </label>
-                            <input
-                              type="color"
-                              value={customColor}
-                              onChange={(e) => setCustomColor(e.target.value)}
-                              className="w-full h-10 rounded-lg border border-gray-300"
-                            />
-                          </div>
-
-                          {gradientType !== "solid" && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Accent Color
-                              </label>
-                              <input
-                                type="color"
-                                value={customAccent}
-                                onChange={(e) =>
-                                  setCustomAccent(e.target.value)
-                                }
-                                className="w-full h-10 rounded-lg border border-gray-300"
-                              />
-                            </div>
-                          )}
-
-                          {/* Preview */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Preview
-                            </label>
                             <div
-                              className="w-full h-12 rounded-lg border border-gray-300"
-                              style={{
-                                background:
-                                  gradientType === "solid"
-                                    ? customColor
-                                    : gradientType === "linear"
-                                    ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
-                                    : `radial-gradient(circle, ${customColor}, ${customAccent})`,
+                              onClick={() => {
+                                setCustomColor("#3B82F6");
+                                handleBannerGridColorChange(
+                                  selectedBannerGrid.blockId,
+                                  "#3B82F6"
+                                );
+                                setShowColorPicker(false);
                               }}
-                            />
-                          </div>
+                              className="flex items-center p-4 rounded-xl bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-colors"
+                            >
+                              <div className="w-4 h-4 bg-white rounded-full mr-3"></div>
+                              <span className="text-lg font-medium">Bb</span>
+                            </div>
 
-                          {/* Apply Button */}
-                          <button
-                            onClick={() => {
-                              const finalColor =
-                                gradientType === "solid"
-                                  ? customColor
-                                  : gradientType === "linear"
-                                  ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
-                                  : `radial-gradient(circle, ${customColor}, ${customAccent})`;
-                              handleBannerGridColorChange(
-                                selectedBannerGrid.blockId,
-                                finalColor
-                              );
-                              setShowColorPicker(false);
-                            }}
-                            className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                          >
-                            Apply
-                          </button>
-                        </div>
-                      )}
+                            <div
+                              onClick={() => {
+                                setCustomColor("#8B5CF6");
+                                handleBannerGridColorChange(
+                                  selectedBannerGrid.blockId,
+                                  "#8B5CF6"
+                                );
+                                setShowColorPicker(false);
+                              }}
+                              className="flex items-center p-4 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors"
+                            >
+                              <div className="w-4 h-4 bg-white rounded-full mr-3"></div>
+                              <span className="text-lg font-medium">Cc</span>
+                            </div>
+
+                            <div
+                              onClick={() => {
+                                setCustomColor("#3B82F6");
+                                handleBannerGridColorChange(
+                                  selectedBannerGrid.blockId,
+                                  "#3B82F6"
+                                );
+                                setShowColorPicker(false);
+                              }}
+                              className="flex items-center p-4 rounded-xl bg-white border border-gray-200 hover:border-gray-300 cursor-pointer transition-colors"
+                            >
+                              <div className="w-4 h-4 bg-blue-600 rounded-full mr-3"></div>
+                              <span className="text-lg font-medium text-gray-700">
+                                Dd
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {colorPickerTab === "custom" && (
+                          <div className="space-y-6">
+                            {/* Background Section */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Background
+                              </label>
+                              <div className="space-y-3">
+                                {/* Background Type Dropdown */}
+                                <select
+                                  value={gradientType}
+                                  onChange={(e) =>
+                                    setGradientType(
+                                      e.target.value as typeof gradientType
+                                    )
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+                                >
+                                  <option value="solid">Solid</option>
+                                  <option value="linear">Linear</option>
+                                  <option value="radial">Radial</option>
+                                </select>
+
+                                {/* Background Color Input */}
+                                <div className="relative">
+                                  <input
+                                    type="text"
+                                    value={customColor}
+                                    onChange={(e) =>
+                                      setCustomColor(e.target.value)
+                                    }
+                                    className="w-full px-3 py-2 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                                    placeholder="#562E65"
+                                  />
+                                  <div
+                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 rounded border border-gray-300"
+                                    style={{ backgroundColor: customColor }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Accent Section */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Accent
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  value={customAccent}
+                                  onChange={(e) =>
+                                    setCustomAccent(e.target.value)
+                                  }
+                                  className="w-full px-3 py-2 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                                  placeholder="#FFFFFF"
+                                />
+                                <div
+                                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 rounded border border-gray-300"
+                                  style={{ backgroundColor: customAccent }}
+                                ></div>
+                              </div>
+                            </div>
+
+                            {/* Preview Section */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Preview
+                              </label>
+                              <div
+                                className="flex items-center p-4 rounded-xl cursor-pointer"
+                                style={{
+                                  background:
+                                    gradientType === "solid"
+                                      ? customColor
+                                      : gradientType === "linear"
+                                      ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
+                                      : `radial-gradient(circle, ${customColor}, ${customAccent})`,
+                                }}
+                                onClick={() => {
+                                  const finalColor =
+                                    gradientType === "solid"
+                                      ? customColor
+                                      : gradientType === "linear"
+                                      ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
+                                      : `radial-gradient(circle, ${customColor}, ${customAccent})`;
+                                  handleBannerGridColorChange(
+                                    selectedBannerGrid.blockId,
+                                    finalColor
+                                  );
+                                  setShowColorPicker(false);
+                                }}
+                              >
+                                <div className="w-4 h-4 bg-white rounded-full mr-3"></div>
+                                <span className="text-lg font-medium text-white">
+                                  Custom
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
