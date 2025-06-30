@@ -14,6 +14,7 @@ import {
   FileText,
   HelpCircle,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -6692,7 +6693,10 @@ Make it sound professional, engaging, and specific to the business type and loca
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Content
+              <span className="inline-flex items-center justify-center gap-1">
+                <FileText className="w-4 h-4" />
+                Content
+              </span>
             </button>
             <button
               onClick={() => setBannerGridActiveTab("style")}
@@ -6702,7 +6706,10 @@ Make it sound professional, engaging, and specific to the business type and loca
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Style
+              <span className="inline-flex items-center justify-center gap-1">
+                <Settings className="w-4 h-4" />
+                Style
+              </span>
             </button>
           </div>
 
@@ -6792,20 +6799,8 @@ Make it sound professional, engaging, and specific to the business type and loca
                       }}
                       className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
                     >
-                      Generate
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
+                      <span>Generate</span>
+                      <Sparkles className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
@@ -6890,7 +6885,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       }}
                       className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
                     >
-                      Regenerate
+                      <span>Regenerate</span>
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -6992,7 +6987,7 @@ Make it sound professional, engaging, and specific to the business type and loca
                       }}
                       className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
                     >
-                      Regenerate
+                      <span>Regenerate</span>
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -7039,6 +7034,9 @@ Make it sound professional, engaging, and specific to the business type and loca
                       </svg>
                     </button>
                   </div>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Select up to 3 images
+                  </p>
                   <div className="grid grid-cols-3 gap-2">
                     {[0, 1, 2].map((index) => {
                       const currentBlock = website?.blocks.find(
