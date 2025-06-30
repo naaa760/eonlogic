@@ -276,7 +276,15 @@ export default function WebsiteBuilder() {
 
   // Color customization states
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [colorPickerTab, setColorPickerTab] = useState<"theme" | "custom">(
+    "theme"
+  );
+  const [gradientType, setGradientType] = useState<
+    "solid" | "linear" | "radial"
+  >("solid");
   const [customColor, setCustomColor] = useState("#663399");
+  const [customAccent, setCustomAccent] = useState("#054691");
+  const [buttonEnabled, setButtonEnabled] = useState(true);
 
   // New comprehensive section system states
   const [showSectionPanel, setShowSectionPanel] = useState(false);
@@ -6575,36 +6583,591 @@ Make it sound professional, engaging, and specific to the business type and loca
         </div>
       )}
 
-      {/* Banner Grid Settings Panel - Minimal Implementation */}
+      {/* Banner Grid Settings Panel - Complete Implementation */}
       {showBannerGridPanel && selectedBannerGrid && !isPreviewMode && (
-        <div className="fixed bg-white shadow-xl border border-gray-200 z-50 right-5 top-20 w-80 h-96 rounded-lg">
-          <div className="p-4 border-b">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold">Banner Grid Settings</h3>
+        <div
+          className="fixed bg-white shadow-xl border border-gray-200 z-50"
+          style={{
+            right: "20px",
+            top: "80px",
+            width: "320px",
+            height: "calc(100vh - 100px)",
+            borderRadius: "12px",
+          }}
+        >
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowBannerGridPanel(false)}
-                className="text-blue-600"
+                className="text-gray-600 hover:text-gray-800"
               >
-                Done
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
               </button>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Banner Grid Settings
+              </h3>
             </div>
+            <button
+              onClick={() => setShowBannerGridPanel(false)}
+              className="text-blue-600 text-sm font-medium"
+            >
+              Done
+            </button>
           </div>
-          <div className="p-4">
-            <div className="mb-4">
-              <label className="block text-sm mb-2">Colors</label>
-              <input
-                type="color"
-                value={customColor}
-                onChange={(e) => {
-                  setCustomColor(e.target.value);
-                  handleBannerGridColorChange(
-                    selectedBannerGrid.blockId,
-                    e.target.value
-                  );
-                }}
-                className="w-full h-12 rounded border"
-              />
-            </div>
+
+          {/* Tab Navigation */}
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setBannerGridActiveTab("content")}
+              className={`flex-1 py-3 px-4 text-sm font-medium text-center ${
+                bannerGridActiveTab === "content"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Content
+            </button>
+            <button
+              onClick={() => setBannerGridActiveTab("style")}
+              className={`flex-1 py-3 px-4 text-sm font-medium text-center ${
+                bannerGridActiveTab === "style"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Style
+            </button>
+          </div>
+
+          <div
+            className="overflow-y-auto"
+            style={{ height: "calc(100% - 120px)" }}
+          >
+            {bannerGridActiveTab === "content" && (
+              <div className="p-4 space-y-6">
+                {/* Tagline */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tagline
+                  </label>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter tagline..."
+                    />
+                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                      Generate
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Headline */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Headline
+                  </label>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter headline..."
+                    />
+                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                      Regenerate
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subtext */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Subtext
+                  </label>
+                  <div className="space-y-2">
+                    <textarea
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter subtext..."
+                    />
+                    <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                      Regenerate
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Grid Images */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Grid images
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="relative group">
+                        <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                          <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                            <span className="text-gray-500 text-xs">
+                              Image {i}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                          <button className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50">
+                            <svg
+                              className="w-3 h-3 text-gray-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                              />
+                            </svg>
+                          </button>
+                          <button className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-50">
+                            <svg
+                              className="w-3 h-3 text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-gray-700">
+                      Buttons
+                    </label>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={buttonEnabled}
+                        onChange={(e) => setButtonEnabled(e.target.checked)}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  {buttonEnabled && (
+                    <button className="w-full px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-2">
+                      <span className="text-lg">+</span>
+                      Add button
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {bannerGridActiveTab === "style" && (
+              <div className="p-4 space-y-6">
+                {/* Colors */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-gray-700">
+                      Colors
+                    </label>
+                    <button
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                      className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Change
+                    </button>
+                  </div>
+                  <div className="p-3 border border-gray-300 rounded-lg bg-gray-100 flex items-center space-x-3">
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"></div>
+                    <span className="text-sm font-medium">Custom</span>
+                  </div>
+                </div>
+
+                {/* Color Picker Modal */}
+                {showColorPicker && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-6 w-80 max-w-sm">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-lg font-semibold">Choose Color</h4>
+                        <button
+                          onClick={() => setShowColorPicker(false)}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Color Tabs */}
+                      <div className="flex border-b border-gray-200 mb-4">
+                        <button
+                          onClick={() => setColorPickerTab("theme")}
+                          className={`flex-1 py-2 text-sm font-medium ${
+                            colorPickerTab === "theme"
+                              ? "text-blue-600 border-b-2 border-blue-600"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          Theme
+                        </button>
+                        <button
+                          onClick={() => setColorPickerTab("custom")}
+                          className={`flex-1 py-2 text-sm font-medium ${
+                            colorPickerTab === "custom"
+                              ? "text-blue-600 border-b-2 border-blue-600"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          Custom
+                        </button>
+                      </div>
+
+                      {colorPickerTab === "theme" && (
+                        <div className="grid grid-cols-4 gap-3">
+                          {[
+                            "#3B82F6",
+                            "#8B5CF6",
+                            "#EF4444",
+                            "#10B981",
+                            "#F59E0B",
+                            "#EC4899",
+                            "#6366F1",
+                            "#84CC16",
+                          ].map((color) => (
+                            <button
+                              key={color}
+                              onClick={() => {
+                                setCustomColor(color);
+                                handleBannerGridColorChange(
+                                  selectedBannerGrid.blockId,
+                                  color
+                                );
+                              }}
+                              className="w-10 h-10 rounded-lg border-2 border-gray-200 hover:border-gray-400 transition-colors"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {colorPickerTab === "custom" && (
+                        <div className="space-y-4">
+                          {/* Gradient Type Selector */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Type
+                            </label>
+                            <div className="flex space-x-2">
+                              {["solid", "linear", "radial"].map((type) => (
+                                <button
+                                  key={type}
+                                  onClick={() =>
+                                    setGradientType(type as typeof gradientType)
+                                  }
+                                  className={`px-3 py-2 text-sm rounded-lg border ${
+                                    gradientType === type
+                                      ? "bg-blue-600 text-white border-blue-600"
+                                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Color Inputs */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Primary Color
+                            </label>
+                            <input
+                              type="color"
+                              value={customColor}
+                              onChange={(e) => setCustomColor(e.target.value)}
+                              className="w-full h-10 rounded-lg border border-gray-300"
+                            />
+                          </div>
+
+                          {gradientType !== "solid" && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Accent Color
+                              </label>
+                              <input
+                                type="color"
+                                value={customAccent}
+                                onChange={(e) =>
+                                  setCustomAccent(e.target.value)
+                                }
+                                className="w-full h-10 rounded-lg border border-gray-300"
+                              />
+                            </div>
+                          )}
+
+                          {/* Preview */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Preview
+                            </label>
+                            <div
+                              className="w-full h-12 rounded-lg border border-gray-300"
+                              style={{
+                                background:
+                                  gradientType === "solid"
+                                    ? customColor
+                                    : gradientType === "linear"
+                                    ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
+                                    : `radial-gradient(circle, ${customColor}, ${customAccent})`,
+                              }}
+                            />
+                          </div>
+
+                          {/* Apply Button */}
+                          <button
+                            onClick={() => {
+                              const finalColor =
+                                gradientType === "solid"
+                                  ? customColor
+                                  : gradientType === "linear"
+                                  ? `linear-gradient(135deg, ${customColor}, ${customAccent})`
+                                  : `radial-gradient(circle, ${customColor}, ${customAccent})`;
+                              handleBannerGridColorChange(
+                                selectedBannerGrid.blockId,
+                                finalColor
+                              );
+                              setShowColorPicker(false);
+                            }}
+                            className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Button Style */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Button style
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="text-xs font-medium">Style 1</div>
+                      <div className="mt-1 text-xs text-gray-500">Default</div>
+                    </button>
+                    <button className="p-3 border-2 border-blue-600 bg-blue-50 rounded-lg transition-colors">
+                      <div className="text-xs font-medium text-blue-600">
+                        Style 2
+                      </div>
+                      <div className="mt-1 text-xs text-blue-500">Selected</div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Layout */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Layout
+                  </label>
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-sm text-gray-600 mb-2 block">
+                        Grid position
+                      </span>
+                      <div className="flex space-x-2">
+                        <button className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-50 text-blue-600 rounded-lg">
+                          Right
+                        </button>
+                        <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                          Left
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600 mb-2 block">
+                        Content alignment
+                      </span>
+                      <div className="flex space-x-2">
+                        <button className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-50 text-blue-600 rounded-lg">
+                          Left
+                        </button>
+                        <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                          Center
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Toggles */}
+                <div className="space-y-4">
+                  {[
+                    "Invert mobile",
+                    "Borderless image",
+                    "Expand to full width",
+                  ].map((label) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-sm font-medium text-gray-700">
+                        {label}
+                      </span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" />
+                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Text Sizes */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Heading text size
+                    </label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option>Large</option>
+                      <option>Medium</option>
+                      <option>Small</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Subtext size
+                    </label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option>Medium</option>
+                      <option>Large</option>
+                      <option>Small</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Spacing */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Spacing
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <span className="text-xs text-gray-600 mb-1 block">
+                        Top
+                      </span>
+                      <select className="w-full px-2 py-1 text-sm border border-gray-300 rounded">
+                        <option>Medium</option>
+                        <option>Small</option>
+                        <option>Large</option>
+                      </select>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-600 mb-1 block">
+                        Bottom
+                      </span>
+                      <select className="w-full px-2 py-1 text-sm border border-gray-300 rounded">
+                        <option>Medium</option>
+                        <option>Small</option>
+                        <option>Large</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Min Height */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Min height
+                  </label>
+                  <div className="flex space-x-2">
+                    <button className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-50 text-blue-600 rounded-lg">
+                      Content
+                    </button>
+                    <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                      Screen
+                    </button>
+                  </div>
+                </div>
+
+                {/* Animations */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Animations
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option>Fade in</option>
+                    <option>Slide in</option>
+                    <option>Scale in</option>
+                    <option>None</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
