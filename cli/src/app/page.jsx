@@ -94,7 +94,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen bg-white relative">
       <Head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Alex+Brush:ital,wght@0,400;1,400&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Alex+Brush:ital,wght@0,400;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
         <style>{`
@@ -102,6 +102,8 @@ export default function LandingPage() {
             font-family: 'Alex Brush', cursive;
             font-style: italic;
           }
+          .font-inter { font-family: 'Inter', sans-serif; }
+          .font-heading { font-family: 'Playfair Display', serif; }
         `}</style>
       </Head>
 
@@ -448,19 +450,25 @@ export default function LandingPage() {
       </section>
 
       {/* Rotating Semi-Circle Wheel Section */}
-      <section className="relative w-full overflow-hidden py-12 bg-white">
-        <div className="relative mx-auto max-w-6xl flex flex-col items-center justify-center gap-8">
+      <section className="relative w-full overflow-hidden py-8 sm:py-12 bg-white">
+        <div className="relative mx-auto max-w-6xl flex flex-col items-center justify-center gap-6 sm:gap-8">
           {/* Section Header */}
           <div className="mx-auto max-w-2xl flex flex-col items-center text-center">
-            <p className="text-sm font-medium text-purple-600 mb-4">
+            <p className="text-xs sm:text-sm font-medium text-amber-900 mb-3">
               Your AI business partner
             </p>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              Get online in record time
-            </h2>
-            <p className="text-lg text-gray-600 max-w-md">
-              Millions of businesses trust Durable to grow their business with
-              AI.
+            <div className="relative flex justify-center w-full mb-3 overflow-visible">
+              <h2 className="font-heading text-3xl leading-[40px] sm:text-4xl sm:leading-[48px] md:text-5xl md:leading-[60px] lg:text-6xl lg:leading-[72px] tracking-tight text-black font-normal text-center">
+                Modern rails to move money.
+              </h2>
+              <img
+                src="/lv.png"
+                alt="decorative"
+                className="absolute right-210 top-1/2 -translate-y-1/2 w-20 sm:w-28 md:w-32 lg:w-40 h-auto pointer-events-none"
+              />
+            </div>
+            <p className="font-cursive text-sm sm:text-base md:text-lg text-gray-800 max-w-xl italic">
+              Developer API's to build entirely new money movement flows.
             </p>
           </div>
 
@@ -483,18 +491,18 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  left: "8%",
-                  bottom: "28%",
+                  left: "10%",
+                  bottom: "22%",
                   transform: "rotate(-12deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Designing website"
-                      width="40"
-                      height="40"
+                      width="64"
+                      height="64"
                       className="object-contain"
                       src="/a.png"
                     />
@@ -514,18 +522,18 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  left: "30%",
-                  top: "12%",
+                  left: "32%",
+                  bottom: "30%",
                   transform: "rotate(-6deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Writing content"
-                      width="40"
-                      height="40"
+                      width="64"
+                      height="64"
                       className="object-contain"
                       src="/b.png"
                     />
@@ -545,18 +553,18 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  right: "30%",
-                  top: "12%",
+                  right: "32%",
+                  bottom: "30%",
                   transform: "rotate(6deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Optimizing for SEO"
-                      width="40"
-                      height="40"
+                      width="64"
+                      height="64"
                       className="object-contain"
                       src="/c.png"
                     />
@@ -576,18 +584,18 @@ export default function LandingPage() {
               <motion.div
                 className="absolute flex flex-col items-center"
                 style={{
-                  right: "8%",
-                  bottom: "28%",
+                  right: "10%",
+                  bottom: "22%",
                   transform: "rotate(12deg)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Ready to go live"
-                      width="40"
-                      height="40"
+                      width="64"
+                      height="64"
                       className="object-contain"
                       src="/d.png"
                     />
