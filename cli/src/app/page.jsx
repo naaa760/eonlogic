@@ -39,6 +39,14 @@ const Snow = () => {
             transform: translateY(100vh) translateX(40px);
           }
         }
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
         .snow-animation {
           animation-name: snowfall;
           animation-timing-function: linear;
@@ -255,114 +263,184 @@ export default function LandingPage() {
       {/* Image Gallery Section with Pyramid Layout */}
       <section className="relative min-h-screen overflow-hidden bg-white py-20">
         <div className="max-w-6xl mx-auto px-4">
-          {/* Scattered Pyramid Layout - 5 Images with Bottom Fade - Responsive */}
-          <div className="relative h-64 sm:h-80 lg:h-96 mb-8 sm:mb-12 lg:mb-16">
-            {/* Image 1 - Top center, slightly left */}
+          {/* Enhanced Aesthetic Scattered Pyramid Layout */}
+          <div className="relative h-64 sm:h-80 lg:h-96 mb-8 sm:mb-12 lg:mb-16 overflow-hidden">
+            {/* Floating background elements for ambiance */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-10 left-10 w-2 h-2 bg-blue-200 rounded-full opacity-40 animate-pulse"></div>
+              <div
+                className="absolute top-20 right-16 w-1 h-1 bg-purple-200 rounded-full opacity-60 animate-bounce"
+                style={{ animationDelay: "0.5s" }}
+              ></div>
+              <div
+                className="absolute bottom-20 left-20 w-1.5 h-1.5 bg-pink-200 rounded-full opacity-50 animate-pulse"
+                style={{ animationDelay: "1s" }}
+              ></div>
+              <div
+                className="absolute top-1/3 right-1/4 w-1 h-1 bg-indigo-200 rounded-full opacity-40 animate-bounce"
+                style={{ animationDelay: "1.5s" }}
+              ></div>
+            </div>
+
+            {/* Image 1 - Top center, slightly left - Enhanced */}
             <motion.div
-              className="absolute top-0 left-1/6 sm:left-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-52 sm:h-40 lg:w-64 lg:h-48 z-10"
-              initial={{ y: 100, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              className="absolute top-0 left-1/6 sm:left-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-52 sm:h-40 lg:w-64 lg:h-48 z-10 shadow-lg hover:shadow-2xl transition-all duration-500 group"
+              initial={{ y: 100, opacity: 0, rotate: -2 }}
+              whileInView={{ y: 0, opacity: 1, rotate: 0 }}
+              whileHover={{
+                scale: 1.05,
+                rotate: 2,
+                y: -5,
+                transition: { duration: 0.3 },
+              }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               style={{
                 y: useTransform(scrollY, [0, 1000], [0, -50]),
               }}
             >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"></div>
               <img
                 src="/1.png"
                 alt="Website example"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 width={294}
                 height={221}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.div>
 
-            {/* Image 2 - Top right, overlapping */}
+            {/* Image 2 - Top right, overlapping - Enhanced */}
             <motion.div
-              className="absolute top-4 sm:top-8 right-1/6 sm:right-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-32 h-24 sm:w-44 sm:h-32 lg:w-56 lg:h-42 z-20"
-              initial={{ y: 120, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              className="absolute top-4 sm:top-8 right-1/6 sm:right-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-32 h-24 sm:w-44 sm:h-32 lg:w-56 lg:h-42 z-20 shadow-lg hover:shadow-2xl transition-all duration-500 group"
+              initial={{ y: 120, opacity: 0, rotate: 3 }}
+              whileInView={{ y: 0, opacity: 1, rotate: 0 }}
+              whileHover={{
+                scale: 1.08,
+                rotate: -3,
+                y: -8,
+                transition: { duration: 0.3 },
+              }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
               style={{
                 y: useTransform(scrollY, [0, 1000], [0, -40]),
               }}
             >
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"></div>
               <img
                 src="/2.png"
                 alt="Website example"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 width={294}
                 height={221}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.div>
 
-            {/* Image 3 - Center, large and prominent */}
+            {/* Image 3 - Center, large and prominent - Enhanced with special effects */}
             <motion.div
-              className="absolute top-8 sm:top-12 lg:top-16 left-1/2 transform -translate-x-1/2 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-48 h-36 sm:w-60 sm:h-45 lg:w-72 lg:h-54 z-30"
-              initial={{ y: 120, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              className="absolute top-8 sm:top-12 lg:top-16 left-1/2 transform -translate-x-1/2 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-48 h-36 sm:w-60 sm:h-45 lg:w-72 lg:h-54 z-30 shadow-2xl hover:shadow-3xl transition-all duration-500 group"
+              initial={{ y: 120, opacity: 0, scale: 0.9 }}
+              whileInView={{ y: 0, opacity: 1, scale: 1 }}
+              whileHover={{
+                scale: 1.1,
+                y: -10,
+                transition: { duration: 0.4 },
+              }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               style={{
                 y: useTransform(scrollY, [0, 1000], [0, -60]),
               }}
             >
+              {/* Glow effect for center image */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg sm:rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"></div>
               <img
                 src="/3.png"
                 alt="Website example"
-                className="w-full h-full object-cover"
+                className="relative w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 width={294}
                 height={221}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              {/* Sparkle effect */}
+              <div className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping"></div>
             </motion.div>
 
-            {/* Image 4 - Bottom left */}
+            {/* Image 4 - Bottom left - Enhanced */}
             <motion.div
-              className="absolute bottom-4 sm:bottom-6 lg:bottom-8 left-4 sm:left-8 lg:left-16 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-36 h-28 sm:w-44 sm:h-34 lg:w-52 lg:h-40 z-15"
-              initial={{ y: 140, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              className="absolute bottom-4 sm:bottom-6 lg:bottom-8 left-4 sm:left-8 lg:left-16 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-36 h-28 sm:w-44 sm:h-34 lg:w-52 lg:h-40 z-15 shadow-lg hover:shadow-2xl transition-all duration-500 group"
+              initial={{ y: 140, opacity: 0, rotate: -3 }}
+              whileInView={{ y: 0, opacity: 1, rotate: 0 }}
+              whileHover={{
+                scale: 1.06,
+                rotate: 3,
+                y: -6,
+                transition: { duration: 0.3 },
+              }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               style={{
                 y: useTransform(scrollY, [0, 1000], [0, -30]),
               }}
             >
+              <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"></div>
               <img
                 src="/4.png"
                 alt="Website example"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 width={294}
                 height={221}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.div>
 
-            {/* Image 5 - Bottom right, partially behind center */}
+            {/* Image 5 - Bottom right, partially behind center - Enhanced */}
             <motion.div
-              className="absolute bottom-0 sm:bottom-0 lg:bottom-0 right-4 sm:right-12 lg:right-20 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-50 sm:h-38 lg:w-60 lg:h-44 z-25"
-              initial={{ y: 140, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              className="absolute bottom-0 sm:bottom-0 lg:bottom-0 right-4 sm:right-12 lg:right-20 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-50 sm:h-38 lg:w-60 lg:h-44 z-25 shadow-lg hover:shadow-2xl transition-all duration-500 group"
+              initial={{ y: 140, opacity: 0, rotate: 2 }}
+              whileInView={{ y: 0, opacity: 1, rotate: 0 }}
+              whileHover={{
+                scale: 1.07,
+                rotate: -2,
+                y: -7,
+                transition: { duration: 0.3 },
+              }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               style={{
                 y: useTransform(scrollY, [0, 1000], [0, -70]),
               }}
             >
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-red-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"></div>
               <img
                 src="/5.png"
                 alt="Website example"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 width={294}
                 height={221}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.div>
 
-            {/* Bottom fade effect overlay for the scattered images - Responsive */}
+            {/* Enhanced bottom fade effect with shimmer */}
             <div
               className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 lg:h-32 pointer-events-none z-40"
               style={{
                 background:
-                  "linear-gradient(to top, white 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.6) 60%, transparent 100%)",
+                  "linear-gradient(to top, white 0%, rgba(255,255,255,0.95) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 75%, transparent 100%)",
+              }}
+            />
+
+            {/* Subtle shimmer effect */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 lg:h-24 pointer-events-none z-35 opacity-30"
+              style={{
+                background:
+                  "linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%)",
+                animation: "shimmer 3s ease-in-out infinite",
               }}
             />
           </div>
