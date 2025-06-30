@@ -14,13 +14,13 @@ const Snow = () => {
 
   useEffect(() => {
     const flakes = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 60; i++) {
       flakes.push({
         id: i,
         left: Math.random() * 100,
-        animationDuration: Math.random() * 15 + 15,
-        opacity: Math.random() * 0.3 + 0.05,
-        size: Math.random() * 2 + 1,
+        animationDuration: Math.random() * 15 + 25,
+        opacity: Math.random() * 0.4 + 0.3,
+        size: Math.random() * 1.5 + 1,
         delay: Math.random() * 12,
       });
     }
@@ -39,10 +39,12 @@ const Snow = () => {
           }
         }
         .snow-animation {
-          animation: snowfall linear infinite;
+          animation-name: snowfall;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
         }
       `}</style>
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
         {snowflakes.map((flake) => (
           <div
             key={flake.id}
@@ -55,7 +57,7 @@ const Snow = () => {
             }}
           >
             <div
-              className="rounded-full bg-gray-400"
+              className="rounded-full bg-black"
               style={{
                 width: `${flake.size}px`,
                 height: `${flake.size}px`,
@@ -174,13 +176,13 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="flex-1 flex items-center justify-center bg-gradient-to-br from-white via-gray-50/30 to-blue-50/20 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-5xl mx-auto text-center py-10 sm:py-20 px-4">
+        <div className="max-w-5xl mx-auto text-center py-12 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[40px] sm:text-[52px] md:text-[64px] lg:text-[80px] xl:text-[96px] mx-auto text-center mb-6 sm:mb-8">
+            <h1 className="text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[34px] sm:text-[44px] md:text-[64px] lg:text-[80px] xl:text-[96px] mx-auto text-center mb-6 sm:mb-8">
               AI that builds a <br />
               website for you
             </h1>
@@ -197,26 +199,26 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="mb-20"
           >
-            <div className="relative w-full max-w-sm sm:max-w-md mx-auto">
+            <div className="relative w-full max-w-3xl mx-auto">
               <Input
                 type="text"
                 placeholder="What type of business are you building?"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                className="w-full h-9 sm:h-10 pl-3 pr-36 sm:pr-44 text-sm border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="w-full h-14 pl-6 pr-40 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
               />
               {isSignedIn ? (
                 <Link href="/dashboard">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 text-[11px] sm:text-xs px-2 sm:px-3 h-full absolute top-0 right-0 rounded-lg bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-2 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 right-1 bottom-1 rounded-lg">
                     Generate website
-                    <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5" />
+                    <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 text-[11px] sm:text-xs px-2 sm:px-3 h-full absolute top-0 right-0 rounded-lg bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-2 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark absolute top-1 right-1 bottom-1 rounded-lg">
                     Generate website
-                    <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5" />
+                    <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </SignUpButton>
               )}
