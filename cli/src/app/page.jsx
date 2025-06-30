@@ -666,7 +666,7 @@ export default function LandingPage() {
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Designed for you
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
               Skip hiring a designer, and get a beautiful customisable website
               out of the box.
             </p>
@@ -691,7 +691,7 @@ export default function LandingPage() {
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Written for you
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
               Not a wordsmith? No problem. Durable writes high converting copy.
             </p>
             <a
@@ -713,7 +713,7 @@ export default function LandingPage() {
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Optimized for you
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
               Get found on Google faster. Your website is SEO-ready the moment
               it's live.
             </p>
@@ -736,7 +736,7 @@ export default function LandingPage() {
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Content created for you
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
               Put your marketing on autopilot. Durable writes and publishes new
               blog content weekly.
             </p>
