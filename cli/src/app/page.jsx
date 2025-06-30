@@ -6,7 +6,7 @@ import { ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
 // Snow Component
@@ -89,6 +89,12 @@ export default function LandingPage() {
   const { isSignedIn } = useUser();
   const [businessType, setBusinessType] = useState("");
   const { scrollY } = useScroll();
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+  const rotate = useTransform(scrollYProgress, [0, 1], [14, -14]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
@@ -204,7 +210,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="flex-1 flex items-center justify-center bg-gradient-to-br from-white via-gray-50/30 to-blue-50/20 px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="flex-1 flex items-center justify-center  to-blue-50/20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-5xl mx-auto text-center py-12 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -263,7 +269,7 @@ export default function LandingPage() {
       </section>
 
       {/* Image Gallery Section with Pyramid Layout */}
-      <section className="relative min-h-screen overflow-hidden bg-white py-20">
+      <section className="relative min-h-[80vh] sm:min-h-screen overflow-hidden bg-white py-12 sm:py-20">
         <div className="max-w-6xl mx-auto px-4">
           {/* Enhanced Aesthetic Scattered Pyramid Layout */}
           <div className="relative h-64 sm:h-80 lg:h-96 mb-8 sm:mb-12 lg:mb-16 overflow-hidden">
@@ -450,7 +456,7 @@ export default function LandingPage() {
       </section>
 
       {/* Rotating Semi-Circle Wheel Section */}
-      <section className="relative w-full overflow-hidden py-8 sm:py-12 bg-white">
+      <section className="relative w-full overflow-hidden py-6 sm:py-12 bg-white">
         <div className="relative mx-auto max-w-6xl flex flex-col items-center justify-center gap-6 sm:gap-8">
           {/* Section Header */}
           <div className="mx-auto max-w-2xl flex flex-col items-center text-center">
@@ -473,12 +479,15 @@ export default function LandingPage() {
           </div>
 
           {/* Rotating Semi-Circle Container */}
-          <div className="relative w-full max-w-5xl h-80 flex items-center justify-center">
+          <div
+            ref={containerRef}
+            className="relative w-full max-w-5xl h-64 sm:h-80 flex items-center justify-center"
+          >
             <motion.div
               className="relative w-full h-full"
               style={{
                 transformOrigin: "center bottom",
-                rotate: useTransform(scrollY, [1000, 2000], [14, -14]),
+                rotate,
               }}
             >
               {/* More visible but subtle semi-circle visual guide */}
@@ -498,11 +507,11 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Designing website"
-                      width="64"
-                      height="64"
+                      width="48"
+                      height="48"
                       className="object-contain"
                       src="/a.png"
                     />
@@ -529,11 +538,11 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Writing content"
-                      width="64"
-                      height="64"
+                      width="48"
+                      height="48"
                       className="object-contain"
                       src="/b.png"
                     />
@@ -560,11 +569,11 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Optimizing for SEO"
-                      width="64"
-                      height="64"
+                      width="48"
+                      height="48"
                       className="object-contain"
                       src="/c.png"
                     />
@@ -591,11 +600,11 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.1 }}
               >
                 <div className="relative mb-2">
-                  <div className="w-32 h-32 rounded-full flex items-center justify-center mb-2">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mb-2">
                     <img
                       alt="Ready to go live"
-                      width="64"
-                      height="64"
+                      width="48"
+                      height="48"
                       className="object-contain"
                       src="/d.png"
                     />
@@ -612,7 +621,13 @@ export default function LandingPage() {
               </motion.div>
 
               {/* More elongated connection lines */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+              <svg
+                className="absolute left-1/2 bottom-0 -translate-x-1/2 pointer-events-none opacity-40 w-full"
+                height="180"
+                viewBox="0 0 1000 220"
+                fill="none"
+                preserveAspectRatio="none"
+              >
                 <path
                   d="M 80 230 Q 400 40 720 230"
                   stroke="#d1d5db"
