@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
+import Head from "next/head";
 
 // Snow Component
 const Snow = () => {
@@ -43,6 +44,10 @@ const Snow = () => {
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }
+        @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+        .font-cursive {
+          font-family: "Alex Brush", cursive;
+        }
       `}</style>
       <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
         {snowflakes.map((flake) => (
@@ -78,6 +83,19 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Alex+Brush:ital,wght@0,400;1,400&display=swap"
+          rel="stylesheet"
+        />
+        <style>{`
+          .font-cursive {
+            font-family: 'Alex Brush', cursive;
+            font-style: italic;
+          }
+        `}</style>
+      </Head>
+
       {/* Snow Effect */}
       <Snow />
 
@@ -186,7 +204,13 @@ export default function LandingPage() {
               AI that builds a <br />
               website for you
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-12 sm:mb-16 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
+            <p
+              className="text-xs sm:text-sm md:text-base text-black mb-12 sm:mb-16 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-4 sm:px-0"
+              style={{
+                fontFamily: "'Alex Brush', cursive",
+                fontStyle: "italic",
+              }}
+            >
               Get your business online in 30 seconds with the #1 AI{" "}
               <br className="hidden sm:block" />
               website builder and marketing platform.
