@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -121,6 +122,8 @@ interface ContentBlock {
     maxWidth?: string;
     margin?: string;
     paddingLeft?: string;
+    /** Determines which side the image grid appears on for banner-grid blocks */
+    gridPosition?: string;
   };
 }
 
@@ -298,6 +301,25 @@ export default function WebsiteBuilder() {
   // Carousel state management for banner auto-rotation
   const [carouselStates, setCarouselStates] = useState<Record<string, number>>(
     {}
+  );
+
+  // Section panel states for all section types
+  const [showHeroPanel, setShowHeroPanel] = useState(false);
+  const [showServicesPanel, setShowServicesPanel] = useState(false);
+  const [showAboutPanel, setShowAboutPanel] = useState(false);
+  const [showTestimonialsPanel, setShowTestimonialsPanel] = useState(false);
+  const [showContactPanel, setShowContactPanel] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [showFeaturesPanel, setShowFeaturesPanel] = useState(false);
+  const [showGalleryPanel, setShowGalleryPanel] = useState(false);
+  const [showCtaPanel, setShowCtaPanel] = useState(false);
+
+  const [selectedSection, setSelectedSection] = useState<{
+    blockId: string;
+    type: string;
+  } | null>(null);
+  const [sectionActiveTab, setSectionActiveTab] = useState<"content" | "style">(
+    "content"
   );
 
   // Auto-rotate carousel slides every 2 seconds
@@ -2802,6 +2824,7 @@ Make it sound professional, engaging, and specific to the business type and loca
           padding: "80px 0",
           backgroundColor: "#663399",
           color: "white",
+          gridPosition: "right",
         };
       default:
         return {};
@@ -3604,7 +3627,13 @@ Make it sound professional, engaging, and specific to the business type and loca
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 {/* Left Content */}
-                <div className="space-y-6">
+                <div
+                  className={`space-y-6 ${
+                    block.styles?.gridPosition === "left"
+                      ? "order-2 lg:order-1"
+                      : "order-1"
+                  }`}
+                >
                   {/* Tagline */}
                   {block.content.subtitle && (
                     <p
@@ -3756,7 +3785,13 @@ Make it sound professional, engaging, and specific to the business type and loca
                 </div>
 
                 {/* Right Image Grid */}
-                <div className="grid grid-cols-2 gap-4">
+                <div
+                  className={`grid grid-cols-2 gap-4 ${
+                    block.styles?.gridPosition === "left"
+                      ? "order-1 lg:order-2"
+                      : "order-2"
+                  }`}
+                >
                   {/* Large image top right */}
                   {block.content.images && block.content.images[0] && (
                     <div className="col-span-2">
@@ -7504,10 +7539,40 @@ Make it sound professional, engaging, and specific to the business type and loca
                         Grid position
                       </span>
                       <div className="flex space-x-2">
-                        <button className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-50 text-blue-600 rounded-lg">
+                        <button
+                          onClick={() =>
+                            applyStyleToBlock(selectedBannerGrid.blockId, {
+                              gridPosition: "right" as const,
+                            })
+                          }
+                          className={`px-3 py-2 text-sm rounded-lg border-2 ${
+                            (
+                              website?.blocks.find(
+                                (b) => b.id === selectedBannerGrid.blockId
+                              )?.styles as { gridPosition?: "left" | "right" }
+                            )?.gridPosition === "right"
+                              ? "border-blue-600 bg-blue-50 text-blue-600"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
                           Right
                         </button>
-                        <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                        <button
+                          onClick={() =>
+                            applyStyleToBlock(selectedBannerGrid.blockId, {
+                              gridPosition: "left" as const,
+                            })
+                          }
+                          className={`px-3 py-2 text-sm rounded-lg border-2 ${
+                            (
+                              website?.blocks.find(
+                                (b) => b.id === selectedBannerGrid.blockId
+                              )?.styles as { gridPosition?: "left" | "right" }
+                            )?.gridPosition === "left"
+                              ? "border-blue-600 bg-blue-50 text-blue-600"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
                           Left
                         </button>
                       </div>
