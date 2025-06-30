@@ -255,11 +255,11 @@ export default function LandingPage() {
       {/* Image Gallery Section with Pyramid Layout */}
       <section className="relative min-h-screen overflow-hidden bg-white py-20">
         <div className="max-w-6xl mx-auto px-4">
-          {/* Scattered Pyramid Layout - 5 Images with Bottom Fade */}
-          <div className="relative h-96 mb-16">
+          {/* Scattered Pyramid Layout - 5 Images with Bottom Fade - Responsive */}
+          <div className="relative h-64 sm:h-80 lg:h-96 mb-8 sm:mb-12 lg:mb-16">
             {/* Image 1 - Top center, slightly left */}
             <motion.div
-              className="absolute top-0 left-1/4 overflow-hidden rounded-xl bg-neutral-50 w-64 h-48 z-10"
+              className="absolute top-0 left-1/6 sm:left-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-52 sm:h-40 lg:w-64 lg:h-48 z-10"
               initial={{ y: 100, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, amount: 0.3 }}
@@ -279,7 +279,7 @@ export default function LandingPage() {
 
             {/* Image 2 - Top right, overlapping */}
             <motion.div
-              className="absolute top-8 right-1/4 overflow-hidden rounded-xl bg-neutral-50 w-56 h-42 z-20"
+              className="absolute top-4 sm:top-8 right-1/6 sm:right-1/4 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-32 h-24 sm:w-44 sm:h-32 lg:w-56 lg:h-42 z-20"
               initial={{ y: 120, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, amount: 0.3 }}
@@ -299,7 +299,7 @@ export default function LandingPage() {
 
             {/* Image 3 - Center, large and prominent */}
             <motion.div
-              className="absolute top-16 left-1/2 transform -translate-x-1/2 overflow-hidden rounded-xl bg-neutral-50 w-72 h-54 z-30"
+              className="absolute top-8 sm:top-12 lg:top-16 left-1/2 transform -translate-x-1/2 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-48 h-36 sm:w-60 sm:h-45 lg:w-72 lg:h-54 z-30"
               initial={{ y: 120, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, amount: 0.3 }}
@@ -319,7 +319,7 @@ export default function LandingPage() {
 
             {/* Image 4 - Bottom left */}
             <motion.div
-              className="absolute bottom-8 left-16 overflow-hidden rounded-xl bg-neutral-50 w-52 h-40 z-15"
+              className="absolute bottom-4 sm:bottom-6 lg:bottom-8 left-4 sm:left-8 lg:left-16 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-36 h-28 sm:w-44 sm:h-34 lg:w-52 lg:h-40 z-15"
               initial={{ y: 140, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, amount: 0.3 }}
@@ -339,7 +339,7 @@ export default function LandingPage() {
 
             {/* Image 5 - Bottom right, partially behind center */}
             <motion.div
-              className="absolute bottom-0 right-20 overflow-hidden rounded-xl bg-neutral-50 w-60 h-44 z-25"
+              className="absolute bottom-0 sm:bottom-0 lg:bottom-0 right-4 sm:right-12 lg:right-20 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-50 w-40 h-30 sm:w-50 sm:h-38 lg:w-60 lg:h-44 z-25"
               initial={{ y: 140, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, amount: 0.3 }}
@@ -357,9 +357,9 @@ export default function LandingPage() {
               />
             </motion.div>
 
-            {/* Bottom fade effect overlay for the scattered images */}
+            {/* Bottom fade effect overlay for the scattered images - Responsive */}
             <div
-              className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-40"
+              className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 lg:h-32 pointer-events-none z-40"
               style={{
                 background:
                   "linear-gradient(to top, white 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.6) 60%, transparent 100%)",
