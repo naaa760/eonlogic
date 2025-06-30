@@ -644,7 +644,7 @@ export default function LandingPage() {
       {/* Feature Cards Section */}
       <section className="relative w-full bg-white py-12 sm:py-20">
         <div className="mx-auto max-w-4xl text-center mb-12 px-4">
-          <p className="text-xs font-semibold tracking-widest text-amber-700 mb-2">
+          <p className="text-xs font-semibold tracking-widest text-amber-900 mb-2">
             The #1 AI website builder
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-normal text-gray-900 mb-3">
@@ -660,7 +660,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-6xl mx-auto px-4">
           {/* Card 1 */}
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold text-amber-800 mb-1">
+            <p className="text-xs font-semibold text-amber-700 mb-1">
               AI websites
             </p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
@@ -685,7 +685,7 @@ export default function LandingPage() {
 
           {/* Card 2 */}
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold text-amber-600 mb-1">
+            <p className="text-xs font-semibold text-amber-700 mb-1">
               AI copywriter
             </p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
@@ -696,7 +696,7 @@ export default function LandingPage() {
             </p>
             <a
               href="#"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+              className="text-sm font-medium text-amber-500 hover:text-amber-200 inline-flex items-center gap-1 mb-4"
             >
               AI Copywriter <span className="text-lg">→</span>
             </a>
@@ -709,7 +709,7 @@ export default function LandingPage() {
 
           {/* Card 3 */}
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold text-amber-600 mb-1">SEO</p>
+            <p className="text-xs font-semibold text-amber-700 mb-1">SEO</p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Optimized for you
             </h3>
@@ -719,7 +719,7 @@ export default function LandingPage() {
             </p>
             <a
               href="#"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+              className="text-sm font-medium text-amber-500 hover:text-amber-200 inline-flex items-center gap-1 mb-4"
             >
               SEO Tools <span className="text-lg">→</span>
             </a>
@@ -732,7 +732,7 @@ export default function LandingPage() {
 
           {/* Card 4 */}
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold text-amber-600 mb-1">AI blog</p>
+            <p className="text-xs font-semibold text-amber-700 mb-1">AI blog</p>
             <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
               Content created for you
             </h3>
@@ -742,7 +742,7 @@ export default function LandingPage() {
             </p>
             <a
               href="#"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mb-4"
+              className="text-sm font-medium text-amber-500 hover:text-amber-200 inline-flex items-center gap-1 mb-4"
             >
               AI Blog Builder <span className="text-lg">→</span>
             </a>
