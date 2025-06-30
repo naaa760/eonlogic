@@ -14,14 +14,14 @@ const Snow = () => {
 
   useEffect(() => {
     const flakes = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 15; i++) {
       flakes.push({
         id: i,
         left: Math.random() * 100,
-        animationDuration: Math.random() * 8 + 6, // 6-14 seconds
-        opacity: Math.random() * 0.6 + 0.4, // 0.4-1.0 for better visibility
-        size: Math.random() * 4 + 2, // 2-6px
-        delay: Math.random() * 6,
+        animationDuration: Math.random() * 15 + 15,
+        opacity: Math.random() * 0.3 + 0.05,
+        size: Math.random() * 2 + 1,
+        delay: Math.random() * 12,
       });
     }
     setSnowflakes(flakes);
@@ -35,7 +35,7 @@ const Snow = () => {
             transform: translateY(-100vh) translateX(0px);
           }
           100% {
-            transform: translateY(100vh) translateX(80px);
+            transform: translateY(100vh) translateX(40px);
           }
         }
         .snow-animation {
@@ -55,12 +55,12 @@ const Snow = () => {
             }}
           >
             <div
-              className="rounded-full bg-gray-600"
+              className="rounded-full bg-gray-400"
               style={{
                 width: `${flake.size}px`,
                 height: `${flake.size}px`,
                 opacity: flake.opacity,
-                boxShadow: "0 0 3px rgba(0,0,0,0.2)",
+                boxShadow: "0 0 1px rgba(0,0,0,0.05)",
               }}
             />
           </div>
@@ -156,13 +156,13 @@ export default function LandingPage() {
             <div className="flex items-center">
               {isSignedIn ? (
                 <Link href="/dashboard">
-                  <Button className="bg-gray-700 hover:bg-gray-800 text-gray-200 px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-6 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark rounded-xl">
                     Go to app
                   </Button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
-                  <Button className="bg-gray-700 hover:bg-gray-800 text-gray-200 px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-6 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark rounded-xl">
                     Go to app
                   </Button>
                 </SignUpButton>
@@ -174,18 +174,19 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="flex-1 flex items-center justify-center bg-gradient-to-br from-white via-gray-50/30 to-blue-50/20 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-5xl mx-auto text-center py-20">
+        <div className="max-w-5xl mx-auto text-center py-12 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-gray-800 text-7xl leading-5xl md:text-6xl md:leading-6xl z-10 max-w-sm text-center md:max-w-2xl mb-8">
+            <h1 className="text-gray-800 text-4xl leading-tight sm:text-5xl sm:leading-tight md:text-6xl md:leading-tight lg:text-7xl lg:leading-tight z-10 max-w-sm mx-auto text-center sm:max-w-2xl md:max-w-4xl mb-6 sm:mb-8">
               AI that builds a <br />
               website for you
             </h1>
-            <p className="text-base text-gray-600 mb-16 max-w-2xl mx-auto leading-relaxed">
-              Get your business online in 30 seconds with the #1 AI <br />
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-12 sm:mb-16 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
+              Get your business online in 30 seconds with the #1 AI{" "}
+              <br className="hidden sm:block" />
               website builder and marketing platform.
             </p>
           </motion.div>
@@ -202,49 +203,23 @@ export default function LandingPage() {
                 placeholder="What type of business are you building?"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                className="flex-1 h-14 px-6 pr-32 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="flex-1 h-14 px-6 sm:pr-32 pr-6 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
               />
               {isSignedIn ? (
                 <Link href="/dashboard">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:text-blue-400 hover:shadow-button-dark absolute right-1 top-1/2 -translate-y-1/2 rounded-xl max-md:hidden">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark sm:absolute sm:inset-y-1 sm:right-1 rounded-xl">
                     Generate website
                     <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
-                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:text-blue-400 hover:shadow-button-dark absolute right-1 top-1/2 -translate-y-1/2 rounded-xl max-md:hidden">
+                  <Button className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 px-4 py-3 has-[>svg:first-child]:pl-3 has-[>svg:last-child]:pr-3 [&_svg:not([class*='size-'])]:size-6 bg-black/80 text-white/75 shadow-button-dark hover:bg-black/80 hover:text-white hover:shadow-button-dark sm:absolute sm:inset-y-1 sm:right-1 rounded-xl">
                     Generate website
                     <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </SignUpButton>
               )}
-            </div>
-          </motion.div>
-
-          {/* Trustpilot Rating */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-8 text-base text-gray-600"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5 fill-green-500 text-green-500"
-                  />
-                ))}
-              </div>
-              <span className="font-semibold">4.8 Stars on Trustpilot</span>
-            </div>
-            <div className="hidden sm:block w-2 h-2 bg-gray-300 rounded-full"></div>
-            <div>
-              <span className="font-semibold">
-                10,000,000+ Websites generated
-              </span>
             </div>
           </motion.div>
         </div>
