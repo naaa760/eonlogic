@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Quote,
   Star,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -310,7 +311,7 @@ export default function LandingPage() {
                 placeholder="What type of business are you building?"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                className="w-full h-8 sm:h-10 pl-3 pr-28 sm:pr-32 text-xs sm:text-sm border-2 border-gray-200 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="w-full h-9 sm:h-10 pl-3 pr-32 sm:pr-40 text-xs sm:text-sm border-2 border-gray-200 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
               />
               {isSignedIn ? (
                 <Link href="/dashboard">
@@ -1055,29 +1056,132 @@ export default function LandingPage() {
           Build a website and get your business online in minutes.
         </p>
 
-        <div className="relative max-w-lg mx-auto w-full">
+        <div className="mx-auto w-full max-w-[18rem] sm:max-w-lg flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch">
           <Input
             type="text"
             placeholder="What type of business are you building?"
             value={businessType}
             onChange={(e) => setBusinessType(e.target.value)}
-            className="w-full h-10 sm:h-12 pl-3 pr-40 text-sm border border-gray-300 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200"
+            className="flex-1 h-8 sm:h-9 pl-2 sm:pl-3 text-[11px] sm:text-xs border border-gray-300 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200"
           />
           {isSignedIn ? (
-            <Link href="/dashboard">
-              <Button className="absolute top-1/2 -translate-y-1/2 right-1 px-5 sm:px-6 h-8 sm:h-10 bg-black/90 text-white hover:bg-black">
+            <Link href="/dashboard" className="shrink-0">
+              <Button className="w-full sm:w-auto px-3 sm:px-4 h-8 sm:h-9 text-[11px] sm:text-xs bg-black/90 text-white hover:bg-black whitespace-nowrap">
                 Generate website <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
           ) : (
-            <SignUpButton mode="modal">
-              <Button className="absolute top-1/2 -translate-y-1/2 right-1 px-5 sm:px-6 h-8 sm:h-10 bg-black/90 text-white hover:bg-black">
+            <SignUpButton mode="modal" className="shrink-0">
+              <Button className="w-full sm:w-auto px-3 sm:px-4 h-8 sm:h-9 text-[11px] sm:text-xs bg-black/90 text-white hover:bg-black whitespace-nowrap">
                 Generate website <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </SignUpButton>
           )}
         </div>
       </section>
+
+      {/* Footer Section */}
+      <footer className="relative w-full bg-[#2b2b2b] text-gray-200 pt-10 pb-6">
+        {/* top fade */}
+        <div className="absolute inset-x-0 -top-6 h-6 bg-gradient-to-b from-transparent to-[#2b2b2b] pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-6 gap-6">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+            {/* Simple diamond logo */}
+            <svg
+              viewBox="0 0 24 24"
+              className="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2l5 5-5 5-5-5 5-5z" />
+            </svg>
+            <p className="text-xs leading-relaxed max-w-xs">
+              Durable makes owning a business easier than having a job.
+            </p>
+            <p className="text-[10px] text-gray-400">
+              ©2025 Durable Technologies Inc
+            </p>
+
+            {/* Language select */}
+            <div className="relative w-28">
+              <select className="w-full bg-black/20 border border-black/30 rounded-md py-1.5 pl-3 pr-8 text-xs text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>English</option>
+                <option>Español</option>
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Column helper */}
+          {[
+            {
+              title: "Product",
+              items: [
+                "Pricing",
+                "Website Builder",
+                "Blog Builder",
+                "Brand Builder",
+                "Invoicing",
+              ],
+            },
+            {
+              title: "Resources",
+              items: [
+                "Blog",
+                "Starter guides",
+                "Website templates",
+                "Customer stories",
+                "AI tools",
+              ],
+            },
+            {
+              title: "Compare",
+              items: ["Squarespace", "Wix", "Wordpress", "10web"],
+            },
+            {
+              title: "Company",
+              items: [
+                "About",
+                "Affiliate program",
+                "Careers",
+                "Privacy policy",
+                "Help center",
+                "Terms of service",
+              ],
+            },
+            {
+              title: "Social",
+              items: [
+                "Facebook",
+                "X/Twitter",
+                "Instagram",
+                "LinkedIn",
+                "TikTok",
+                "YouTube",
+              ],
+            },
+          ].map((col, i) => (
+            <div key={i} className="space-y-3">
+              <p className="text-xs font-semibold text-gray-100 mb-1">
+                {col.title}
+              </p>
+              <ul className="space-y-1.5 text-xs">
+                {col.items.map((it) => (
+                  <li key={it}>
+                    <a href="#" className="hover:text-white">
+                      {it}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </footer>
 
       {/* Hide scrollbar globally for custom class */}
       <style jsx global>{`
