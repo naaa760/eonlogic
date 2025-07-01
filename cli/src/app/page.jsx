@@ -280,9 +280,9 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[48px] sm:text-[56px] md:text-[72px] lg:text-[88px] xl:text-[96px] mx-auto text-center mb-6 sm:mb-8">
-              AI that builds a <br />
-              website for you
+            <h1 className="font-cursive italic text-transparent bg-[radial-gradient(89.47%_51.04%_at_44.27%_50%,_#E2E3E9_0%,_#D4D6DE_52.73%,_#3D3F4C_100%)] bg-clip-text font-medium tracking-tight leading-[1.1] text-[40px] sm:text-[48px] md:text-[60px] lg:text-[72px] xl:text-[80px] mx-auto text-center mb-6 sm:mb-8">
+              No code, no hassle <br />
+              just AI-built websites
             </h1>
             <p
               className="text-xs sm:text-sm md:text-base text-black mb-12 sm:mb-16 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-4 sm:px-0"
@@ -306,7 +306,7 @@ export default function LandingPage() {
             <div className="relative w-full max-w-[18rem] sm:max-w-md mx-auto">
               <Input
                 type="text"
-                placeholder="What type of business are you building?"
+                placeholder="What type of business?"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
                 className="w-full h-9 sm:h-10 pl-3 pr-32 sm:pr-40 text-xs sm:text-sm border-2 border-gray-200 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
