@@ -1048,7 +1048,7 @@ export default function LandingPage() {
 
       {/* Call to Action Section */}
       <section className="relative w-full bg-white py-16 sm:py-24 text-center">
-        <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl text-gray-900 mb-4">
+        <h2 className="font-cursive italic text-4xl sm:text-5xl md:text-6xl text-gray-900 mb-4">
           Get started for free
         </h2>
         <p className="font-cursive italic text-sm sm:text-base text-gray-700 mb-10 max-w-xl mx-auto">
