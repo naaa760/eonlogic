@@ -1,9 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import Groq from "groq-sdk";
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
 
 interface BusinessInfo {
   name: string;
@@ -14,52 +9,57 @@ interface BusinessInfo {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prompt, businessInfo } = body;
+    const { businessInfo } = body;
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a professional website content generator. Create engaging, professional content for businesses. Always respond with valid JSON only, no additional text or formatting.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      model: "llama3-8b-8192",
-      temperature: 0.7,
-      max_tokens: 2048,
+    // Proxy to backend API
+    const backendUrl =
+      process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000";
+
+    const response = await fetch(`${backendUrl}/api/ai/generate-content`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: "page",
+        topic: `${businessInfo?.type || "business"} content`,
+        tone: "professional",
+        length: "medium",
+      }),
     });
 
-    const generatedContent = chatCompletion.choices[0]?.message?.content;
-
-    if (!generatedContent) {
-      throw new Error("No content generated");
+    if (!response.ok) {
+      throw new Error(`Backend API error: ${response.status}`);
     }
 
-    // Parse the JSON response
-    let content;
-    try {
-      content = JSON.parse(generatedContent);
-    } catch (parseError) {
-      console.error("Error parsing AI response:", parseError);
-      // Return fallback content if parsing fails
-      content = getFallbackContent(businessInfo);
+    const data = await response.json();
+
+    // If backend returns the expected format, use it
+    if (data.success && data.data) {
+      return NextResponse.json({ content: data.data });
     }
 
-    return NextResponse.json({ content });
+    // Otherwise, return fallback content
+    return NextResponse.json({ content: getFallbackContent(businessInfo) });
   } catch (error) {
     console.error("Error generating content:", error);
-    return NextResponse.json(
-      { error: "Failed to generate content" },
-      { status: 500 }
-    );
+
+    // Return fallback content instead of error
+    const body = await request.json().catch(() => ({}));
+    const fallbackContent = getFallbackContent(body?.businessInfo);
+    return NextResponse.json({ content: fallbackContent });
   }
 }
 
 function getFallbackContent(businessInfo: BusinessInfo) {
+  if (!businessInfo) {
+    businessInfo = {
+      name: "Your Business",
+      type: "Business",
+      location: "Your Location",
+    };
+  }
+
   return {
     hero: {
       title: `Welcome to ${businessInfo.name}`,
