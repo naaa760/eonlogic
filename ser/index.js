@@ -44,6 +44,10 @@ app.get("/api", (req, res) => {
   });
 });
 
+// Import and use AI routes
+const aiRoutes = require("./routes/ai");
+app.use("/api/ai", aiRoutes);
+
 // AI Routes
 app.get("/api/ai", (req, res) => {
   res.json({
