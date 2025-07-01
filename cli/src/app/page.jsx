@@ -962,17 +962,17 @@ export default function LandingPage() {
 
       {/* Resources Section */}
       <section className="relative w-full bg-white py-12 sm:py-20">
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 mb-12">
+        <h2 className="font-cursive italic text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 mb-12">
           Resources
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-6xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-center gap-4 sm:gap-6 max-w-6xl mx-auto px-4">
           {/* Card 1: Name Generator */}
           <CardContainer
             className="rounded-2xl"
             containerClassName="flex items-center justify-center"
           >
-            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center">
+            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center relative overflow-hidden">
               <CardItem
                 as="p"
                 className="text-xs font-medium text-green-700 mb-1"
@@ -1001,6 +1001,8 @@ export default function LandingPage() {
                   className="w-full max-w-sm object-contain"
                 />
               </CardItem>
+              {/* bottom fade overlay */}
+              <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
             </CardBody>
           </CardContainer>
 
@@ -1009,7 +1011,7 @@ export default function LandingPage() {
             className="rounded-2xl"
             containerClassName="flex items-center justify-center"
           >
-            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center">
+            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center relative overflow-hidden">
               <CardItem
                 className="text-xs font-medium text-green-700 mb-1"
                 translateZ={20}
@@ -1037,6 +1039,8 @@ export default function LandingPage() {
                   className="w-full max-w-sm object-contain"
                 />
               </CardItem>
+              {/* bottom fade overlay */}
+              <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
             </CardBody>
           </CardContainer>
         </div>
