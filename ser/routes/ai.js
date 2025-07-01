@@ -6,9 +6,45 @@ const { PrismaClient } = require("@prisma/client");
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// Debug: Check if GROQ API key is loaded
+console.log("GROQ_API_KEY loaded:", process.env.GROQ_API_KEY ? "YES" : "NO");
+console.log("GROQ_API_KEY length:", process.env.GROQ_API_KEY?.length || 0);
+
 // Initialize Groq client
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
+});
+
+// Test endpoint to verify GROQ connection
+router.get("/test", async (req, res) => {
+  try {
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(500).json({
+        error: "GROQ_API_KEY not found",
+        envKeys: Object.keys(process.env).filter((key) => key.includes("GROQ")),
+      });
+    }
+
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: "Hello, respond with just 'OK'" }],
+      model: "llama3-8b-8192",
+      temperature: 0.1,
+      max_tokens: 10,
+    });
+
+    res.json({
+      success: true,
+      message: "GROQ API working",
+      response: completion.choices[0]?.message?.content,
+    });
+  } catch (error) {
+    console.error("GROQ Test Error:", error);
+    res.status(500).json({
+      error: "GROQ API test failed",
+      details: error.message,
+      hasApiKey: !!process.env.GROQ_API_KEY,
+    });
+  }
 });
 
 // Validation schemas
@@ -34,7 +70,18 @@ const generateContentSchema = z.object({
 // Generate complete website structure
 router.post("/generate-website", async (req, res) => {
   try {
+    // Check if GROQ API key exists
+    if (!process.env.GROQ_API_KEY) {
+      console.error("GROQ_API_KEY is missing from environment variables");
+      return res.status(500).json({
+        error: "GROQ API key not configured",
+        message: "Please check your GROQ_API_KEY environment variable",
+      });
+    }
+
     const validatedData = generateWebsiteSchema.parse(req.body);
+
+    console.log("Generating website for:", validatedData.businessName);
 
     const prompt = `
 You are an expert web designer and developer. Create a comprehensive website structure for a ${
@@ -96,6 +143,7 @@ Respond in valid JSON format with this structure:
 }
 `;
 
+    console.log("Making GROQ API call...");
     const completion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "llama3-8b-8192",
@@ -103,6 +151,7 @@ Respond in valid JSON format with this structure:
       max_tokens: 4000,
     });
 
+    console.log("GROQ API call successful");
     const responseContent = completion.choices[0]?.message?.content;
     let websiteData;
 
@@ -142,7 +191,20 @@ Respond in valid JSON format with this structure:
       });
     }
 
-    res.status(500).json({ error: "Failed to generate website" });
+    // Check for GROQ-specific errors
+    if (error.message?.includes("API key")) {
+      return res.status(500).json({
+        error: "GROQ API key error",
+        message: "Please check your GROQ_API_KEY configuration",
+        details: error.message,
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to generate website",
+      message: error.message,
+      hasApiKey: !!process.env.GROQ_API_KEY,
+    });
   }
 });
 
