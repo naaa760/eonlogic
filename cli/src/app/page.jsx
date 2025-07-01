@@ -1046,6 +1046,39 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Call to Action Section */}
+      <section className="relative w-full bg-white py-16 sm:py-24 text-center">
+        <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl text-gray-900 mb-4">
+          Get started for free
+        </h2>
+        <p className="font-cursive italic text-sm sm:text-base text-gray-700 mb-10 max-w-xl mx-auto">
+          Build a website and get your business online in minutes.
+        </p>
+
+        <div className="relative max-w-lg mx-auto w-full">
+          <Input
+            type="text"
+            placeholder="What type of business are you building?"
+            value={businessType}
+            onChange={(e) => setBusinessType(e.target.value)}
+            className="w-full h-10 sm:h-12 pl-3 pr-40 text-sm border border-gray-300 rounded-md focus:ring-4 focus:ring-blue-500/20 focus:border-blue-300 transition-all duration-200"
+          />
+          {isSignedIn ? (
+            <Link href="/dashboard">
+              <Button className="absolute top-1/2 -translate-y-1/2 right-1 px-5 sm:px-6 h-8 sm:h-10 bg-black/90 text-white hover:bg-black">
+                Generate website <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+          ) : (
+            <SignUpButton mode="modal">
+              <Button className="absolute top-1/2 -translate-y-1/2 right-1 px-5 sm:px-6 h-8 sm:h-10 bg-black/90 text-white hover:bg-black">
+                Generate website <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </SignUpButton>
+          )}
+        </div>
+      </section>
+
       {/* Hide scrollbar globally for custom class */}
       <style jsx global>{`
         .no-scrollbar {
