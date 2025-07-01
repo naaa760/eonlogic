@@ -117,12 +117,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 EonLogic API Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-});
+// Start server (only when not on Vercel)
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`🚀 EonLogic API Server running on port ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+}
 
 // Graceful shutdown
 process.on("SIGTERM", () => {

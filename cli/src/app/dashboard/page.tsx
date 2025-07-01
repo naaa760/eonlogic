@@ -252,7 +252,7 @@ export default function Dashboard() {
           <div className="flex-1 p-4 md:p-8 ml-16 pt-16">
             {/* Welcome Header */}
             <div className="mb-8">
-              <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              <h1 className="jsx-d1bf2febfabc5633 font-cursive italic text-2xl sm:text-3xl md:text-4xl font-normal text-gray-800 mb-3">
                 {greeting}, welcome to EonLogic
               </h1>
             </div>
