@@ -528,7 +528,7 @@ export default function LandingPage() {
             </p>
             <div className="relative flex justify-center w-full mb-3 overflow-visible">
               <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-6 sm:mb-8 md:mb-12">
-                Modern rails to move money.
+                Go live in minutes, not days!
               </h2>
               <img
                 src="/lv.png"
