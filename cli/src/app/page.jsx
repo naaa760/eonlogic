@@ -499,7 +499,7 @@ export default function LandingPage() {
 
             {/* Enhanced bottom fade effect with shimmer */}
             <div
-              className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 lg:h-32 pointer-events-none z-40"
+              className="absolute bottom-0 left-0 right-0 h-14 sm:h-16 pointer-events-none z-40"
               style={{
                 background:
                   "linear-gradient(to top, white 0%, rgba(255,255,255,0.95) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 75%, transparent 100%)",
@@ -1002,7 +1002,7 @@ export default function LandingPage() {
                 />
               </CardItem>
               {/* bottom fade overlay */}
-              <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-14 sm:h-16 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none" />
             </CardBody>
           </CardContainer>
 
@@ -1040,7 +1040,7 @@ export default function LandingPage() {
                 />
               </CardItem>
               {/* bottom fade overlay */}
-              <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-14 sm:h-16 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none" />
             </CardBody>
           </CardContainer>
         </div>
