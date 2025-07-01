@@ -14,6 +14,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
+import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 
 // Snow Component
 const Snow = () => {
@@ -835,7 +836,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto px-4">
           {/* Card 1 - Invoicing */}
           <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col w-full mx-auto overflow-visible max-w-[350px] md:max-w-full md:mx-0 relative">
             {/* Decorative overlay icon */}
@@ -956,6 +957,88 @@ export default function LandingPage() {
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Resources Section */}
+      <section className="relative w-full bg-white py-12 sm:py-20">
+        <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 mb-12">
+          Resources
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-6xl mx-auto px-4">
+          {/* Card 1: Name Generator */}
+          <CardContainer
+            className="rounded-2xl"
+            containerClassName="flex items-center justify-center"
+          >
+            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center">
+              <CardItem
+                as="p"
+                className="text-xs font-medium text-green-700 mb-1"
+                translateZ={20}
+              >
+                Name generator
+              </CardItem>
+              <CardItem
+                className="font-cursive italic text-lg sm:text-xl text-gray-900 mb-4 max-w-xs"
+                translateZ={20}
+              >
+                Generate a great business name
+              </CardItem>
+              <CardItem translateZ={20}>
+                <Link
+                  href="#"
+                  className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-800 mb-6"
+                >
+                  Generate a name <ArrowRight className="w-4 h-4" />
+                </Link>
+              </CardItem>
+              <CardItem translateZ={30}>
+                <img
+                  src="/chat.png"
+                  alt="Name generator"
+                  className="w-full max-w-sm object-contain"
+                />
+              </CardItem>
+            </CardBody>
+          </CardContainer>
+
+          {/* Card 2: Templates */}
+          <CardContainer
+            className="rounded-2xl"
+            containerClassName="flex items-center justify-center"
+          >
+            <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center">
+              <CardItem
+                className="text-xs font-medium text-green-700 mb-1"
+                translateZ={20}
+              >
+                Templates
+              </CardItem>
+              <CardItem
+                className="font-cursive italic text-lg sm:text-xl text-gray-900 mb-4 max-w-xs"
+                translateZ={20}
+              >
+                Find the perfect template
+              </CardItem>
+              <CardItem translateZ={20}>
+                <Link
+                  href="#"
+                  className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-800 mb-6"
+                >
+                  Website templates <ArrowRight className="w-4 h-4" />
+                </Link>
+              </CardItem>
+              <CardItem translateZ={30}>
+                <img
+                  src="/temp.png"
+                  alt="Template previews"
+                  className="w-full max-w-sm object-contain"
+                />
+              </CardItem>
+            </CardBody>
+          </CardContainer>
         </div>
       </section>
 
