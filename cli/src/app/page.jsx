@@ -2,7 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Star } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Quote,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
@@ -95,6 +101,63 @@ export default function LandingPage() {
     offset: ["start end", "end start"],
   });
   const rotate = useTransform(scrollYProgress, [0, 1], [14, -14]);
+
+  // Testimonials Carousel setup
+  const carouselRef = useRef(null);
+  const testimonials = [
+    {
+      quote:
+        "With Durable, everything felt really obvious and on other platforms I used, it was more complicated. I also love the CRM tool.",
+      name: "Meredith May",
+      company: "Color Wonder Balloon Co.",
+      avatar: "/avatar1.png",
+    },
+    {
+      quote:
+        "Durable is the only website builder that allowed me to apply my artistic side to the creation process. I didn't need technical skills to launch my site.",
+      name: "Clark McMaster",
+      company: "Ebl Jabs",
+      avatar: "/avatar2.png",
+    },
+    {
+      quote:
+        "You could be someone who has no idea how to turn on a computer and you could easily use Durable to build your website.",
+      name: "Jessica Dennis",
+      company: "Little Cooks Club",
+      avatar: "/avatar3.png",
+    },
+    {
+      quote:
+        "Durable gave me such a leg up. There are no distractions and nothing is complicated. When I have an idea for my site, I can go in and add it just like that.",
+      name: "Adrian Pruett",
+      company: "ONEBIGPARTY",
+      avatar: "/avatar4.png",
+    },
+    {
+      quote:
+        "The fastest way I've ever put a site online. The AI copy alone saved hours of brainstorming.",
+      name: "Heather Morin",
+      company: "Maple Creative",
+      avatar: "/avatar5.png",
+    },
+    {
+      quote:
+        "From zero to live site in minutes – I still can't believe how easy Durable makes it.",
+      name: "Liam Wong",
+      company: "PixelForge Studio",
+      avatar: "/avatar6.png",
+    },
+  ];
+
+  const scrollCarousel = (dir) => {
+    if (carouselRef.current) {
+      const width = carouselRef.current.offsetWidth;
+      carouselRef.current.scrollBy({
+        left: dir * width * 0.8,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
@@ -823,6 +886,92 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Carousel Section */}
+      <section className="relative w-full bg-white py-12 sm:py-20">
+        <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center text-gray-900 mb-10 leading-tight">
+          Millions of business <br className="hidden sm:block" /> owners love
+          Durable
+        </h2>
+
+        <div className="relative max-w-6xl mx-auto px-4">
+          {/* Carousel wrapper */}
+          <div
+            ref={carouselRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar"
+          >
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex-shrink-0 w-72 sm:w-80 md:w-96 snap-start hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                {/* decorative mini person */}
+                {idx % 2 === 0 ? (
+                  <span className="absolute -top-6 left-4 text-black text-xl select-none">
+                    🕴️
+                  </span>
+                ) : (
+                  <span className="absolute -top-6 right-4 text-black text-xl select-none">
+                    🕴️
+                  </span>
+                )}
+
+                {/* top gradient accent */}
+                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300" />
+
+                {/* Quote Icon */}
+                <div className="w-9 h-9 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Quote className="w-5 h-5" />
+                </div>
+
+                <p className="text-sm sm:text-base text-gray-800 mb-6 leading-relaxed text-left">
+                  {t.quote}
+                </p>
+
+                {/* Footer */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src={t.avatar}
+                    alt={t.name}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <div className="text-xs text-gray-700">
+                    <p className="font-medium">{t.name}</p>
+                    <p className="text-gray-500">{t.company}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              onClick={() => scrollCarousel(-1)}
+              className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 bg-black/5 text-black/55 hover:bg-black/10 hover:text-black/80 p-3 [&_svg:not([class*='size-'])]:size-6 rounded-full"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => scrollCarousel(1)}
+              className="aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive outline-hidden relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap font-medium transition-[background,color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 bg-black/5 text-black/55 hover:bg-black/10 hover:text-black/80 p-3 [&_svg:not([class*='size-'])]:size-6 rounded-full"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Hide scrollbar globally for custom class */}
+      <style jsx global>{`
+        .no-scrollbar {
+          -ms-overflow-style: none; /* IE & Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera*/
+        }
+      `}</style>
     </div>
   );
 }
