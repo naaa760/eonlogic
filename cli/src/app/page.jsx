@@ -110,42 +110,42 @@ export default function LandingPage() {
         "With Durable, everything felt really obvious and on other platforms I used, it was more complicated. I also love the CRM tool.",
       name: "Meredith May",
       company: "Color Wonder Balloon Co.",
-      avatar: "/avatar1.png",
+      avatar: "/h1.jpg",
     },
     {
       quote:
         "Durable is the only website builder that allowed me to apply my artistic side to the creation process. I didn't need technical skills to launch my site.",
       name: "Clark McMaster",
       company: "Ebl Jabs",
-      avatar: "/avatar2.png",
+      avatar: "/h2.jpg",
     },
     {
       quote:
         "You could be someone who has no idea how to turn on a computer and you could easily use Durable to build your website.",
       name: "Jessica Dennis",
       company: "Little Cooks Club",
-      avatar: "/avatar3.png",
+      avatar: "/h3.jpg",
     },
     {
       quote:
         "Durable gave me such a leg up. There are no distractions and nothing is complicated. When I have an idea for my site, I can go in and add it just like that.",
       name: "Adrian Pruett",
       company: "ONEBIGPARTY",
-      avatar: "/avatar4.png",
+      avatar: "/h4.jpg",
     },
     {
       quote:
         "The fastest way I've ever put a site online. The AI copy alone saved hours of brainstorming.",
       name: "Heather Morin",
       company: "Maple Creative",
-      avatar: "/avatar5.png",
+      avatar: "/h5.jpg",
     },
     {
       quote:
         "From zero to live site in minutes – I still can't believe how easy Durable makes it.",
       name: "Liam Wong",
       company: "PixelForge Studio",
-      avatar: "/avatar6.png",
+      avatar: "/h6.jpg",
     },
   ];
 
@@ -915,9 +915,6 @@ export default function LandingPage() {
                     🕴️
                   </span>
                 )}
-
-                {/* top gradient accent */}
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300" />
 
                 {/* Quote Icon */}
                 <div className="w-9 h-9 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
