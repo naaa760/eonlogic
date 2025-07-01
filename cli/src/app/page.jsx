@@ -528,7 +528,7 @@ export default function LandingPage() {
               Your AI business partner
             </p>
             <div className="relative flex justify-center w-full mb-3 overflow-visible">
-              <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-10 leading-snug">
+              <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-6 sm:mb-8 md:mb-12">
                 Modern rails to move money.
               </h2>
               <img
@@ -962,15 +962,15 @@ export default function LandingPage() {
 
       {/* Resources Section */}
       <section className="relative w-full bg-white py-12 sm:py-20">
-        <h2 className="font-cursive italic text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 mb-12">
+        <h2 className="font-cursive italic text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 mb-6 sm:mb-8 md:mb-12">
           Resources
         </h2>
 
-        <div className="flex flex-col md:flex-row justify-center gap-4 sm:gap-6 max-w-6xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-center gap-2 sm:gap-4 md:gap-6 max-w-6xl mx-auto px-4">
           {/* Card 1: Name Generator */}
           <CardContainer
             className="rounded-2xl"
-            containerClassName="flex items-center justify-center"
+            containerClassName="flex items-center justify-center py-4 md:py-0"
           >
             <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center relative overflow-hidden">
               <CardItem
@@ -1009,7 +1009,7 @@ export default function LandingPage() {
           {/* Card 2: Templates */}
           <CardContainer
             className="rounded-2xl"
-            containerClassName="flex items-center justify-center"
+            containerClassName="flex items-center justify-center py-4 md:py-0"
           >
             <CardBody className="bg-white border border-gray-200/40 p-6 sm:p-8 rounded-2xl shadow-md flex flex-col items-center text-center relative overflow-hidden">
               <CardItem
