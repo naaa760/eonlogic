@@ -758,6 +758,64 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* New Two-Card Section */}
+      <section className="relative w-full bg-white py-12 sm:py-20">
+        <div className="mx-auto max-w-4xl text-center mb-12 px-4">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-normal text-gray-900 mb-6">
+            Send invoices and
+            <br />
+            manage contacts
+          </h2>
+          <p className="font-cursive italic text-sm sm:text-base text-gray-600 max-w-lg mx-auto">
+            Fully integrated lead and customer management.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mx-auto px-4">
+          {/* Card 1 - Invoicing */}
+          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col">
+            <div className="mb-4">
+              <img
+                src="/cd1.png"
+                alt="Invoicing interface"
+                className="w-3/4 h-auto rounded-lg object-contain mx-auto"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-medium text-gray-500 mb-2">
+                Invoicing
+              </p>
+              <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+                Get paid
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Get paid faster and save time with simple invoicing tools.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2 - Contacts */}
+          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col">
+            <div className="mb-4">
+              <img
+                src="/cd2.png"
+                alt="Contacts management interface"
+                className="w-full h-auto rounded-lg object-contain"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-medium text-gray-500 mb-2">Contacts</p>
+              <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+                Grow your leads
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Everything you need to manage leads and contacts in one place.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
