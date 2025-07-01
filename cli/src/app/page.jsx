@@ -774,7 +774,13 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mx-auto px-4">
           {/* Card 1 - Invoicing */}
-          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col w-full mx-auto overflow-visible max-w-[350px] md:max-w-full md:mx-0">
+          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col w-full mx-auto overflow-visible max-w-[350px] md:max-w-full md:mx-0 relative">
+            {/* Decorative overlay icon */}
+            <img
+              src="/pei.png"
+              alt="decorative icon"
+              className="absolute -top-8 left-1/2 -translate-x-1/2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none"
+            />
             <div className="flex-1 flex items-center justify-center mb-4">
               <img
                 src="/manp.png"
