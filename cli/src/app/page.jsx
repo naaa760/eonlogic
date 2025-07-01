@@ -109,28 +109,28 @@ export default function LandingPage() {
   const testimonials = [
     {
       quote:
-        "With Durable, everything felt really obvious and on other platforms I used, it was more complicated. I also love the CRM tool.",
+        "With EonLG, everything felt really obvious and on other platforms I used, it was more complicated. I also love the CRM tool.",
       name: "Meredith May",
       company: "Color Wonder Balloon Co.",
       avatar: "/h1.jpg",
     },
     {
       quote:
-        "Durable is the only website builder that allowed me to apply my artistic side to the creation process. I didn't need technical skills to launch my site.",
+        "EonLG is the only website builder that allowed me to apply my artistic side to the creation process. I didn't need technical skills to launch my site.",
       name: "Clark McMaster",
       company: "Ebl Jabs",
       avatar: "/h2.jpg",
     },
     {
       quote:
-        "You could be someone who has no idea how to turn on a computer and you could easily use Durable to build your website.",
+        "You could be someone who has no idea how to turn on a computer and you could easily use EonLG to build your website.",
       name: "Jessica Dennis",
       company: "Little Cooks Club",
       avatar: "/h3.jpg",
     },
     {
       quote:
-        "Durable gave me such a leg up. There are no distractions and nothing is complicated. When I have an idea for my site, I can go in and add it just like that.",
+        "EonLG gave me such a leg up. There are no distractions and nothing is complicated. When I have an idea for my site, I can go in and add it just like that.",
       name: "Adrian Pruett",
       company: "ONEBIGPARTY",
       avatar: "/h4.jpg",
@@ -144,7 +144,7 @@ export default function LandingPage() {
     },
     {
       quote:
-        "From zero to live site in minutes – I still can't believe how easy Durable makes it.",
+        "From zero to live site in minutes – I still can't believe how easy EonLG makes it.",
       name: "Liam Wong",
       company: "PixelForge Studio",
       avatar: "/h6.jpg",
@@ -198,9 +198,7 @@ export default function LandingPage() {
                     />
                   </svg>
                 </div>
-                <span className="text-2xl font-bold text-gray-800">
-                  Durable
-                </span>
+                <span className="text-2xl font-bold text-gray-800">EonLG</span>
               </div>
             </div>
 
@@ -759,7 +757,7 @@ export default function LandingPage() {
               Written for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
-              Not a wordsmith? No problem. Durable writes high converting copy.
+              Not a wordsmith? No problem. EonLG writes high converting copy.
             </p>
             <a
               href="#"
@@ -806,7 +804,7 @@ export default function LandingPage() {
               Content created for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
-              Put your marketing on autopilot. Durable writes and publishes new
+              Put your marketing on autopilot. EonLG writes and publishes new
               blog content weekly.
             </p>
             <a
@@ -893,7 +891,7 @@ export default function LandingPage() {
       <section className="relative w-full bg-white py-12 sm:py-20">
         <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-10 leading-snug">
           Millions of business <br className="hidden sm:block" /> owners love
-          Durable
+          EonLG
         </h2>
 
         <div className="relative max-w-6xl mx-auto px-4">
@@ -1100,10 +1098,10 @@ export default function LandingPage() {
               <path d="M12 2l5 5-5 5-5-5 5-5z" />
             </svg>
             <p className="text-xs leading-relaxed max-w-xs">
-              Durable makes owning a business easier than having a job.
+              EonLG makes owning a business easier than having a job.
             </p>
             <p className="text-[10px] text-gray-400">
-              ©2025 Durable Technologies Inc
+              ©2025 EonLG Technologies Inc
             </p>
 
             {/* Language select */}
