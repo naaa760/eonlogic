@@ -774,14 +774,15 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mx-auto px-4">
           {/* Card 1 - Invoicing */}
-          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col">
-            <div className="mb-4">
+          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col w-full mx-auto overflow-visible max-w-[350px] md:max-w-full md:mx-0">
+            <div className="flex-1 flex items-center justify-center mb-4">
               <img
-                src="/cd1.png"
+                src="/manp.png"
                 alt="Invoicing interface"
-                className="w-3/4 h-auto rounded-lg object-contain mx-auto"
+                className="w-full h-48 sm:h-56 md:h-60 object-contain rounded-lg"
               />
             </div>
+
             <div className="text-center">
               <p className="text-xs font-medium text-gray-500 mb-2">
                 Invoicing
@@ -796,12 +797,12 @@ export default function LandingPage() {
           </div>
 
           {/* Card 2 - Contacts */}
-          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col">
+          <div className="bg-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col w-full mx-auto overflow-visible max-w-[350px] md:max-w-full md:mx-0">
             <div className="mb-4">
               <img
                 src="/cd2.png"
                 alt="Contacts management interface"
-                className="w-full h-auto rounded-lg object-contain"
+                className="w-full h-auto rounded-lg object-contain transform scale-110 sm:scale-125 md:scale-150"
               />
             </div>
             <div className="text-center">
