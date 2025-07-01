@@ -527,7 +527,7 @@ export default function LandingPage() {
               Your AI business partner
             </p>
             <div className="relative flex justify-center w-full mb-3 overflow-visible">
-              <h2 className="font-heading text-3xl leading-[40px] sm:text-4xl sm:leading-[48px] md:text-5xl md:leading-[60px] lg:text-6xl lg:leading-[72px] tracking-tight text-black font-normal text-center">
+              <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-10 leading-snug">
                 Modern rails to move money.
               </h2>
               <img
@@ -710,7 +710,7 @@ export default function LandingPage() {
           <p className="text-xs font-semibold tracking-widest text-amber-900 mb-2">
             The #1 AI website builder
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-normal text-gray-900 mb-3">
+          <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl font-normal text-gray-800 mb-3">
             A website that
             <br className="sm:hidden" /> works for you
           </h2>
@@ -727,7 +727,7 @@ export default function LandingPage() {
             <p className="text-xs font-semibold text-amber-700 mb-1">
               AI websites
             </p>
-            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+            <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
               Designed for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
@@ -753,7 +753,7 @@ export default function LandingPage() {
             <p className="text-xs font-semibold text-amber-700 mb-1">
               AI copywriter
             </p>
-            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+            <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
               Written for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
@@ -776,7 +776,7 @@ export default function LandingPage() {
           <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">SEO</p>
-            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+            <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
               Optimized for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
@@ -800,7 +800,7 @@ export default function LandingPage() {
           <div className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-gradient-to-r from-amber-400 via-gray-200 to-gray-400 rounded-full group-hover:w-20 transition-all duration-300"></span>
             <p className="text-xs font-semibold text-amber-700 mb-1">AI blog</p>
-            <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+            <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
               Content created for you
             </h3>
             <p className="font-cursive italic text-[11px] sm:text-xs text-gray-800 mb-4">
@@ -825,7 +825,7 @@ export default function LandingPage() {
       {/* New Two-Card Section */}
       <section className="relative w-full bg-white py-12 sm:py-20">
         <div className="mx-auto max-w-4xl text-center mb-12 px-4">
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-normal text-gray-900 mb-6">
+          <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl font-normal text-gray-800 mb-6">
             Send invoices and
             <br />
             manage contacts
@@ -856,7 +856,7 @@ export default function LandingPage() {
               <p className="text-xs font-medium text-gray-500 mb-2">
                 Invoicing
               </p>
-              <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
                 Get paid
               </h3>
               <p className="text-xs text-gray-600 leading-relaxed">
@@ -876,7 +876,7 @@ export default function LandingPage() {
             </div>
             <div className="text-center">
               <p className="text-xs font-medium text-gray-500 mb-2">Contacts</p>
-              <h3 className="font-heading text-lg sm:text-xl text-gray-900 mb-2">
+              <h3 className="font-cursive text-lg sm:text-xl text-gray-900 mb-2">
                 Grow your leads
               </h3>
               <p className="text-xs text-gray-600 leading-relaxed">
@@ -889,7 +889,7 @@ export default function LandingPage() {
 
       {/* Testimonials Carousel Section */}
       <section className="relative w-full bg-white py-12 sm:py-20">
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center text-gray-900 mb-10 leading-tight">
+        <h2 className="font-cursive italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center text-gray-800 mb-10 leading-snug">
           Millions of business <br className="hidden sm:block" /> owners love
           Durable
         </h2>
@@ -903,7 +903,7 @@ export default function LandingPage() {
             {testimonials.map((t, idx) => (
               <div
                 key={idx}
-                className="group relative rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-lg shadow-md p-6 flex-shrink-0 w-72 sm:w-80 md:w-96 snap-start hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className="group relative rounded-2xl border border-gray-200/40 bg-white/70 backdrop-blur-lg shadow-md p-5 flex-shrink-0 w-64 sm:w-72 md:w-80 snap-start hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 {/* decorative mini person */}
                 {idx % 2 === 0 ? (
