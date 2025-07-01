@@ -100,11 +100,8 @@ app.use("*", (req, res) => {
     availableRoutes: [
       "/health",
       "/api",
-      "/api/ai",
-      "/api/projects",
-      "/api/websites",
-      "/api/templates",
-      "/api/users",
+      "/api/ai/generate-website",
+      "/api/ai/generate-content",
     ],
   });
 });
