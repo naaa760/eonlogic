@@ -291,9 +291,9 @@ export default function LandingPage() {
                 fontStyle: "italic",
               }}
             >
-              Get your business online in 30 seconds with the #1 AI{" "}
+              Get your business online in 30 seconds with the AI website builder
               <br className="hidden sm:block" />
-              website builder and marketing platform.
+              and marketing platform.
             </p>
           </motion.div>
 
@@ -1118,13 +1118,7 @@ export default function LandingPage() {
           {[
             {
               title: "Product",
-              items: [
-                "Pricing",
-                "Website Builder",
-                "Blog Builder",
-                "Brand Builder",
-                "Invoicing",
-              ],
+              items: ["Pricing", "Website Builder", "Blog Builder"],
             },
             {
               title: "Resources",
@@ -1132,14 +1126,11 @@ export default function LandingPage() {
                 "Blog",
                 "Starter guides",
                 "Website templates",
-                "Customer stories",
+
                 "AI tools",
               ],
             },
-            {
-              title: "Compare",
-              items: ["Squarespace", "Wix", "Wordpress", "10web"],
-            },
+
             {
               title: "Company",
               items: [
@@ -1153,14 +1144,7 @@ export default function LandingPage() {
             },
             {
               title: "Social",
-              items: [
-                "Facebook",
-                "X/Twitter",
-                "Instagram",
-                "LinkedIn",
-                "TikTok",
-                "YouTube",
-              ],
+              items: ["LinkedIn", "TikTok", "YouTube"],
             },
           ].map((col, i) => (
             <div key={i} className="space-y-3">
