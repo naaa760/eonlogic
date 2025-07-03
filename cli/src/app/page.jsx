@@ -30,7 +30,7 @@ const Snow = () => {
         animationDuration: Math.random() * 15 + 25,
         opacity: Math.random() * 0.4 + 0.3,
         size: Math.random() * 1.5 + 1,
-        delay: Math.random() * 12,
+        delay: -Math.random() * 12,
       });
     }
     setSnowflakes(flakes);
